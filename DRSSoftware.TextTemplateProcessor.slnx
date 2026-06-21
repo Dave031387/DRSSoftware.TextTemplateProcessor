@@ -1,0 +1,8 @@
+<Solution>
+  <Folder Name="/Solution Items/">
+    <File Path=".editorconfig" />
+    <File Path="LICENSE.txt" />
+  </Folder>
+  <Project Path="DRSSoftware.TextTemplateProcessor.Tests/DRSSoftware.TextTemplateProcessor.Tests.csproj" />
+  <Project Path="DRSSoftware.TextTemplateProcessor/DRSSoftware.TextTemplateProcessor.csproj" />
+</Solution>
