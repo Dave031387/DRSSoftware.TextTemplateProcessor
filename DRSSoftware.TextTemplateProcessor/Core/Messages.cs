@@ -1,12 +1,10 @@
 ﻿namespace DRSSoftware.TextTemplateProcessor.Core;
 
-using System.Text.RegularExpressions;
-
 /// <summary>
 /// The <see cref="Messages" /> static class defines all the message strings that are used for
 /// exceptions, log entries, etc, in the Text Template Processor class library.
 /// </summary>
-internal static partial class Messages
+internal static class Messages
 {
     // internal const string MsgAttemptingToReadFile = "Attempting to read text template file:\n{0}";
     // internal const string MsgAttemptToGenerateSegmentBeforeItWasLoaded = "An attempt was made to generate segment \"{0}\" before the template was loaded.";
@@ -137,8 +135,7 @@ internal static partial class Messages
     /// </returns>
     internal static string FormatMessage(string message, params string[] strings)
     {
-        Regex regex = FormatItemPattern();
-        int formatItemCount = regex.Count(message);
+        int formatItemCount = GetFormatItemCount(message);
         int stringCount = strings.Length;
         int argumentCount = stringCount > formatItemCount
             ? formatItemCount > 3
@@ -156,7 +153,4 @@ internal static partial class Messages
             _ => string.Format(message, strings[0], strings[1], strings[3]),
         };
     }
-
-    [GeneratedRegex(@"\{\d\}")]
-    private static partial Regex FormatItemPattern();
 }

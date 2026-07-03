@@ -9,8 +9,6 @@ using System.Reflection;
 /// </summary>
 internal class FileAndDirectoryService : IFileAndDirectoryService
 {
-    private const string SolutionFileSearchPattern = "*.sln";
-
     /// <summary>
     /// Default constructor that creates an instance of the <see cref="FileAndDirectoryService" />
     /// class.
