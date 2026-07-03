@@ -1,4 +1,9 @@
-﻿namespace DRSSoftware.TextTemplateProcessor.Core;
+﻿using System.Runtime.CompilerServices;
+
+[assembly: InternalsVisibleTo("DRSSoftware.TextTemplateProcessor.Tests")]
+[assembly: InternalsVisibleTo("DynamicProxyGenAssembly2")]
+
+namespace DRSSoftware.TextTemplateProcessor.Core;
 
 /// <summary>
 /// This static class defines certain constant values and fixed properties that are used throughout

@@ -121,36 +121,17 @@ internal static class Messages
     /// <summary>
     /// Format the given <paramref name="message"/> composite string by replacing each format item with the given <paramref name="strings"/>.
     /// </summary>
-    /// <remarks>
-    /// If there are more than 3 format items in the <paramref name="message"/> only the first three are replaced with the corresponding strings from <paramref name="strings"/>.
-    /// </remarks>
     /// <param name="message">
-    /// A composite string containing up to three format items which are to be replaced by the strings contained in <paramref name="strings"/>.
+    /// A composite string containing zero or more format items which are to be replaced by the strings contained in <paramref name="strings"/>.
     /// </param>
     /// <param name="strings">
-    /// Up to three string values to be substituted for the corresponding format items found in <paramref name="message"/>.
+    /// An array of string values to be substituted for the corresponding format items found in <paramref name="message"/>.
     /// </param>
     /// <returns>
     /// The formatted version of <paramref name="message"/> having all format items replaced with the appropriate string values.
     /// </returns>
     internal static string FormatMessage(string message, params string[] strings)
-    {
-        int formatItemCount = GetFormatItemCount(message);
-        int stringCount = strings.Length;
-        int argumentCount = stringCount > formatItemCount
-            ? formatItemCount > 3
-                ? 3
-                : formatItemCount
-            : stringCount > 3
-                ? 3
-                : stringCount;
-
-        return argumentCount switch
-        {
-            0 => message,
-            1 => string.Format(message, strings[0]),
-            2 => string.Format(message, strings[0], strings[1]),
-            _ => string.Format(message, strings[0], strings[1], strings[3]),
-        };
-    }
+        => HasFormatItems(message)
+            ? string.Format(message, strings)
+            : message;
 }

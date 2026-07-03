@@ -9,19 +9,6 @@ using System.Text.RegularExpressions;
 internal static partial class RegexHelper
 {
     /// <summary>
-    /// Gets the number of format items in a composite string.
-    /// </summary>
-    /// <param name="compositeString">
-    /// The composite string containing zero or more format items.
-    /// </param>
-    /// <returns>
-    /// An integer value that is equal to the number of format items that were found in the
-    /// composite string.
-    /// </returns>
-    public static int GetFormatItemCount(string compositeString)
-        => FormatItemRegex().Count(compositeString);
-
-    /// <summary>
     /// Gets a value indicating whether or not the given <paramref name="textLine" /> begins with an
     /// absolute indent indicator string.
     /// </summary>
@@ -69,6 +56,20 @@ internal static partial class RegexHelper
     /// </returns>
     public static bool HasAbsoluteOneTimeIndentCode(string textLine)
         => AbsoluteOneTimeIndentCodeRegex().IsMatch(textLine);
+
+    /// <summary>
+    /// Gets a value indicating whether the given <paramref name="compositeString" /> contains any
+    /// format items.
+    /// </summary>
+    /// <param name="compositeString">
+    /// The composite string containing zero or more format items.
+    /// </param>
+    /// <returns>
+    /// <see langword="true" /> if <paramref name="compositeString" /> contains format items;
+    /// otherwise, <see langword="false" />.
+    /// </returns>
+    public static bool HasFormatItems(string compositeString)
+        => FormatItemRegex().IsMatch(compositeString);
 
     /// <summary>
     /// Gets a value indicating whether or not the given <paramref name="textLine" /> begins with
@@ -299,13 +300,13 @@ internal static partial class RegexHelper
     /// Gets a <see cref="Regex" /> object used for matching format items in a composite string.
     /// </summary>
     /// <remarks>
-    /// Only format items with index values between 0 and 2 (inclusive) are matched. Format items
-    /// with index values greater than 2 are not matched.
+    /// Only format items with index values between 0 and 9 (inclusive) are matched. Format items
+    /// with index values greater than 9 are not matched.
     /// </remarks>
     /// <returns>
     /// A <see cref="Regex" /> object used for matching format items in a composite string.
     /// </returns>
-    [GeneratedRegex(@"\{[0-2]}", RegexOptions.Compiled)]
+    [GeneratedRegex(@"\{[0-9]}", RegexOptions.Compiled)]
     private static partial Regex FormatItemRegex();
 
     /// <summary>
