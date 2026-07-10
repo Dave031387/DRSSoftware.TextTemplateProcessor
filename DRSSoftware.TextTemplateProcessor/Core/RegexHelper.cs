@@ -44,20 +44,6 @@ internal static partial class RegexHelper
         => AbsoluteIndentCodeRegex().IsMatch(textLine);
 
     /// <summary>
-    /// Gets a value indicating whether or not the given <paramref name="textLine" /> begins with an
-    /// absolute one-time indent indicator string.
-    /// </summary>
-    /// <param name="textLine">
-    /// The text template line to be checked.
-    /// </param>
-    /// <returns>
-    /// <see langword="true" /> if <paramref name="textLine" /> begins with an absolute one-time
-    /// indent indicator string; otherwise, <see langword="false" />.
-    /// </returns>
-    public static bool HasAbsoluteOneTimeIndentCode(string textLine)
-        => AbsoluteOneTimeIndentCodeRegex().IsMatch(textLine);
-
-    /// <summary>
     /// Gets a value indicating whether the given <paramref name="compositeString" /> contains any
     /// format items.
     /// </summary>
@@ -100,6 +86,20 @@ internal static partial class RegexHelper
         => NoControlCodeRegex().IsMatch(textLine);
 
     /// <summary>
+    /// Gets a value indicating whether or not the given <paramref name="textLine" /> begins with an
+    /// absolute one-time indent indicator string.
+    /// </summary>
+    /// <param name="textLine">
+    /// The text template line to be checked.
+    /// </param>
+    /// <returns>
+    /// <see langword="true" /> if <paramref name="textLine" /> begins with an absolute one-time
+    /// indent indicator string; otherwise, <see langword="false" />.
+    /// </returns>
+    public static bool HasOneTimeAbsoluteIndentCode(string textLine)
+        => OneTimeAbsoluteIndentCodeRegex().IsMatch(textLine);
+
+    /// <summary>
     /// Gets a value indicating whether or not the given <paramref name="textLine" /> begins with
     /// any one-time indent indicator string.
     /// </summary>
@@ -115,6 +115,34 @@ internal static partial class RegexHelper
     /// </returns>
     public static bool HasOneTimeIndent(string textLine)
         => OneTimeIndentRegex().IsMatch(textLine);
+
+    /// <summary>
+    /// Gets a value indicating whether or not the given <paramref name="textLine" /> begins with a
+    /// relative one-time left indent indicator string.
+    /// </summary>
+    /// <param name="textLine">
+    /// The text template line to be checked.
+    /// </param>
+    /// <returns>
+    /// <see langword="true" /> if <paramref name="textLine" /> begins with a relative one-time left
+    /// indent indicator string; otherwise, <see langword="false" />.
+    /// </returns>
+    public static bool HasOneTimeRelativeLeftIndentCode(string textLine)
+        => OneTimeRelativeLeftIndentCodeRegex().IsMatch(textLine);
+
+    /// <summary>
+    /// Gets a value indicating whether or not the given <paramref name="textLine" /> begins with a
+    /// relative one-time right indent indicator string.
+    /// </summary>
+    /// <param name="textLine">
+    /// The text template line to be checked.
+    /// </param>
+    /// <returns>
+    /// <see langword="true" /> if <paramref name="textLine" /> begins with a relative one-time
+    /// right indent indicator string; otherwise, <see langword="false" />.
+    /// </returns>
+    public static bool HasOneTimeRelativeRightIndentCode(string textLine)
+        => OneTimeRelativeRightIndentCodeRegex().IsMatch(textLine);
 
     /// <summary>
     /// Gets a value indicating whether or not the given <paramref name="textLine" /> begins with a
@@ -153,20 +181,6 @@ internal static partial class RegexHelper
 
     /// <summary>
     /// Gets a value indicating whether or not the given <paramref name="textLine" /> begins with a
-    /// relative one-time left indent indicator string.
-    /// </summary>
-    /// <param name="textLine">
-    /// The text template line to be checked.
-    /// </param>
-    /// <returns>
-    /// <see langword="true" /> if <paramref name="textLine" /> begins with a relative one-time left
-    /// indent indicator string; otherwise, <see langword="false" />.
-    /// </returns>
-    public static bool HasRelativeLeftOneTimeIndentCode(string textLine)
-        => RelativeLeftOneTimeIndentCodeRegex().IsMatch(textLine);
-
-    /// <summary>
-    /// Gets a value indicating whether or not the given <paramref name="textLine" /> begins with a
     /// relative right indent indicator string.
     /// </summary>
     /// <remarks>
@@ -182,20 +196,6 @@ internal static partial class RegexHelper
     /// </returns>
     public static bool HasRelativeRightIndentCode(string textLine)
         => RelativeRightIndentCodeRegex().IsMatch(textLine);
-
-    /// <summary>
-    /// Gets a value indicating whether or not the given <paramref name="textLine" /> begins with a
-    /// relative one-time right indent indicator string.
-    /// </summary>
-    /// <param name="textLine">
-    /// The text template line to be checked.
-    /// </param>
-    /// <returns>
-    /// <see langword="true" /> if <paramref name="textLine" /> begins with a relative one-time
-    /// right indent indicator string; otherwise, <see langword="false" />.
-    /// </returns>
-    public static bool HasRelativeRightOneTimeIndentCode(string textLine)
-        => RelativeRightOneTimeIndentCodeRegex().IsMatch(textLine);
 
     /// <summary>
     /// Gets a value indicating whether or not the given <paramref name="textLine" /> begins with a
@@ -260,7 +260,7 @@ internal static partial class RegexHelper
     /// A <see cref="Regex" /> object used for matching text lines that begin with an absolute
     /// indent indicator string.
     /// </returns>
-    [GeneratedRegex(@"^@=[0-9] ", RegexOptions.Compiled)]
+    [GeneratedRegex($@"^{Normal}{Absolute}{AnyDigit} ", RegexOptions.Compiled)]
     private static partial Regex AbsoluteIndentCodeRegex();
 
     /// <summary>
@@ -271,19 +271,8 @@ internal static partial class RegexHelper
     /// A <see cref="Regex" /> object used for matching text lines that begin with an absolute
     /// indent or absolute one-time indent indicator string.
     /// </remarks>
-    [GeneratedRegex(@"^(O|@)=[0-9] ", RegexOptions.Compiled)]
+    [GeneratedRegex($@"^[{Normal}{OneTime}]{Absolute}{AnyDigit} ", RegexOptions.Compiled)]
     private static partial Regex AbsoluteIndentRegex();
-
-    /// <summary>
-    /// Gets a <see cref="Regex" /> object used for matching text lines that begin with an absolute
-    /// one-time indent indicator string.
-    /// </summary>
-    /// <returns>
-    /// A <see cref="Regex" /> object used for matching text lines that begin with an absolute
-    /// one-time indent indicator string.
-    /// </returns>
-    [GeneratedRegex(@"^O=[0-9] ", RegexOptions.Compiled)]
-    private static partial Regex AbsoluteOneTimeIndentCodeRegex();
 
     /// <summary>
     /// Gets a <see cref="Regex" /> object used for matching text lines that begin with a comment
@@ -293,7 +282,7 @@ internal static partial class RegexHelper
     /// A <see cref="Regex" /> object used for matching text lines that begin with a comment line
     /// indicator string.
     /// </returns>
-    [GeneratedRegex(@"^/// ", RegexOptions.Compiled)]
+    [GeneratedRegex($@"^{CommentCode} ", RegexOptions.Compiled)]
     private static partial Regex CommentLineRegex();
 
     /// <summary>
@@ -306,7 +295,7 @@ internal static partial class RegexHelper
     /// <returns>
     /// A <see cref="Regex" /> object used for matching format items in a composite string.
     /// </returns>
-    [GeneratedRegex(@"\{[0-9]}", RegexOptions.Compiled)]
+    [GeneratedRegex($@"\{{{AnyDigit}}}", RegexOptions.Compiled)]
     private static partial Regex FormatItemRegex();
 
     /// <summary>
@@ -317,7 +306,7 @@ internal static partial class RegexHelper
     /// A <see cref="Regex" /> object used for matching text lines that begin with any valid indent
     /// indicator string.
     /// </returns>
-    [GeneratedRegex(@"^[@O][\+\-=][0-9] ", RegexOptions.Compiled)]
+    [GeneratedRegex($@"^[{Normal}{OneTime}][{Absolute}{RelativeLeft}{RelativeRight}]{AnyDigit} ", RegexOptions.Compiled)]
     private static partial Regex IndentCodeRegex();
 
     /// <summary>
@@ -328,8 +317,19 @@ internal static partial class RegexHelper
     /// A <see cref="Regex" /> object used for matching text lines that don't begin with any indent
     /// indicator string.
     /// </returns>
-    [GeneratedRegex(@"^    ", RegexOptions.Compiled)]
+    [GeneratedRegex($@"^{NoControlCode} ", RegexOptions.Compiled)]
     private static partial Regex NoControlCodeRegex();
+
+    /// <summary>
+    /// Gets a <see cref="Regex" /> object used for matching text lines that begin with an absolute
+    /// one-time indent indicator string.
+    /// </summary>
+    /// <returns>
+    /// A <see cref="Regex" /> object used for matching text lines that begin with an absolute
+    /// one-time indent indicator string.
+    /// </returns>
+    [GeneratedRegex($@"^{OneTime}{Absolute}{AnyDigit} ", RegexOptions.Compiled)]
+    private static partial Regex OneTimeAbsoluteIndentCodeRegex();
 
     /// <summary>
     /// Gets a <see cref="Regex" /> object used for matching text lines that begin with a one-time
@@ -339,8 +339,30 @@ internal static partial class RegexHelper
     /// A <see cref="Regex" /> object used for matching text lines that begin with a one-time indent
     /// indicator string.
     /// </returns>
-    [GeneratedRegex(@"^O[\-\+=][0-9] ", RegexOptions.Compiled)]
+    [GeneratedRegex($@"^{OneTime}[{Absolute}{RelativeLeft}{RelativeRight}]{AnyDigit} ", RegexOptions.Compiled)]
     private static partial Regex OneTimeIndentRegex();
+
+    /// <summary>
+    /// Gets a <see cref="Regex" /> object used for matching text lines that begin with a relative
+    /// one-time left indent indicator string.
+    /// </summary>
+    /// <returns>
+    /// A <see cref="Regex" /> object used for matching text lines that begin with a relative
+    /// one-time left indent indicator string.
+    /// </returns>
+    [GeneratedRegex($@"^{OneTime}{RelativeLeft}{AnyDigit} ", RegexOptions.Compiled)]
+    private static partial Regex OneTimeRelativeLeftIndentCodeRegex();
+
+    /// <summary>
+    /// Gets a <see cref="Regex" /> object used for matching text lines that begin with a relative
+    /// one-time right indent indicator string.
+    /// </summary>
+    /// <returns>
+    /// A <see cref="Regex" /> object used for matching text lines that begin with a relative
+    /// one-time right indent indicator string.
+    /// </returns>
+    [GeneratedRegex($@"^{OneTime}{RelativeRight}{AnyDigit} ", RegexOptions.Compiled)]
+    private static partial Regex OneTimeRelativeRightIndentCodeRegex();
 
     /// <summary>
     /// Gets a <see cref="Regex" /> object used for matching text lines that begin with a relative
@@ -350,7 +372,7 @@ internal static partial class RegexHelper
     /// A <see cref="Regex" /> object used for matching text lines that begin with a relative indent
     /// indicator string.
     /// </returns>
-    [GeneratedRegex(@"^(@|O)[\-\+][0-9] ", RegexOptions.Compiled)]
+    [GeneratedRegex($@"^[{Normal}{OneTime}][{RelativeLeft}{RelativeRight}]{AnyDigit} ", RegexOptions.Compiled)]
     private static partial Regex RelativeIndentRegex();
 
     /// <summary>
@@ -361,19 +383,8 @@ internal static partial class RegexHelper
     /// A <see cref="Regex" /> object used for matching text lines that begin with a relative left
     /// indent indicator string.
     /// </returns>
-    [GeneratedRegex(@"^@-[0-9] ", RegexOptions.Compiled)]
+    [GeneratedRegex($@"^{Normal}{RelativeLeft}{AnyDigit} ", RegexOptions.Compiled)]
     private static partial Regex RelativeLeftIndentCodeRegex();
-
-    /// <summary>
-    /// Gets a <see cref="Regex" /> object used for matching text lines that begin with a relative
-    /// one-time left indent indicator string.
-    /// </summary>
-    /// <returns>
-    /// A <see cref="Regex" /> object used for matching text lines that begin with a relative
-    /// one-time left indent indicator string.
-    /// </returns>
-    [GeneratedRegex(@"^O-[0-9]", RegexOptions.Compiled)]
-    private static partial Regex RelativeLeftOneTimeIndentCodeRegex();
 
     /// <summary>
     /// Gets a <see cref="Regex" /> object used for matching text lines that begin with a relative
@@ -383,19 +394,8 @@ internal static partial class RegexHelper
     /// A <see cref="Regex" /> object used for matching text lines that begin with a relative right
     /// indent indicator string.
     /// </returns>
-    [GeneratedRegex(@"^@\+[0-9] ", RegexOptions.Compiled)]
+    [GeneratedRegex($@"^{Normal}{RelativeRight}{AnyDigit} ", RegexOptions.Compiled)]
     private static partial Regex RelativeRightIndentCodeRegex();
-
-    /// <summary>
-    /// Gets a <see cref="Regex" /> object used for matching text lines that begin with a relative
-    /// one-time right indent indicator string.
-    /// </summary>
-    /// <returns>
-    /// A <see cref="Regex" /> object used for matching text lines that begin with a relative
-    /// one-time right indent indicator string.
-    /// </returns>
-    [GeneratedRegex(@"^O\+[0-9]", RegexOptions.Compiled)]
-    private static partial Regex RelativeRightOneTimeIndentCodeRegex();
 
     /// <summary>
     /// Gets a <see cref="Regex" /> object used for matching text template lines that begin with a
@@ -405,7 +405,7 @@ internal static partial class RegexHelper
     /// A <see cref="Regex" /> object used for matching text template lines that begin with a
     /// segment header indicator string.
     /// </returns>
-    [GeneratedRegex(@"^### ", RegexOptions.Compiled)]
+    [GeneratedRegex($@"^{SegmentHeaderCode} ", RegexOptions.Compiled)]
     private static partial Regex SegmentHeaderRegex();
 
     /// <summary>
@@ -416,7 +416,7 @@ internal static partial class RegexHelper
     /// A <see cref="Regex" /> object used for matching text template lines that begin with any
     /// valid indicator string.
     /// </returns>
-    [GeneratedRegex(@"^([@O][+-=][0-9]|   |///|###) ", RegexOptions.Compiled)]
+    [GeneratedRegex($@"^([{Normal}{OneTime}][{Absolute}{RelativeLeft}{RelativeRight}]{AnyDigit}|{NoControlCode}|{CommentCode}|{SegmentHeaderCode}) ", RegexOptions.Compiled)]
     private static partial Regex ValidControlCodeRegex();
 
     /// <summary>
@@ -426,6 +426,6 @@ internal static partial class RegexHelper
     /// <returns>
     /// A <see cref="Regex" /> object used for validating segment names on a segment header line.
     /// </returns>
-    [GeneratedRegex(@"^([a-z])+([a-z]|[0-9]|_)*$", RegexOptions.Compiled | RegexOptions.IgnoreCase)]
+    [GeneratedRegex($@"^({AnyLetter})({AnyLetter}|{AnyDigit}|_)*$", RegexOptions.Compiled | RegexOptions.IgnoreCase)]
     private static partial Regex ValidNameRegex();
 }

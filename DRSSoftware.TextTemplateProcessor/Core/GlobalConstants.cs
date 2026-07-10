@@ -12,6 +12,30 @@ namespace DRSSoftware.TextTemplateProcessor.Core;
 internal static class GlobalConstants
 {
     /// <summary>
+    /// Character used to represent an absolute indent.
+    /// </summary>
+    public const string Absolute = "=";
+
+    /// <summary>
+    /// Pattern string for matching any digit in a Regex expression.
+    /// </summary>
+    public const string AnyDigit = "[0-9]";
+
+    /// <summary>
+    /// Pattern string for matching any letter in a Regex expression.
+    /// </summary>
+    /// <remarks>
+    /// Assumes that the option <c> RegexOptions.IgnoreCase </c> is used when compiling the Regex
+    /// expression.
+    /// </remarks>
+    public const string AnyLetter = "[a-z]";
+
+    /// <summary>
+    /// The string that is used to indicate the start of a comment line in a text template file.
+    /// </summary>
+    public const string CommentCode = "///";
+
+    /// <summary>
     /// The default string that is used to indicate the end of a token in a text template file.
     /// </summary>
     /// <remarks>
@@ -86,15 +110,56 @@ internal static class GlobalConstants
     public const int MinTabSize = 1;
 
     /// <summary>
+    /// Placeholder value indicating the absence of a control code.
+    /// </summary>
+    public const string NoControlCode = "   ";
+
+    /// <summary>
+    /// Character used to indicate a normal indent (as opposed to a one-time indent).
+    /// </summary>
+    public const string Normal = "@";
+
+    /// <summary>
+    /// Character used to indicate a one-time indent (as opposed to a normal indent).
+    /// </summary>
+    public const string OneTime = "O";
+
+    /// <summary>
     /// The string that represents the Pad Segment Name option.
     /// </summary>
     public const string PadSegmentNameOption = "PAD";
+
+    /// <summary>
+    /// Character used to indicate a relative left indent in Regex patterns.
+    /// </summary>
+    public const string RelativeLeft = $@"\{RelativeLeftChar}";
+
+    /// <summary>
+    /// Character used to indicate a relative left indent.
+    /// </summary>
+    public const string RelativeLeftChar = "-";
+
+    /// <summary>
+    /// Character used to indicate a relative right indent in Regex patterns.
+    /// </summary>
+    public const string RelativeRight = $@"\{RelativeRightChar}";
+
+    /// <summary>
+    /// Character used to indicate a relative right indent.
+    /// </summary>
+    public const string RelativeRightChar = "+";
 
     /// <summary>
     /// Used in a token to indicate that the first character of the token value should be left as-is
     /// when it is inserted into the output text.
     /// </summary>
     public const char SameCaseFlag = '=';
+
+    /// <summary>
+    /// The string that is used to indicate the start of a segment header line in a text template
+    /// file.
+    /// </summary>
+    public const string SegmentHeaderCode = "###";
 
     /// <summary>
     /// The search pattern that is used in locating the solution directory.
