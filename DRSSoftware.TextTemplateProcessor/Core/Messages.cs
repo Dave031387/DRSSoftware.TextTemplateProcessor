@@ -11,7 +11,7 @@ internal static class Messages
     // internal const string MsgAttemptToLoadMoreThanOnce = "Attempted to load template file \"{0}\" more than once. Repeat loads will be ignored.";
     // internal const string MsgClearTheOutputDirectory = "\nCONFIRM: Do you want to clear the contents of the following directory?\n{0}";
     // internal const string MsgContinuationPrompt = "Press [ENTER] to continue...";
-    // internal const string MsgDependencyIsNull = "The {1} dependency of the {0} object should not be null.";
+    internal const string MsgDependencyIsNull = "The {1} dependency object passed to the {0} class should not be null.";
     // internal const string MsgDirectoryNotFound = "The specified directory was not found. Directory path: ";
     // internal const string MsgDirectoryPathIsEmptyOrWhitespace = "The directory path must not be empty or contain only whitespace.";
     internal const string MsgDynamicallyGeneratedAssembliesNotSupported = "Dynamically-generated assemblies are not supported by the Text Template Processor.";
