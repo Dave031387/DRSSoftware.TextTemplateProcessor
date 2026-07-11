@@ -9,10 +9,10 @@ using static ServiceNames;
 /// </summary>
 internal static class ServiceParameterNames
 {
-    public static string ConsoleReaderParameter = GetParameterName(ConsoleReaderService);
-    public static string ConsoleWriterParameter = GetParameterName(ConsoleWriterService);
-    public static string FileAndDirectoryServiceParameter = GetParameterName(FileAndDirectoryService);
-    public static string LocaterParameter = GetParameterName(LocaterService);
+    public static readonly string ConsoleReaderParameter = GetParameterName(ConsoleReaderService);
+    public static readonly string ConsoleWriterParameter = GetParameterName(ConsoleWriterService);
+    public static readonly string FileAndDirectoryServiceParameter = GetParameterName(FileAndDirectoryService);
+    public static readonly string LocaterParameter = GetParameterName(LocaterService);
 
     /// <summary>
     /// Get the parameter name corresponding to the given <paramref name="serviceName" />.

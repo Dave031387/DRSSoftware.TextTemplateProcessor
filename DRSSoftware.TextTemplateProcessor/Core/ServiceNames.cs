@@ -10,8 +10,8 @@ using DRSSoftware.TextTemplateProcessor.IO;
 /// </summary>
 internal static class ServiceNames
 {
-    public static string ConsoleReaderService = nameof(IConsoleReader);
-    public static string ConsoleWriterService = nameof(IConsoleWriter);
-    public static string FileAndDirectoryService = nameof(IFileAndDirectoryService);
-    public static string LocaterService = nameof(ILocater);
+    public static readonly string ConsoleReaderService = nameof(IConsoleReader);
+    public static readonly string ConsoleWriterService = nameof(IConsoleWriter);
+    public static readonly string FileAndDirectoryService = nameof(IFileAndDirectoryService);
+    public static readonly string LocaterService = nameof(ILocater);
 }
