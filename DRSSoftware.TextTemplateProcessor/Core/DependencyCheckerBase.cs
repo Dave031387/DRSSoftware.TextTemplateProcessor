@@ -23,9 +23,9 @@ internal abstract class DependencyCheckerBase
     /// Thrown if the <paramref name="dependencyObject" /> is <see langword="null" />.
     /// </exception>
     protected virtual void NullDependencyCheck(object? dependencyObject,
-                                              string className,
-                                              string serviceName,
-                                              string parameterName)
+                                               string className,
+                                               string serviceName,
+                                               string parameterName)
     {
         if (dependencyObject is null)
         {

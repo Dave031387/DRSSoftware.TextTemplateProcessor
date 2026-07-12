@@ -32,4 +32,7 @@ internal static class TestHelper
             .WithInnerExceptionExactly<TInner>()
             .WithMessage(inner);
     }
+
+    public static string GetNullDependencyMessage(string className, string serviceName, string parameterName)
+        => string.Format(MsgDependencyIsNull, className, serviceName) + $" (Parameter '{parameterName}')";
 }
