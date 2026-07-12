@@ -1,10 +1,6 @@
 ﻿namespace DRSSoftware.TextTemplateProcessor.Core;
 
-/// <summary>
-/// A static utility class that provides helper methods for the application, including null
-/// dependency checks and error message formatting.
-/// </summary>
-internal static class Utility
+internal abstract class DependencyCheckerBase
 {
     /// <summary>
     /// Check to see if the given <paramref name="dependencyObject" /> is <see langword="null" />
@@ -26,10 +22,10 @@ internal static class Utility
     /// <exception cref="ArgumentNullException">
     /// Thrown if the <paramref name="dependencyObject" /> is <see langword="null" />.
     /// </exception>
-    public static void NullDependencyCheck(object? dependencyObject,
-                                           string className,
-                                           string serviceName,
-                                           string parameterName)
+    protected virtual void NullDependencyCheck(object? dependencyObject,
+                                              string className,
+                                              string serviceName,
+                                              string parameterName)
     {
         if (dependencyObject is null)
         {
