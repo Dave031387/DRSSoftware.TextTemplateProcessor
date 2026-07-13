@@ -12,10 +12,10 @@ public class LocaterTests
         // Assert
         locater.CurrentSegment
             .Should()
-            .BeEmpty();
+            .Be(Location.Empty.SegmentName);
         locater.LineNumber
             .Should()
-            .Be(0);
+            .Be(Location.Empty.LineNumber);
     }
 
     [Theory]
@@ -33,13 +33,13 @@ public class LocaterTests
         }
 
         // Act
-        (string actualSegmentName, int actualLineNumber) = locater.Location;
+        Location actual = locater.Location;
 
         // Assert
-        actualSegmentName
+        actual.SegmentName
             .Should()
             .Be(expectedSegmentName);
-        actualLineNumber
+        actual.LineNumber
             .Should()
             .Be(expectedLineNumber);
     }
@@ -64,10 +64,70 @@ public class LocaterTests
         // Assert
         locater.CurrentSegment
             .Should()
-            .BeEmpty();
+            .Be(Location.Empty.SegmentName);
         locater.LineNumber
             .Should()
-            .Be(0);
+            .Be(Location.Empty.LineNumber);
+    }
+
+    [Theory]
+    [InlineData(" Segment1")]
+    [InlineData("Segment1 ")]
+    [InlineData(" Segment1 ")]
+    [InlineData(Whitespace + "Segment1")]
+    [InlineData("Segment1" + Whitespace)]
+    [InlineData(Whitespace + "Segment1" + Whitespace)]
+    public void CurrentSegment_ShouldTrimWhitespace(string segmentName)
+    {
+        // Arrange
+        string expected = "Segment1";
+        Locater locater = new()
+        {
+            // Act
+            CurrentSegment = segmentName
+        };
+
+        // Assert
+        locater.CurrentSegment
+            .Should()
+            .Be(expected);
+    }
+
+    [Theory]
+    [InlineData("Segment1", 42)]
+    [InlineData("", 42)]
+    [InlineData("Segment1", 0)]
+    public void IsEmpty_ShouldReturnFalseWhenLocationIsNotEmpty(string segmentName, int lineNumber)
+    {
+        // Arrange
+        Locater locater = new()
+        {
+            CurrentSegment = segmentName,
+            LineNumber = lineNumber
+        };
+
+        // Act
+        bool actual = locater.IsEmpty;
+
+        // Assert
+        actual
+            .Should()
+            .BeFalse();
+    }
+
+    [Fact]
+    public void IsEmpty_ShouldReturnTrueWhenLocationIsEmpty()
+    {
+        // Arrange
+        Locater locater = new();
+
+        // Act
+        bool actual = locater.IsEmpty;
+
+        // Assert
+        actual
+            .Should()
+            .BeTrue();
     }
 
     [Theory]
@@ -91,5 +151,26 @@ public class LocaterTests
         actual
             .Should()
             .Be(expected);
+    }
+
+    [Theory]
+    [InlineData("  ")]
+    [InlineData(null)]
+    [InlineData(Whitespace)]
+    public void TryToSetCurrentSegmentToNullOrWhitespace_ShouldSetToEmpty(string? segmentName)
+    {
+        // Arrange
+        Locater locater = new()
+        {
+            CurrentSegment = "InitialSegment"
+        };
+
+        // Act
+        locater.CurrentSegment = segmentName!;
+
+        // Assert
+        locater.CurrentSegment
+            .Should()
+            .Be(Location.Empty.SegmentName);
     }
 }

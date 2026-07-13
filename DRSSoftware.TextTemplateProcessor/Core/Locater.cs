@@ -1,5 +1,10 @@
 ﻿namespace DRSSoftware.TextTemplateProcessor.Core;
 
+/// <summary>
+/// The <see cref="Locater" /> class is used for keeping track of the current location within a text
+/// template file. The current location is defined by the current segment being processed and the
+/// line number within that segment.
+/// </summary>
 internal class Locater : ILocater
 {
     /// <summary>
@@ -8,22 +13,48 @@ internal class Locater : ILocater
     /// </summary>
     public Locater()
     {
-        CurrentSegment = string.Empty;
-        LineNumber = 0;
+        CurrentSegment = Location.Empty.SegmentName;
+        LineNumber = Location.Empty.LineNumber;
     }
 
     /// <summary>
-    /// Gets the name of the current segment being processed in the text template file.
+    /// Gets or sets the name of the current segment being processed in the text template file.
     /// </summary>
+    /// <remarks>
+    /// Leading and trailing whitespace will be trimmed from the segment name when it is set. If the
+    /// segment name is null or whitespace, it will be replaced with an empty
+    /// <see langword="string" />.
+    /// </remarks>
     public string CurrentSegment
     {
         get;
-        set;
+        set
+        {
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                field = Location.Empty.SegmentName;
+            }
+            else
+            {
+                field = value.Trim();
+            }
+        }
     }
 
     /// <summary>
-    /// Gets the current line number of the segment that is being processed in the text template
-    /// file.
+    /// Gets a value indicating whether or not the current location is empty, meaning that the
+    /// current segment name is null or whitespace and the line number is 0.
+    /// </summary>
+    /// <returns>
+    /// <see langword="true" /> if the current location is empty; otherwise,
+    /// <see langword="false" />.
+    /// </returns>
+    public bool IsEmpty => CurrentSegment == Location.Empty.SegmentName
+        && LineNumber == Location.Empty.LineNumber;
+
+    /// <summary>
+    /// Gets or sets the current line number of the segment that is being processed in the text
+    /// template file.
     /// </summary>
     public int LineNumber
     {
@@ -32,21 +63,18 @@ internal class Locater : ILocater
     }
 
     /// <summary>
-    /// Gets the current location in the text template file.
+    /// Gets a <see cref="Location" /> record that has been initialized with the current location in
+    /// the text template file.
     /// </summary>
-    /// <returns>
-    /// A <see langword="(string, int)" /> tuple containing the current segment name and the current
-    /// line number within that segment.
-    /// </returns>
-    public (string currentSegment, int lineNumber) Location => (CurrentSegment, LineNumber);
+    public Location Location => new(CurrentSegment, LineNumber);
 
     /// <summary>
-    /// Resets the current segment name to an empty string and the line number to 0.
+    /// Resets the current location to an empty location.
     /// </summary>
     public void Reset()
     {
-        CurrentSegment = string.Empty;
-        LineNumber = 0;
+        CurrentSegment = Location.Empty.SegmentName;
+        LineNumber = Location.Empty.LineNumber;
     }
 
     /// <summary>
@@ -54,10 +82,9 @@ internal class Locater : ILocater
     /// </summary>
     /// <returns>
     /// A <see langword="string" /> containing the current segment name and line number, or an empty
-    /// string if the segment name is null or whitespace.
+    /// string if the current location is empty.
     /// </returns>
-    public override string ToString()
-        => string.IsNullOrWhiteSpace(CurrentSegment)
-            ? string.Empty
-            : $"{CurrentSegment}[{LineNumber}]";
+    public override string ToString() => IsEmpty
+        ? string.Empty
+        : $"{CurrentSegment}[{LineNumber}]";
 }
