@@ -1,4 +1,5 @@
 ﻿using System.Runtime.CompilerServices;
+using DRSSoftware.TextTemplateProcessor.Console;
 
 [assembly: InternalsVisibleTo("DRSSoftware.TextTemplateProcessor.Tests")]
 [assembly: InternalsVisibleTo("DynamicProxyGenAssembly2")]
@@ -58,6 +59,12 @@ internal static class GlobalConstants
     /// The suffix string that appears at the end of any default file name.
     /// </summary>
     public const string DefaultFileNameSuffix = ".txt";
+
+    /// <summary>
+    /// The default <see cref="LogEntryType" /> that is used when creating a new instance of the
+    /// <see cref="ConsoleLogger" /> class.
+    /// </summary>
+    public const LogEntryType DefaultLogEntryType = LogEntryType.Setup;
 
     /// <summary>
     /// The prefix string that appears at the start of any default segment name.

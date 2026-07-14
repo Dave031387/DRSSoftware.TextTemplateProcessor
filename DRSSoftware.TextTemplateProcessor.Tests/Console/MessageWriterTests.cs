@@ -3,7 +3,10 @@
 [ExcludeFromCodeCoverage]
 public class MessageWriterTests
 {
-    private readonly Mock<IConsoleWriter> _consoleWriter = new(MockBehavior.Strict);
+    private Mock<IConsoleWriter> ConsoleWriterMock
+    {
+        get;
+    } = new(MockBehavior.Strict);
 
     [Fact]
     public void CreateMessageWriterWithNullDependency_ShouldThrowException()
@@ -51,7 +54,7 @@ public class MessageWriterTests
         // Arrange
         InitializeMocks();
         string expected = "This is a test message.";
-        _consoleWriter
+        ConsoleWriterMock
             .Setup(x => x.WriteLine(expected))
             .Verifiable(Times.Once);
         MessageWriter messageWriter = GetMessageWriter();
@@ -69,7 +72,7 @@ public class MessageWriterTests
         // Arrange
         InitializeMocks();
         string message = "This is a test message.";
-        _consoleWriter
+        ConsoleWriterMock
             .Setup(x => x.WriteLine(message))
             .Verifiable(Times.Once);
         MessageWriter messageWriter = GetMessageWriter();
@@ -82,19 +85,19 @@ public class MessageWriterTests
     }
 
     private MessageWriter GetMessageWriter()
-        => new(_consoleWriter.Object);
+        => new(ConsoleWriterMock.Object);
 
     private void InitializeMocks()
-        => _consoleWriter.Reset();
+        => ConsoleWriterMock.Reset();
 
     private void MocksVerifyNoOtherCalls()
-        => _consoleWriter.VerifyNoOtherCalls();
+        => ConsoleWriterMock.VerifyNoOtherCalls();
 
     private void VerifyMocks()
     {
-        if (_consoleWriter.Setups.Any())
+        if (ConsoleWriterMock.Setups.Any())
         {
-            _consoleWriter.Verify();
+            ConsoleWriterMock.Verify();
         }
 
         MocksVerifyNoOtherCalls();
