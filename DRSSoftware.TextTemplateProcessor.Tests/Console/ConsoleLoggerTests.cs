@@ -23,7 +23,7 @@ public class ConsoleLoggerTests
         // Arrange
         InitializeMocks();
         ILocater locater = null!;
-        string expected = GetNullDependencyMessage(nameof(ConsoleLogger), nameof(ILocater), nameof(locater));
+        string expected = GetNullDependencyMessage(nameof(LoggerBase), nameof(ILocater), nameof(locater));
 
         // Act
         Action action = () => _ = new ConsoleLogger(locater, MessageWriterMock.Object);
@@ -68,9 +68,9 @@ public class ConsoleLoggerTests
         consoleLogger
             .Should()
             .NotBeNull();
-        consoleLogger.CurrentLogEntryType
+        consoleLogger.CurrentOperationType
             .Should()
-            .Be(DefaultLogEntryType);
+            .Be(DefaultOperationType);
         VerifyMocks();
     }
 
@@ -79,9 +79,10 @@ public class ConsoleLoggerTests
     {
         // Arrange
         InitializeMocks();
-        string formattedMessage = SampleLogMessagePrefix + LogEntryType.Generating.ToString() + SampleLogMessageSuffix;
+        LogSeverity logSeverity = LogSeverity.Error;
+        string formattedMessage = SampleLogMessagePrefix + OperationType.Generating.ToString() + SampleLogMessageSuffix;
         Location location = new("SampleSegment", 42);
-        string logEntryText = new LogEntry(LogEntryType.Generating, location, formattedMessage).ToString();
+        string logEntryText = new LogEntry(logSeverity, OperationType.Generating, location, formattedMessage).ToString();
         LocaterMock
             .Setup(x => x.Location)
             .Returns(location)
@@ -89,10 +90,10 @@ public class ConsoleLoggerTests
         MessageWriterMock
             .Setup(x => x.WriteLine(logEntryText))
             .Verifiable(Times.Once);
-        ConsoleLogger consoleLogger = GetConsoleLogger(LogEntryType.Generating);
+        ConsoleLogger consoleLogger = GetConsoleLogger(OperationType.Generating);
 
         // Act
-        consoleLogger.Log(SampleLogMessage, "Generating");
+        consoleLogger.Log(logSeverity, SampleLogMessage, "Generating");
 
         // Assert
         VerifyMocks();
@@ -103,15 +104,21 @@ public class ConsoleLoggerTests
     {
         // Arrange
         InitializeMocks();
-        string formattedMessage = SampleLogMessagePrefix + LogEntryType.Loading.ToString() + SampleLogMessageSuffix;
-        string logEntryText = new LogEntry(LogEntryType.Loading, Location.Empty, formattedMessage).ToString();
+        LogSeverity logSeverity = LogSeverity.Information;
+        string formattedMessage = SampleLogMessagePrefix + OperationType.Loading.ToString() + SampleLogMessageSuffix;
+        Location location = new("TemplateFile", 42);
+        string logEntryText = new LogEntry(logSeverity, OperationType.Loading, location, formattedMessage).ToString();
+        LocaterMock
+            .Setup(x => x.Location)
+            .Returns(location)
+            .Verifiable(Times.Once);
         MessageWriterMock
             .Setup(x => x.WriteLine(logEntryText))
             .Verifiable(Times.Once);
-        ConsoleLogger consoleLogger = GetConsoleLogger(LogEntryType.Loading);
+        ConsoleLogger consoleLogger = GetConsoleLogger(OperationType.Loading);
 
         // Act
-        consoleLogger.Log(SampleLogMessage, "Loading");
+        consoleLogger.Log(logSeverity, SampleLogMessage, "Loading");
 
         // Assert
         VerifyMocks();
@@ -122,9 +129,10 @@ public class ConsoleLoggerTests
     {
         // Arrange
         InitializeMocks();
-        string formattedMessage = SampleLogMessagePrefix + LogEntryType.Parsing.ToString() + SampleLogMessageSuffix;
+        LogSeverity logSeverity = LogSeverity.Debug;
+        string formattedMessage = SampleLogMessagePrefix + OperationType.Parsing.ToString() + SampleLogMessageSuffix;
         Location location = new("SampleSegment", 42);
-        string logEntryText = new LogEntry(LogEntryType.Parsing, location, formattedMessage).ToString();
+        string logEntryText = new LogEntry(logSeverity, OperationType.Parsing, location, formattedMessage).ToString();
         LocaterMock
             .Setup(x => x.Location)
             .Returns(location)
@@ -132,10 +140,10 @@ public class ConsoleLoggerTests
         MessageWriterMock
             .Setup(x => x.WriteLine(logEntryText))
             .Verifiable(Times.Once);
-        ConsoleLogger consoleLogger = GetConsoleLogger(LogEntryType.Parsing);
+        ConsoleLogger consoleLogger = GetConsoleLogger(OperationType.Parsing);
 
         // Act
-        consoleLogger.Log(SampleLogMessage, "Parsing");
+        consoleLogger.Log(logSeverity, SampleLogMessage, "Parsing");
 
         // Assert
         VerifyMocks();
@@ -146,15 +154,16 @@ public class ConsoleLoggerTests
     {
         // Arrange
         InitializeMocks();
-        string formattedMessage = SampleLogMessagePrefix + LogEntryType.Reset.ToString() + SampleLogMessageSuffix;
-        string logEntryText = new LogEntry(LogEntryType.Reset, Location.Empty, formattedMessage).ToString();
+        LogSeverity logSeverity = LogSeverity.Warning;
+        string formattedMessage = SampleLogMessagePrefix + OperationType.Reset.ToString() + SampleLogMessageSuffix;
+        string logEntryText = new LogEntry(logSeverity, OperationType.Reset, Location.Empty, formattedMessage).ToString();
         MessageWriterMock
             .Setup(x => x.WriteLine(logEntryText))
             .Verifiable(Times.Once);
-        ConsoleLogger consoleLogger = GetConsoleLogger(LogEntryType.Reset);
+        ConsoleLogger consoleLogger = GetConsoleLogger(OperationType.Reset);
 
         // Act
-        consoleLogger.Log(SampleLogMessage, "Reset");
+        consoleLogger.Log(logSeverity, SampleLogMessage, "Reset");
 
         // Assert
         VerifyMocks();
@@ -165,15 +174,16 @@ public class ConsoleLoggerTests
     {
         // Arrange
         InitializeMocks();
-        string formattedMessage = SampleLogMessagePrefix + LogEntryType.Setup.ToString() + SampleLogMessageSuffix;
-        string logEntryText = new LogEntry(LogEntryType.Setup, Location.Empty, formattedMessage).ToString();
+        LogSeverity logSeverity = LogSeverity.Information;
+        string formattedMessage = SampleLogMessagePrefix + OperationType.Setup.ToString() + SampleLogMessageSuffix;
+        string logEntryText = new LogEntry(logSeverity, OperationType.Setup, Location.Empty, formattedMessage).ToString();
         MessageWriterMock
             .Setup(x => x.WriteLine(logEntryText))
             .Verifiable(Times.Once);
-        ConsoleLogger consoleLogger = GetConsoleLogger(LogEntryType.Setup);
+        ConsoleLogger consoleLogger = GetConsoleLogger(OperationType.Setup);
 
         // Act
-        consoleLogger.Log(SampleLogMessage, "Setup");
+        consoleLogger.Log(logSeverity, SampleLogMessage, "Setup");
 
         // Assert
         VerifyMocks();
@@ -184,15 +194,16 @@ public class ConsoleLoggerTests
     {
         // Arrange
         InitializeMocks();
-        string formattedMessage = SampleLogMessagePrefix + LogEntryType.User.ToString() + SampleLogMessageSuffix;
-        string logEntryText = new LogEntry(LogEntryType.User, Location.Empty, formattedMessage).ToString();
+        LogSeverity logSeverity = LogSeverity.Warning;
+        string formattedMessage = SampleLogMessagePrefix + OperationType.User.ToString() + SampleLogMessageSuffix;
+        string logEntryText = new LogEntry(logSeverity, OperationType.User, Location.Empty, formattedMessage).ToString();
         MessageWriterMock
             .Setup(x => x.WriteLine(logEntryText))
             .Verifiable(Times.Once);
-        ConsoleLogger consoleLogger = GetConsoleLogger(LogEntryType.User);
+        ConsoleLogger consoleLogger = GetConsoleLogger(OperationType.User);
 
         // Act
-        consoleLogger.Log(SampleLogMessage, "User");
+        consoleLogger.Log(logSeverity, SampleLogMessage, "User");
 
         // Assert
         VerifyMocks();
@@ -203,15 +214,21 @@ public class ConsoleLoggerTests
     {
         // Arrange
         InitializeMocks();
-        string formattedMessage = SampleLogMessagePrefix + LogEntryType.Writing.ToString() + SampleLogMessageSuffix;
-        string logEntryText = new LogEntry(LogEntryType.Writing, Location.Empty, formattedMessage).ToString();
+        LogSeverity logSeverity = LogSeverity.Error;
+        string formattedMessage = SampleLogMessagePrefix + OperationType.Writing.ToString() + SampleLogMessageSuffix;
+        Location location = new("OutputFile", 42);
+        string logEntryText = new LogEntry(logSeverity, OperationType.Writing, location, formattedMessage).ToString();
+        LocaterMock
+            .Setup(x => x.Location)
+            .Returns(location)
+            .Verifiable(Times.Once);
         MessageWriterMock
             .Setup(x => x.WriteLine(logEntryText))
             .Verifiable(Times.Once);
-        ConsoleLogger consoleLogger = GetConsoleLogger(LogEntryType.Writing);
+        ConsoleLogger consoleLogger = GetConsoleLogger(OperationType.Writing);
 
         // Act
-        consoleLogger.Log(SampleLogMessage, "Writing");
+        consoleLogger.Log(logSeverity, SampleLogMessage, "Writing");
 
         // Assert
         VerifyMocks();
@@ -220,10 +237,10 @@ public class ConsoleLoggerTests
     private ConsoleLogger GetConsoleLogger()
         => new(LocaterMock.Object, MessageWriterMock.Object);
 
-    private ConsoleLogger GetConsoleLogger(LogEntryType logEntryType)
+    private ConsoleLogger GetConsoleLogger(OperationType operationType)
         => new(LocaterMock.Object, MessageWriterMock.Object)
         {
-            CurrentLogEntryType = logEntryType
+            CurrentOperationType = operationType
         };
 
     private void InitializeMocks()

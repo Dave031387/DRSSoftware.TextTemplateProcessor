@@ -2,19 +2,19 @@
 
 /// <summary>
 /// The <see cref="ILocater" /> interface defines the contract for a class that is used to keep
-/// track of the current location within a text template file.
+/// track of the current location within a text file.
 /// </summary>
 internal interface ILocater
 {
     /// <summary>
-    /// Gets or sets the name of the current segment being processed in the text template file.
+    /// Gets or sets the name of the current location being processed in the text file.
     /// </summary>
     /// <remarks>
-    /// Leading and trailing whitespace will be trimmed from the segment name when it is set. If the
-    /// segment name is null or whitespace, it will be replaced with an empty
+    /// Leading and trailing whitespace will be trimmed from the location name when it is set. If
+    /// the location name is null or whitespace, it will be replaced with an empty
     /// <see langword="string" />.
     /// </remarks>
-    string CurrentSegment
+    string CurrentLocationName
     {
         get;
         set;
@@ -22,7 +22,7 @@ internal interface ILocater
 
     /// <summary>
     /// Gets a value indicating whether or not the current location is empty, meaning that the
-    /// current segment name is null or whitespace and the line number is 0.
+    /// current location name is null or whitespace and the line number is 0.
     /// </summary>
     /// <returns>
     /// <see langword="true" /> if the current location is empty; otherwise,
@@ -34,8 +34,8 @@ internal interface ILocater
     }
 
     /// <summary>
-    /// Gets or sets the current line number of the segment that is being processed in the text
-    /// template file.
+    /// Gets or sets the current line number of the location that is being processed in the text
+    /// file.
     /// </summary>
     int LineNumber
     {
@@ -45,7 +45,7 @@ internal interface ILocater
 
     /// <summary>
     /// Gets a <see cref="Location" /> record that has been initialized with the current location in
-    /// the text template file.
+    /// the text file.
     /// </summary>
     public Location Location
     {

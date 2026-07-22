@@ -37,6 +37,11 @@ internal static class GlobalConstants
     public const string CommentCode = "///";
 
     /// <summary>
+    /// The string that is used for denoting debug severity level in a log message.
+    /// </summary>
+    public const string DebugSeverity = "DEBUG--->";
+
+    /// <summary>
     /// The default string that is used to indicate the end of a token in a text template file.
     /// </summary>
     /// <remarks>
@@ -61,10 +66,10 @@ internal static class GlobalConstants
     public const string DefaultFileNameSuffix = ".txt";
 
     /// <summary>
-    /// The default <see cref="LogEntryType" /> that is used when creating a new instance of the
+    /// The default <see cref="OperationType" /> that is used when creating a new instance of the
     /// <see cref="ConsoleLogger" /> class.
     /// </summary>
-    public const LogEntryType DefaultLogEntryType = LogEntryType.Setup;
+    public const OperationType DefaultOperationType = OperationType.Setup;
 
     /// <summary>
     /// The prefix string that appears at the start of any default segment name.
@@ -86,9 +91,19 @@ internal static class GlobalConstants
     public const int DefaultTabSize = 4;
 
     /// <summary>
+    /// The string that is used for denoting error severity level in a log message.
+    /// </summary>
+    public const string ErrorSeverity = "ERROR--->";
+
+    /// <summary>
     /// The string that represents the First Time Indent option.
     /// </summary>
     public const string FirstTimeIndentOption = "FTI";
+
+    /// <summary>
+    /// The string that is used for denoting information severity level in a log message.
+    /// </summary>
+    public const string InfoSeverity = "INFO---->";
 
     /// <summary>
     /// Used in a token to indicate that the first character of the token value should be converted
@@ -183,6 +198,11 @@ internal static class GlobalConstants
     /// to uppercase when it is inserted into the output text.
     /// </summary>
     public const char UppercaseFlag = '+';
+
+    /// <summary>
+    /// The string that is used for denoting warning severity level in a log message.
+    /// </summary>
+    public const string WarningSeverity = "WARNING->";
 
     /// <summary>
     /// Gets an array of characters that can be used for separating options on a segment header

@@ -3,18 +3,21 @@
 /// <summary>
 /// The <see cref="LogEntry" /> record represents a single entry in the log.
 /// </summary>
-/// <param name="LogEntryType">
-/// A <see cref="LogEntryType.LogEntryType" /> <see langword="enum" /> value corresponding to the
-/// type of this <see cref="LogEntry" /> object.
+/// <param name="LogSeverity">
+/// The severity level of the log message.
+/// </param>
+/// <param name="OperationType">
+/// The type of operation being performed against the text template file when the log message was
+/// issued.
 /// </param>
 /// <param name="Location">
-/// The <see cref="Location" /> instance representing the segment and line number in the text
-/// template file where the log message was triggered.
+/// An object representing the current location within the text template
+/// file when the log message was issued.
 /// </param>
 /// <param name="Message">
-/// The log message.
+/// The message to be logged.
 /// </param>
-internal record LogEntry(LogEntryType LogEntryType, Location Location, string Message)
+internal record LogEntry(LogSeverity LogSeverity, OperationType OperationType, Location Location, string Message)
 {
     /// <summary>
     /// Generates a string representation of this <see cref="LogEntry" /> object.
@@ -22,7 +25,12 @@ internal record LogEntry(LogEntryType LogEntryType, Location Location, string Me
     /// <returns>
     /// A <see langword="string" /> that represents this <see cref="LogEntry" /> object.
     /// </returns>
-    public override string ToString() => Location.IsEmpty
-        ? $"<{LogEntryType}> {Message}"
-        : $"<{LogEntryType}> {Location.SegmentName}[{Location.LineNumber}] : {Message}";
+    public override string ToString()
+    {
+        string severityString = LogSeverity.GetFriendlyName();
+
+        return Location.IsEmpty
+            ? $"{severityString} {OperationType} : {Message}"
+            : $"{severityString} {OperationType} {Location} : {Message}";
+    }
 }

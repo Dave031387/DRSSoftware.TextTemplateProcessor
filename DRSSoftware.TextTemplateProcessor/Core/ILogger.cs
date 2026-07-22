@@ -7,21 +7,24 @@
 internal interface ILogger
 {
     /// <summary>
-    /// Gets or sets the type of log entry currently being processed.
+    /// Gets or sets the type of operation currently being performed against the text template file.
     /// </summary>
-    /// <remarks>
-    /// This property is initialized to <see cref="LogEntryType.Setup" /> when the logger object is
-    /// created.
-    /// </remarks>
-    public LogEntryType CurrentLogEntryType
+    public OperationType CurrentOperationType
     {
         get;
         set;
     }
 
     /// <summary>
-    /// Creates a new <see cref="LogEntry" /> object and writes it to the log.
+    /// Formats a new log entry and writes it to the log.
     /// </summary>
+    /// <remarks>
+    /// This version of the Log method uses the current operation type when constructing the
+    /// <see cref="LogEntry" /> object.
+    /// </remarks>
+    /// <param name="logSeverity">
+    /// The severity level of the log message.
+    /// </param>
     /// <param name="message">
     /// The log message that is being written to the log.
     /// </param>
@@ -29,5 +32,37 @@ internal interface ILogger
     /// An array of <see langword="string" /> values to be substituted for the format arguments in
     /// the <paramref name="message" /> parameter.
     /// </param>
-    public void Log(string message, params string[] args);
+    public void Log(LogSeverity logSeverity, string message, params string[] args);
+
+    /// <summary>
+    /// Formats a new log entry and writes it to the log.
+    /// </summary>
+    /// <remarks>
+    /// This version of the Log method uses the given <paramref name="operationType" /> instead of
+    /// the current operation type when constructing the <see cref="LogEntry" /> object. <br /> The
+    /// current operation type remains unchanged.
+    /// </remarks>
+    /// <param name="logSeverity">
+    /// The severity level of the log message.
+    /// </param>
+    /// <param name="operationType">
+    /// The type of operation being performed against the text template file when the log message
+    /// was issued.
+    /// </param>
+    /// <param name="message">
+    /// The log message that is being written to the log.
+    /// </param>
+    /// <param name="args">
+    /// An array of <see langword="string" /> values to be substituted for the format arguments in
+    /// the <paramref name="message" /> parameter.
+    /// </param>
+    public void Log(LogSeverity logSeverity, OperationType operationType, string message, params string[] args);
+
+    /// <summary>
+    /// Write the given <paramref name="logEntry" /> to the log.
+    /// </summary>
+    /// <param name="logEntry">
+    /// The <see cref="LogEntry" /> instance that is to be written out to the log.
+    /// </param>
+    public void WriteLogEntry(LogEntry logEntry);
 }

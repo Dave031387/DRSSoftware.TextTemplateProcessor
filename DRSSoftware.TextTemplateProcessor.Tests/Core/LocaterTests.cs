@@ -10,9 +10,9 @@ public class LocaterTests
         var locater = new Locater();
 
         // Assert
-        locater.CurrentSegment
+        locater.CurrentLocationName
             .Should()
-            .Be(Location.Empty.SegmentName);
+            .Be(Location.Empty.LocationName);
         locater.LineNumber
             .Should()
             .Be(Location.Empty.LineNumber);
@@ -28,7 +28,7 @@ public class LocaterTests
 
         if (!string.IsNullOrEmpty(expectedSegmentName))
         {
-            locater.CurrentSegment = expectedSegmentName;
+            locater.CurrentLocationName = expectedSegmentName;
             locater.LineNumber = expectedLineNumber;
         }
 
@@ -36,7 +36,7 @@ public class LocaterTests
         Location actual = locater.Location;
 
         // Assert
-        actual.SegmentName
+        actual.LocationName
             .Should()
             .Be(expectedSegmentName);
         actual.LineNumber
@@ -54,7 +54,7 @@ public class LocaterTests
 
         if (!string.IsNullOrEmpty(initialSegmentName))
         {
-            locater.CurrentSegment = initialSegmentName;
+            locater.CurrentLocationName = initialSegmentName;
             locater.LineNumber = initialLineNumber;
         }
 
@@ -62,9 +62,9 @@ public class LocaterTests
         locater.Reset();
 
         // Assert
-        locater.CurrentSegment
+        locater.CurrentLocationName
             .Should()
-            .Be(Location.Empty.SegmentName);
+            .Be(Location.Empty.LocationName);
         locater.LineNumber
             .Should()
             .Be(Location.Empty.LineNumber);
@@ -84,11 +84,11 @@ public class LocaterTests
         Locater locater = new()
         {
             // Act
-            CurrentSegment = segmentName
+            CurrentLocationName = segmentName
         };
 
         // Assert
-        locater.CurrentSegment
+        locater.CurrentLocationName
             .Should()
             .Be(expected);
     }
@@ -102,7 +102,7 @@ public class LocaterTests
         // Arrange
         Locater locater = new()
         {
-            CurrentSegment = segmentName,
+            CurrentLocationName = segmentName,
             LineNumber = lineNumber
         };
 
@@ -140,7 +140,7 @@ public class LocaterTests
 
         if (!string.IsNullOrEmpty(segmentName))
         {
-            locater.CurrentSegment = segmentName;
+            locater.CurrentLocationName = segmentName;
             locater.LineNumber = lineNumber;
         }
 
@@ -162,15 +162,15 @@ public class LocaterTests
         // Arrange
         Locater locater = new()
         {
-            CurrentSegment = "InitialSegment"
+            CurrentLocationName = "InitialSegment"
         };
 
         // Act
-        locater.CurrentSegment = segmentName!;
+        locater.CurrentLocationName = segmentName!;
 
         // Assert
-        locater.CurrentSegment
+        locater.CurrentLocationName
             .Should()
-            .Be(Location.Empty.SegmentName);
+            .Be(Location.Empty.LocationName);
     }
 }

@@ -1,20 +1,23 @@
 ﻿namespace DRSSoftware.TextTemplateProcessor.Core;
 
 /// <summary>
-/// This record represents a location in a text template file, consisting of a segment name and a
-/// line number. It is used to identify the specific location of log messages or other relevant
-/// information within the text template processing context.
+/// This record represents a location within a file, consisting of a location name and a line
+/// number.
 /// </summary>
-/// <param name="SegmentName">
-/// The name of the segment in which the current location is found.
+/// <remarks>
+/// The location name identifies the area and the line number identifies the specific line within
+/// that area.
+/// </remarks>
+/// <param name="LocationName">
+/// The name of the location. This will be either "TemplateFile", "OutputFile", or a segment name.
 /// </param>
 /// <param name="LineNumber">
-/// The line number within the segment at which the current location is found.
+/// The line number within the area identified by the location name.
 /// </param>
-internal record Location(string SegmentName, int LineNumber)
+internal record Location(string LocationName, int LineNumber)
 {
     /// <summary>
-    /// Gets an empty <see cref="Location" /> instance, which has an empty segment name and a line
+    /// Gets an empty <see cref="Location" /> instance, which has an empty location name and a line
     /// number of 0.
     /// </summary>
     public static Location Empty => new(string.Empty, 0);
@@ -26,7 +29,7 @@ internal record Location(string SegmentName, int LineNumber)
     /// <see langword="true" /> if the location is empty; otherwise, <see langword="false" />.
     /// </returns>
     public bool IsEmpty
-        => SegmentName == Empty.SegmentName && LineNumber == Empty.LineNumber;
+        => LocationName == Empty.LocationName && LineNumber == Empty.LineNumber;
 
     /// <summary>
     /// Gets the string representation of the current location.
@@ -37,5 +40,5 @@ internal record Location(string SegmentName, int LineNumber)
     /// </returns>
     public override string ToString() => IsEmpty
         ? string.Empty
-        : $"{SegmentName}[{LineNumber}]";
+        : $"{LocationName}[{LineNumber}]";
 }
