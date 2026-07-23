@@ -12,8 +12,8 @@ internal static class Messages
     // internal const string MsgClearTheOutputDirectory = "\nCONFIRM: Do you want to clear the contents of the following directory?\n{0}";
     // internal const string MsgContinuationPrompt = "Press [ENTER] to continue...";
     internal const string MsgDependencyIsNull = "The {1} dependency object passed to the {0} class should not be null.";
-    // internal const string MsgDirectoryNotFound = "The specified directory was not found. Directory path: ";
-    // internal const string MsgDirectoryPathIsEmptyOrWhitespace = "The directory path must not be empty or contain only whitespace.";
+    internal const string MsgDirectoryNotFound = "The specified directory was not found. Directory path: {0}";
+    internal const string MsgDirectoryPathIsEmptyOrWhitespace = "The directory path must not be empty or contain only whitespace.";
     internal const string MsgDynamicallyGeneratedAssembliesNotSupported = "Dynamically-generated assemblies are not supported by the Text Template Processor.";
     // internal const string MsgErrorWhenClearingOutputDirectory = "An unexpected error occurred while trying to clear the output directory. {0}";
     // internal const string MsgErrorWhenCreatingOutputDirectory = "An unexpected error occurred when creating the output directory. {0}";
@@ -21,7 +21,7 @@ internal static class Messages
     // internal const string MsgErrorWhileConstructingFilePath = "An error occurred when trying to construct the output file path. {0}";
     // internal const string MsgErrorWhileReadingTemplateFile = "An error occurred while reading the template file. {0}";
     internal const string MsgFileNotFound = "The specified file was not found. Full file path: {0}";
-    // internal const string MsgFilePathIsEmptyOrWhitespace = "The file path must not be empty or contain only whitespace.";
+    internal const string MsgFilePathIsEmptyOrWhitespace = "The file path must not be empty or contain only whitespace.";
     // internal const string MsgFileSuccessfullyRead = "The text template file has been successfully read.";
     // internal const string MsgFirstTimeIndentHasBeenTruncated = "The calculated first time indent for segment \"{0}\" went negative. It will be set to zero.";
     // internal const string MsgFirstTimeIndentIsInvalid = "The First Time Indent for segment \"{0}\" must be a number between -9 and 9. The value found was \"{1}\"";
@@ -37,8 +37,8 @@ internal static class Messages
     // internal const string MsgIndentValueMustBeValidNumber = "The indent value \"{0}\" is not a valid integer value.";
     // internal const string MsgIndentValueOutOfRange = "The FTI option value must be a number between -9 and 9. The value given was {0}.";
     // internal const string MsgInvalidControlCode = "The following template line doesn't begin with a valid control code:\n{0}\n^^^";
-    // internal const string MsgInvalidDirectoryCharacters = "The directory path contains invalid characters.";
-    // internal const string MsgInvalidFileNameCharacters = "The file name contains invalid characters.";
+    internal const string MsgInvalidDirectoryCharacters = "The directory path contains invalid characters.";
+    internal const string MsgInvalidFileNameCharacters = "The file name contains invalid characters.";
     // internal const string MsgInvalidFormOfOption = "Segment options must follow the form \"option=value\" with no intervening spaces. Found \"{1}\" on the \"{0}\" segment header.";
     // internal const string MsgInvalidPadSegmentName = "\"{1}\" is not a valid name for the PAD option for segment \"{0}\". It will be ignored.";
     // internal const string MsgInvalidSegmentName = "\"{0}\" is not a valid segment name. The default name \"{1}\" will be used instead.";
@@ -47,7 +47,7 @@ internal static class Messages
     // internal const string MsgLoadingTemplateFile = "Loading template file \"{0}\"";
     // internal const string MsgMinimumLineLengthInTemplateFileIs3 = "All lines in the template file must be at least 3 characters long.";
     // internal const string MsgMissingDirectoryPath = "The specified file path doesn't contain a valid directory path.";
-    // internal const string MsgMissingFileName = "The file name is missing from the file path.";
+    internal const string MsgMissingFileName = "The file name is missing from the file path.";
     // internal const string MsgMissingInitialSegmentHeader = "The template file is missing the initial segment header. The default segment \"{0}\" will be used.";
     // internal const string MsgMissingTokenName = "Found token start and end delimiters with no token name between them. The token will be ignored.";
     // internal const string MsgMultipleLevelsOfPadSegments = "Pad segment \"{1}\" specified for segment \"{0}\" also contains a pad segment. Multiple levels of pad segments are not allowed.";
