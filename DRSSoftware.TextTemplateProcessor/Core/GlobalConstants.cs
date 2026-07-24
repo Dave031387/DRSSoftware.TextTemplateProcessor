@@ -186,7 +186,12 @@ internal static class GlobalConstants
     /// <summary>
     /// The search pattern that is used in locating the solution directory.
     /// </summary>
-    public const string SolutionFileSearchPattern = "*.sln";
+    public const string SolutionFileSearchPattern1 = "*.sln";
+
+    /// <summary>
+    /// The search pattern that is used in locating the solution directory.
+    /// </summary>
+    public const string SolutionFileSearchPattern2 = "*.slnx";
 
     /// <summary>
     /// The string that represents the Tab Size option.

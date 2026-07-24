@@ -316,7 +316,14 @@ internal class FileAndDirectoryService : IFileAndDirectoryService
 
             try
             {
-                string[] files = Directory.GetFiles(path, SolutionFileSearchPattern);
+                string[] files = Directory.GetFiles(path, SolutionFileSearchPattern1);
+
+                if (files.Length > 0)
+                {
+                    break;
+                }
+
+                files = Directory.GetFiles(path, SolutionFileSearchPattern2);
 
                 if (files.Length > 0)
                 {

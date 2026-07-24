@@ -4,8 +4,13 @@
 internal static class TestHelper
 {
     public const string Whitespace = "\t\n\v\f\r \u0085\u00a0\u2002\u2003\u2028\u2029";
+    public static string[] SampleText => ["Line 1", "Line 2", "Line 3"];
 
-    internal static void AssertException<T>(Action action, string message) where T : Exception
+    public static string GetNullDependencyMessage(string className, string serviceName, string parameterName)
+        => string.Format(MsgDependencyIsNull, className, serviceName) + $" (Parameter '{parameterName}')";
+
+    internal static void AssertException<T>(Action action, string message)
+             where T : Exception
     {
         action
             .Should()
@@ -25,7 +30,8 @@ internal static class TestHelper
     }
 
     internal static void AssertException<TInner, TOuter>(Action action, string inner, string outer)
-        where TInner : Exception where TOuter : Exception
+        where TInner : Exception
+        where TOuter : Exception
     {
         action
             .Should()
@@ -34,7 +40,4 @@ internal static class TestHelper
             .WithInnerExceptionExactly<TInner>()
             .WithMessage(inner);
     }
-
-    public static string GetNullDependencyMessage(string className, string serviceName, string parameterName)
-        => string.Format(MsgDependencyIsNull, className, serviceName) + $" (Parameter '{parameterName}')";
 }
