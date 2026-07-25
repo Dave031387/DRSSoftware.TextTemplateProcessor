@@ -1,4 +1,5 @@
-﻿using System.Runtime.CompilerServices;
+﻿using System.IO;
+using System.Runtime.CompilerServices;
 using DRSSoftware.TextTemplateProcessor.Console;
 
 [assembly: InternalsVisibleTo("DRSSoftware.TextTemplateProcessor.Tests")]
@@ -184,12 +185,14 @@ internal static class GlobalConstants
     public const string SegmentHeaderCode = "###";
 
     /// <summary>
-    /// The search pattern that is used in locating the solution directory.
+    /// The search pattern that is used in locating the solution file with the ".sln" file
+    /// extension.
     /// </summary>
     public const string SolutionFileSearchPattern1 = "*.sln";
 
     /// <summary>
-    /// The search pattern that is used in locating the solution directory.
+    /// The search pattern that is used in locating the solution file with the ".slnx" file
+    /// extension.
     /// </summary>
     public const string SolutionFileSearchPattern2 = "*.slnx";
 
@@ -210,8 +213,13 @@ internal static class GlobalConstants
     public const string WarningSeverity = "WARNING->";
 
     /// <summary>
+    /// Gets an array of characters that can be used as directory name separator characters.
+    /// </summary>
+    public static char[] DirectorySeparatorChars { get; } = [Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar];
+
+    /// <summary>
     /// Gets an array of characters that can be used for separating options on a segment header
     /// line.
     /// </summary>
-    public static char[] SeparatorChars { get; } = [' ', ','];
+    public static char[] OptionSeparatorChars { get; } = [' ', ','];
 }

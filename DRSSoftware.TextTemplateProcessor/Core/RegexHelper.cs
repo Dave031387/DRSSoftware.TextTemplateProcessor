@@ -1,6 +1,6 @@
-﻿namespace DRSSoftware.TextTemplateProcessor.Core;
+﻿using System.Text.RegularExpressions;
 
-using System.Text.RegularExpressions;
+namespace DRSSoftware.TextTemplateProcessor.Core;
 
 /// <summary>
 /// Helper class for handling various <see cref="Regex" /> pattern matching operations against given

@@ -1,6 +1,6 @@
-﻿namespace DRSSoftware.TextTemplateProcessor.IO;
+﻿using System.IO;
 
-using System.IO;
+namespace DRSSoftware.TextTemplateProcessor.IO;
 
 internal class PathValidator : IPathValidator
 {
@@ -194,7 +194,7 @@ internal class PathValidator : IPathValidator
         out string directoryPart,
         out string fileNamePart)
     {
-        int indexOfLastSeparator = path.LastIndexOf(Path.DirectorySeparatorChar);
+        int indexOfLastSeparator = path.LastIndexOfAny(DirectorySeparatorChars);
         int fileNameStart = indexOfLastSeparator + 1;
 
         if (indexOfLastSeparator < 0)

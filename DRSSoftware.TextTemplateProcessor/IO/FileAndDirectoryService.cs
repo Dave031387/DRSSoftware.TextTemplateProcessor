@@ -1,7 +1,7 @@
-﻿namespace DRSSoftware.TextTemplateProcessor.IO;
-
-using System.IO;
+﻿using System.IO;
 using System.Reflection;
+
+namespace DRSSoftware.TextTemplateProcessor.IO;
 
 /// <summary>
 /// The <see cref="FileAndDirectoryService" /> class provides services for managing files and
@@ -9,14 +9,6 @@ using System.Reflection;
 /// </summary>
 internal class FileAndDirectoryService : IFileAndDirectoryService
 {
-    /// <summary>
-    /// Default constructor that creates an instance of the <see cref="FileAndDirectoryService" />
-    /// class.
-    /// </summary>
-    public FileAndDirectoryService()
-    {
-    }
-
     /// <summary>
     /// Clears the contents of the given <paramref name="directoryPath" /> if the directory exists.
     /// </summary>
@@ -425,8 +417,5 @@ internal class FileAndDirectoryService : IFileAndDirectoryService
     /// <paramref name="path" />, or -1 if no directory separator character was found.
     /// </returns>
     private static int GetIndexOfLastDirectorySeparatorChar(string path)
-    {
-        char[] directorySeparatorChars = [Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar];
-        return path.LastIndexOfAny(directorySeparatorChars);
-    }
+        => path.LastIndexOfAny(DirectorySeparatorChars);
 }

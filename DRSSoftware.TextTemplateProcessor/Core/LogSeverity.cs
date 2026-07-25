@@ -1,6 +1,6 @@
-﻿namespace DRSSoftware.TextTemplateProcessor.Core;
+﻿using System.ComponentModel.DataAnnotations;
 
-using System.ComponentModel.DataAnnotations;
+namespace DRSSoftware.TextTemplateProcessor.Core;
 
 /// <summary>
 /// An enumeration of the different levels of severity that can be assigned to log messages.

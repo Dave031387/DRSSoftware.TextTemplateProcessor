@@ -32,17 +32,7 @@ internal class Locater : ILocater
     public string CurrentLocationName
     {
         get;
-        set
-        {
-            if (string.IsNullOrWhiteSpace(value))
-            {
-                field = Location.Empty.LocationName;
-            }
-            else
-            {
-                field = value.Trim();
-            }
-        }
+        set => field = string.IsNullOrWhiteSpace(value) ? Location.Empty.LocationName : value.Trim();
     }
 
     /// <summary>

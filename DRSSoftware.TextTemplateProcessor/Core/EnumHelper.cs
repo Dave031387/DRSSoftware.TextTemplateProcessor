@@ -1,7 +1,7 @@
-﻿namespace DRSSoftware.TextTemplateProcessor.Core;
-
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.Reflection;
+
+namespace DRSSoftware.TextTemplateProcessor.Core;
 
 /// <summary>
 /// Static class that provides helper functions for <see cref="Enum" /> types.

@@ -7,7 +7,7 @@ public class LocaterTests
     public void InstantiateLocater_ShouldInitializeProperties()
     {
         // Arrange & Act
-        var locater = new Locater();
+        Locater locater = new();
 
         // Assert
         locater.CurrentLocationName
