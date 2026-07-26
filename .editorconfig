@@ -205,6 +205,12 @@ csharp_space_between_square_brackets = false
 csharp_preserve_single_line_blocks = false
 csharp_preserve_single_line_statements = false
 
+#### Spelling ####
+
+spelling_languages = en-us
+spelling_checkable_types = identifiers,comments
+spelling_exclusion_path = exclusion.dic
+
 #### Naming styles ####
 
 # Naming rules

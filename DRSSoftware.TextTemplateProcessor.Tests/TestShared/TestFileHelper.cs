@@ -1,6 +1,6 @@
-﻿namespace DRSSoftware.TextTemplateProcessor.TestShared;
+﻿using System.IO;
 
-using System.IO;
+namespace DRSSoftware.TextTemplateProcessor.TestShared;
 
 [ExcludeFromCodeCoverage]
 internal static class TestFileHelper

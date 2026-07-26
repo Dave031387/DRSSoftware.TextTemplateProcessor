@@ -1,7 +1,7 @@
-﻿namespace DRSSoftware.TextTemplateProcessor.IO;
-
-using System.IO;
+﻿using System.IO;
 using static DRSSoftware.TextTemplateProcessor.TestShared.TestFileHelper;
+
+namespace DRSSoftware.TextTemplateProcessor.IO;
 
 [ExcludeFromCodeCoverage]
 public class PathValidatorTests
@@ -642,7 +642,7 @@ public class PathValidatorTests
         }
         else
         {
-            Action action = () => { pathValidator.ValidatePath(path, isFilePath, shouldExist); };
+            Action action = () => pathValidator.ValidatePath(path, isFilePath, shouldExist);
             action
                 .Should()
                 .NotThrow();
