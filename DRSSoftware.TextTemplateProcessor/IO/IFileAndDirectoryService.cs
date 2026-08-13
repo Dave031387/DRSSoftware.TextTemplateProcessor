@@ -16,7 +16,7 @@ internal interface IFileAndDirectoryService
     /// Thrown if any issues are encountered while trying to clear the specified
     /// <paramref name="directoryPath" />.
     /// </exception>
-    public void ClearDirectory(string directoryPath);
+    void ClearDirectory(string directoryPath);
 
     /// <summary>
     /// Combine the given path strings ( <paramref name="path1" /> and <paramref name="path2" />) to
@@ -32,31 +32,26 @@ internal interface IFileAndDirectoryService
     /// The file path obtained by combining <paramref name="path1" /> and <paramref name="path2" />.
     /// </returns>
     /// <exception cref="FileAndDirectoryServiceException">
-    /// Thrown if any issues are encountered while attempting to combine the given file paths.
+    /// Thrown if <paramref name="path1" /> or <paramref name="path2" /> are null or if any issues
+    /// are encountered while attempting to combine the given file paths.
     /// </exception>
-    public string CombinePaths(string path1, string path2);
+    string CombinePaths(string path1, string path2);
 
     /// <summary>
     /// Creates the given <paramref name="directoryPath" /> if it doesn't already exist.
     /// </summary>
+    /// <remarks>
+    /// If <paramref name="directoryPath" /> is a relative path then it will be created relative to
+    /// the given <paramref name="rootDirectory" /> path, or relative to the current working
+    /// directory path if no <paramref name="rootDirectory" /> is given.
+    /// </remarks>
     /// <param name="directoryPath">
-    /// The directory path to be created.
-    /// </param>
-    /// <exception cref="FileAndDirectoryServiceException">
-    /// Thrown if any issues are encountered while attempting to create the given directory.
-    /// </exception>
-    public void CreateDirectory(string directoryPath);
-
-    /// <summary>
-    /// Validates the given <paramref name="path" /> and then creates the directory if it doesn't
-    /// exist.
-    /// </summary>
-    /// <param name="path">
     /// The directory path (either relative or absolute).
     /// </param>
     /// <param name="rootDirectory">
     /// The directory that is used as the root of the full directory path if the
-    /// <paramref name="path" /> parameter is a relative path.
+    /// <paramref name="directoryPath" /> parameter is a relative path. <br /> The current working
+    /// directory will be used of the root directory is omitted or is null or whitespace.
     /// </param>
     /// <returns>
     /// The string representation of the full directory path.
@@ -64,7 +59,7 @@ internal interface IFileAndDirectoryService
     /// <exception cref="FileAndDirectoryServiceException">
     /// Thrown if any issues are encountered while attempting to create the given directory.
     /// </exception>
-    public string CreateDirectory(string path, string rootDirectory);
+    string CreateDirectory(string directoryPath, string rootDirectory);
 
     /// <summary>
     /// Gets the directory name from the given <paramref name="path" /> string.
@@ -82,7 +77,7 @@ internal interface IFileAndDirectoryService
     /// The directory path string from the <paramref name="path" />, or an empty string if the
     /// directory name can't be determined.
     /// </returns>
-    public string GetDirectoryName(string path);
+    string GetDirectoryName(string path);
 
     /// <summary>
     /// Gets the file name from the given <paramref name="path" /> string.
@@ -99,7 +94,7 @@ internal interface IFileAndDirectoryService
     /// The file name string from the <paramref name="path" />, or an empty string if the file name
     /// can't be determined.
     /// </returns>
-    public string GetFileName(string path);
+    string GetFileName(string path);
 
     /// <summary>
     /// Gets the full path for the given <paramref name="path" /> string.
@@ -131,7 +126,7 @@ internal interface IFileAndDirectoryService
     /// An exception is thrown if either <paramref name="path" /> or <paramref name="rootPath" /> is
     /// null or if some other issue is encountered while trying to determine the full path string.
     /// </exception>
-    public string GetFullPath(string path, string rootPath, bool isFilePath = false);
+    string GetFullPath(string path, string rootPath, bool isFilePath = false);
 
     /// <summary>
     /// Gets the full path to the solution directory.
@@ -142,7 +137,7 @@ internal interface IFileAndDirectoryService
     /// <exception cref="FileAndDirectoryServiceException">
     /// Thrown if any issues are encountered while trying to locate the solution directory.
     /// </exception>
-    public string GetSolutionDirectory();
+    string GetSolutionDirectory();
 
     /// <summary>
     /// Reads the text file located at the given <paramref name="fullFilePath" />.
@@ -156,7 +151,7 @@ internal interface IFileAndDirectoryService
     /// <exception cref="FileAndDirectoryServiceException">
     /// Thrown if any issues are encountered while trying to read from the text file.
     /// </exception>
-    public IEnumerable<string> ReadTextFile(string fullFilePath);
+    IEnumerable<string> ReadTextFile(string fullFilePath);
 
     /// <summary>
     /// Writes a collection of <paramref name="textLines" /> to the file that is located at the
@@ -171,5 +166,5 @@ internal interface IFileAndDirectoryService
     /// <exception cref="FileAndDirectoryServiceException">
     /// Thrown if any issues are encountered while trying to write to the text file.
     /// </exception>
-    public void WriteTextFile(string filePath, IEnumerable<string> textLines);
+    void WriteTextFile(string filePath, IEnumerable<string> textLines);
 }

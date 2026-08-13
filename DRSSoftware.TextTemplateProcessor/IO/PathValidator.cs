@@ -194,24 +194,25 @@ internal class PathValidator : IPathValidator
         out string directoryPart,
         out string fileNamePart)
     {
-        int indexOfLastSeparator = path.LastIndexOfAny(DirectorySeparatorChars);
+        string pathString = path.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
+        int indexOfLastSeparator = pathString.LastIndexOf(Path.DirectorySeparatorChar);
         int fileNameStart = indexOfLastSeparator + 1;
 
         if (indexOfLastSeparator < 0)
         {
-            directoryPart = isFilePath ? string.Empty : path;
-            fileNamePart = isFilePath ? path : string.Empty;
+            directoryPart = isFilePath ? string.Empty : pathString;
+            fileNamePart = isFilePath ? pathString : string.Empty;
         }
         else
         {
             if (isFilePath)
             {
-                directoryPart = indexOfLastSeparator > 0 ? path[..indexOfLastSeparator] : string.Empty;
-                fileNamePart = fileNameStart < path.Length ? path[fileNameStart..] : string.Empty;
+                directoryPart = indexOfLastSeparator > 0 ? pathString[..indexOfLastSeparator] : string.Empty;
+                fileNamePart = fileNameStart < pathString.Length ? pathString[fileNameStart..] : string.Empty;
             }
             else
             {
-                directoryPart = path;
+                directoryPart = pathString;
                 fileNamePart = string.Empty;
             }
         }

@@ -1,5 +1,4 @@
-﻿using System.IO;
-using System.Runtime.CompilerServices;
+﻿using System.Runtime.CompilerServices;
 using DRSSoftware.TextTemplateProcessor.Console;
 
 [assembly: InternalsVisibleTo("DRSSoftware.TextTemplateProcessor.Tests")]
@@ -211,11 +210,6 @@ internal static class GlobalConstants
     /// The string that is used for denoting warning severity level in a log message.
     /// </summary>
     public const string WarningSeverity = "WARNING->";
-
-    /// <summary>
-    /// Gets an array of characters that can be used as directory name separator characters.
-    /// </summary>
-    public static char[] DirectorySeparatorChars { get; } = [Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar];
 
     /// <summary>
     /// Gets an array of characters that can be used for separating options on a segment header

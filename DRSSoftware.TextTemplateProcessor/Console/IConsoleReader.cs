@@ -13,5 +13,5 @@ internal interface IConsoleReader
     /// The text that was entered in the console by the user, or an empty string if no input was
     /// provided.
     /// </returns>
-    public string ReadLine();
+    string ReadLine();
 }

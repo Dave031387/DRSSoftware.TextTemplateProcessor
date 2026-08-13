@@ -59,10 +59,21 @@ internal class FileAndDirectoryService : IFileAndDirectoryService
     /// The file path obtained by combining <paramref name="path1" /> and <paramref name="path2" />.
     /// </returns>
     /// <exception cref="FileAndDirectoryServiceException">
-    /// Thrown if any issues are encountered while attempting to combine the given file paths.
+    /// Thrown if <paramref name="path1" /> or <paramref name="path2" /> are null or if any issues
+    /// are encountered while attempting to combine the given file paths.
     /// </exception>
     public string CombinePaths(string path1, string path2)
     {
+        if (path1 is null)
+        {
+            throw new FileAndDirectoryServiceException(MsgCombinePathsArgument1IsNull);
+        }
+
+        if (path2 is null)
+        {
+            throw new FileAndDirectoryServiceException(MsgCombinePathsArgument2IsNull);
+        }
+
         string combinedPath;
 
         try
@@ -79,15 +90,20 @@ internal class FileAndDirectoryService : IFileAndDirectoryService
     }
 
     /// <summary>
-    /// Validates the given <paramref name="path" /> and then creates the directory if it doesn't
-    /// exist.
+    /// Creates the given <paramref name="directoryPath" /> if it doesn't already exist.
     /// </summary>
-    /// <param name="path">
+    /// <remarks>
+    /// If <paramref name="directoryPath" /> is a relative path then it will be created relative to
+    /// the given <paramref name="rootDirectory" /> path, or relative to the current working
+    /// directory path if no <paramref name="rootDirectory" /> is given.
+    /// </remarks>
+    /// <param name="directoryPath">
     /// The directory path (either relative or absolute).
     /// </param>
     /// <param name="rootDirectory">
     /// The directory that is used as the root of the full directory path if the
-    /// <paramref name="path" /> parameter is a relative path.
+    /// <paramref name="directoryPath" /> parameter is a relative path. <br /> The current working
+    /// directory will be used of the root directory is omitted or is null or whitespace.
     /// </param>
     /// <returns>
     /// The string representation of the full directory path.
@@ -95,43 +111,13 @@ internal class FileAndDirectoryService : IFileAndDirectoryService
     /// <exception cref="FileAndDirectoryServiceException">
     /// Thrown if any issues are encountered while attempting to create the given directory.
     /// </exception>
-    public string CreateDirectory(string path, string rootDirectory)
+    public string CreateDirectory(string directoryPath, string? rootDirectory = null)
     {
         string fullDirectoryPath;
 
         try
         {
-            fullDirectoryPath = GetFullPath(path, rootDirectory);
-
-            if (!Directory.Exists(fullDirectoryPath))
-            {
-                _ = Directory.CreateDirectory(fullDirectoryPath);
-            }
-        }
-        catch (Exception ex)
-        {
-            string message = FormatMessage(MsgUnableToCreateDirectory, path);
-            throw new FileAndDirectoryServiceException(message, ex);
-        }
-
-        return fullDirectoryPath;
-    }
-
-    /// <summary>
-    /// Creates the given <paramref name="directoryPath" /> if it doesn't already exist.
-    /// </summary>
-    /// <param name="directoryPath">
-    /// The directory path to be created.
-    /// </param>
-    /// <exception cref="FileAndDirectoryServiceException">
-    /// Thrown if any issues are encountered while attempting to create the given directory.
-    /// </exception>
-    public void CreateDirectory(string directoryPath)
-    {
-        try
-        {
-            string fullDirectoryPath = GetFullPath(directoryPath, string.Empty);
-
+            fullDirectoryPath = GetFullPath(directoryPath, rootDirectory);
             _ = Directory.CreateDirectory(fullDirectoryPath);
         }
         catch (Exception ex)
@@ -139,6 +125,8 @@ internal class FileAndDirectoryService : IFileAndDirectoryService
             string message = FormatMessage(MsgUnableToCreateDirectory, directoryPath);
             throw new FileAndDirectoryServiceException(message, ex);
         }
+
+        return fullDirectoryPath;
     }
 
     /// <summary>
@@ -217,7 +205,8 @@ internal class FileAndDirectoryService : IFileAndDirectoryService
     /// </param>
     /// <param name="rootPath">
     /// The default rooted path that will be used to construct the full file path if the
-    /// <paramref name="path" /> parameter represents a relative path.
+    /// <paramref name="path" /> parameter represents a relative path. <br /> The current working
+    /// directory will be used if nothing else is specified.
     /// </param>
     /// <param name="isFilePath">
     /// An optional boolean parameter that indicates whether or not the given
@@ -231,20 +220,15 @@ internal class FileAndDirectoryService : IFileAndDirectoryService
     /// The string representation of the full file path or directory path.
     /// </returns>
     /// <exception cref="FileAndDirectoryServiceException">
-    /// An exception is thrown if either <paramref name="path" /> or <paramref name="rootPath" /> is
-    /// null or if some other issue is encountered while trying to determine the full path string.
+    /// An exception is thrown if <paramref name="path" /> is null or if some other issue is
+    /// encountered while trying to determine the full path string.
     /// </exception>
-    public string GetFullPath(string path, string rootPath, bool isFilePath = false)
+    public string GetFullPath(string path, string? rootPath = null, bool isFilePath = false)
     {
         if (path is null)
         {
             string msg = isFilePath ? MsgNullFilePath : MsgNullDirectoryPath;
             throw new FileAndDirectoryServiceException(msg);
-        }
-
-        if (rootPath is null)
-        {
-            throw new FileAndDirectoryServiceException(MsgRootPathIsNull);
         }
 
         string fullPath;
@@ -417,5 +401,5 @@ internal class FileAndDirectoryService : IFileAndDirectoryService
     /// <paramref name="path" />, or -1 if no directory separator character was found.
     /// </returns>
     private static int GetIndexOfLastDirectorySeparatorChar(string path)
-        => path.LastIndexOfAny(DirectorySeparatorChars);
+        => path.LastIndexOf(Path.DirectorySeparatorChar);
 }

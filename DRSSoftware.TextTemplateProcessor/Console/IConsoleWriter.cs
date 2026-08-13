@@ -13,5 +13,5 @@ internal interface IConsoleWriter
     /// The text string to be written to the console. If the string is null, it will be treated as
     /// an empty string.
     /// </param>
-    public void WriteLine(string text);
+    void WriteLine(string text);
 }

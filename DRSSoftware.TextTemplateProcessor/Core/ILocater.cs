@@ -28,7 +28,7 @@ internal interface ILocater
     /// <see langword="true" /> if the current location is empty; otherwise,
     /// <see langword="false" />.
     /// </returns>
-    public bool IsEmpty
+    bool IsEmpty
     {
         get;
     }
@@ -47,7 +47,7 @@ internal interface ILocater
     /// Gets a <see cref="Location" /> record that has been initialized with the current location in
     /// the text file.
     /// </summary>
-    public Location Location
+    Location Location
     {
         get;
     }

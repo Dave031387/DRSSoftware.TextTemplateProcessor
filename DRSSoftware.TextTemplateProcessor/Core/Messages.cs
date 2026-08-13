@@ -10,6 +10,8 @@ internal static class Messages
     // internal const string MsgAttemptToGenerateSegmentBeforeItWasLoaded = "An attempt was made to generate segment \"{0}\" before the template was loaded.";
     // internal const string MsgAttemptToLoadMoreThanOnce = "Attempted to load template file \"{0}\" more than once. Repeat loads will be ignored.";
     // internal const string MsgClearTheOutputDirectory = "\nCONFIRM: Do you want to clear the contents of the following directory?\n{0}";
+    internal const string MsgCombinePathsArgument1IsNull = "The first argument passed to FileAndDirectoryService.CombinePaths must not be null.";
+    internal const string MsgCombinePathsArgument2IsNull = "The second argument passed to FileAndDirectoryService.CombinePaths must not be null.";
     // internal const string MsgContinuationPrompt = "Press [ENTER] to continue...";
     internal const string MsgDependencyIsNull = "The {1} dependency object passed to the {0} class should not be null.";
     internal const string MsgDirectoryNotFound = "The specified directory was not found. Directory path: {0}";
@@ -63,7 +65,7 @@ internal static class Messages
     // internal const string MsgPadSegmentNameSameAsSegmentHeaderName = "The PAD segment name and segment header name for segment \"{0}\" are identical. The PAD segment name will be ignored.";
     // internal const string MsgPathIsNotRooted = "Expected a rooted path, but found \"{0}\"";
     // internal const string MsgProcessingSegment = "Processing segment \"{0}\"...";
-    internal const string MsgRootPathIsNull = "The root directory path must not be null.";
+    // internal const string MsgRootPathIsNull = "The root directory path must not be null.";
     // internal const string MsgSegmentHasBeenAdded = "Segment \"{0}\" has been added to the control dictionary.";
     // internal const string MsgSegmentHasBeenReset = "Segment \"{0}\" has been reset.";
     // internal const string MsgSegmentHasNoTextLines = "Tried to generate segment \"{0}\" but the segment has no text lines.";

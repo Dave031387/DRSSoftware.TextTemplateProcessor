@@ -26,7 +26,7 @@ internal interface IPathValidator
     /// Exception is thrown if <paramref name="path" /> isn't valid or if the path doesn't exist and
     /// <paramref name="shouldExist" /> is set to <see langword="true" />.
     /// </exception>
-    public string ValidateFullPath(string path, bool isFilePath = false, bool shouldExist = false);
+    string ValidateFullPath(string path, bool isFilePath = false, bool shouldExist = false);
 
     /// <summary>
     /// Validates a path string to verify that it represents a valid directory path or file path.
@@ -48,5 +48,5 @@ internal interface IPathValidator
     /// Exception is thrown if <paramref name="path" /> isn't valid or if the path doesn't exist and
     /// <paramref name="shouldExist" /> is set to <see langword="true" />.
     /// </exception>
-    public void ValidatePath(string path, bool isFilePath = false, bool shouldExist = false);
+    void ValidatePath(string path, bool isFilePath = false, bool shouldExist = false);
 }

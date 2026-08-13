@@ -9,7 +9,7 @@ internal interface ILogger
     /// <summary>
     /// Gets or sets the type of operation currently being performed against the text template file.
     /// </summary>
-    public OperationType CurrentOperationType
+    OperationType CurrentOperationType
     {
         get;
         set;
@@ -32,7 +32,7 @@ internal interface ILogger
     /// An array of <see langword="string" /> values to be substituted for the format arguments in
     /// the <paramref name="message" /> parameter.
     /// </param>
-    public void Log(LogSeverity logSeverity, string message, params string[] args);
+    void Log(LogSeverity logSeverity, string message, params string[] args);
 
     /// <summary>
     /// Formats a new log entry and writes it to the log.
@@ -56,7 +56,7 @@ internal interface ILogger
     /// An array of <see langword="string" /> values to be substituted for the format arguments in
     /// the <paramref name="message" /> parameter.
     /// </param>
-    public void Log(LogSeverity logSeverity, OperationType operationType, string message, params string[] args);
+    void Log(LogSeverity logSeverity, OperationType operationType, string message, params string[] args);
 
     /// <summary>
     /// Write the given <paramref name="logEntry" /> to the log.
@@ -64,5 +64,5 @@ internal interface ILogger
     /// <param name="logEntry">
     /// The <see cref="LogEntry" /> instance that is to be written out to the log.
     /// </param>
-    public void WriteLogEntry(LogEntry logEntry);
+    void WriteLogEntry(LogEntry logEntry);
 }

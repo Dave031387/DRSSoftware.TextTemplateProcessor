@@ -9,8 +9,10 @@ internal static class TestFileHelper
 
     static TestFileHelper()
     {
-        string path = CurrentDirectory;
+        string path = Directory.GetCurrentDirectory();
         int pathIndex;
+
+        CurrentDirectory = path;
 
         while (true)
         {
@@ -40,7 +42,11 @@ internal static class TestFileHelper
         }
     }
 
-    public static string CurrentDirectory => Directory.GetCurrentDirectory();
+    public static string CurrentDirectory
+    {
+        get;
+        private set;
+    }
 
     public static string NextAbsoluteFilePath => Path.Combine(NextAbsoluteName, NextFileName);
 
@@ -70,20 +76,15 @@ internal static class TestFileHelper
 
     public static string CreateTestFiles(string path, string[] text)
     {
-        string directoryPath = GetFullPath(path);
-        DeleteTestFiles(directoryPath);
-        Directory.CreateDirectory(directoryPath);
-        string fileName = NextFileName;
-        string fullFilePath = Path.Combine(directoryPath, fileName);
+        string directoryPath = PrepareTestDirectory(path);
+        string fullFilePath = Path.Combine(directoryPath, NextFileName);
         File.WriteAllLines(fullFilePath, text);
         return fullFilePath;
     }
 
     public static void CreateTestFiles(string path, int numFiles)
     {
-        string directoryPath = GetFullPath(path);
-        DeleteTestFiles(directoryPath);
-        Directory.CreateDirectory(directoryPath);
+        string directoryPath = PrepareTestDirectory(path);
 
         for (int i = 0; i < numFiles; i++)
         {
@@ -94,9 +95,7 @@ internal static class TestFileHelper
 
     public static string CreateTestFiles(string path, bool directoryOnly = false)
     {
-        string directoryPath = GetFullPath(path);
-        DeleteTestFiles(directoryPath);
-        Directory.CreateDirectory(directoryPath);
+        string directoryPath = PrepareTestDirectory(path);
 
         if (directoryOnly)
         {
@@ -124,4 +123,12 @@ internal static class TestFileHelper
         => Path.IsPathRooted(path)
         ? Path.GetFullPath(path)
         : Path.Combine(SolutionDirectory, path);
+
+    private static string PrepareTestDirectory(string path)
+    {
+        string directoryPath = GetFullPath(path);
+        DeleteTestFiles(directoryPath);
+        Directory.CreateDirectory(directoryPath);
+        return directoryPath;
+    }
 }
