@@ -28,7 +28,7 @@ public class PathValidatorTests
     public void ValidateFullPathWhenFileDirectoryPathContainsInvalidPathCharacters_ShouldThrowException(string invalidChar)
     {
         // Arrange
-        string filePath = $"{VolumeRoot}{Path.DirectorySeparatorChar}x{invalidChar}x{Path.DirectorySeparatorChar}{NextFileName}";
+        string filePath = $"{VolumeRootPath}x{invalidChar}x{Path.DirectorySeparatorChar}{NextFileName}";
 
         // Act/Assert
         AssertException(filePath,
@@ -43,7 +43,7 @@ public class PathValidatorTests
     public void ValidateFullPathWhenFileNameContainsInvalidFileNameCharacters_ShouldThrowException(string invalidChar)
     {
         // Arrange
-        string filePath = $"{NextAbsoluteName}{Path.DirectorySeparatorChar}x{invalidChar}x.test";
+        string filePath = $"{NextAbsoluteDirectoryPath}{Path.DirectorySeparatorChar}x{invalidChar}x.test";
 
         // Act/Assert
         AssertException(filePath,
@@ -58,7 +58,7 @@ public class PathValidatorTests
     public void ValidateFullPathWhenFileNameIsEmptyOrWhitespace_ShouldThrowException(string whitespace)
     {
         // Arrange
-        string filePath = $"{NextAbsoluteName}{Path.DirectorySeparatorChar}{whitespace}";
+        string filePath = $"{NextAbsoluteDirectoryPath}{Path.DirectorySeparatorChar}{whitespace}";
 
         // Act/Assert
         AssertException(filePath,
@@ -84,7 +84,7 @@ public class PathValidatorTests
     public void ValidateFullPathWhenOkayIfAbsoluteDirectoryPathNotFound_ShouldReturnAbsoluteDirectoryPath()
     {
         // Arrange
-        string absolutePath = NextAbsoluteName;
+        string absolutePath = NextAbsoluteDirectoryPath;
 
         // Act/Assert
         AssertValidCall(absolutePath,
@@ -112,7 +112,7 @@ public class PathValidatorTests
     public void ValidateFullPathWhenOkayIfRelativeDirectoryPathNotFound_ShouldReturnDirectoryFilePath()
     {
         // Arrange
-        string relativePath = NextRelativeName;
+        string relativePath = NextRelativeDirectoryPath;
         string fullFilePath = Path.Combine(CurrentDirectory, relativePath);
 
         // Act/Assert
@@ -143,7 +143,7 @@ public class PathValidatorTests
     public void ValidateFullPathWhenPathContainsInvalidPathCharacters_ShouldThrowException(string invalidChar)
     {
         // Arrange
-        string filePath = $"{VolumeRoot}{Path.DirectorySeparatorChar}x{invalidChar}x";
+        string filePath = $"{VolumeRootPath}x{invalidChar}x";
 
         // Act/Assert
         AssertException(filePath,
@@ -180,8 +180,8 @@ public class PathValidatorTests
     public void ValidateFullPathWhenRequiredAbsoluteDirectoryPathExists_ShouldReturnAbsoluteDirectoryPath()
     {
         // Arrange
-        string absolutePath = NextAbsoluteName;
-        CreateTestFiles(absolutePath, true);
+        string absolutePath = NextAbsoluteDirectoryPath;
+        CreateTestDirectory(absolutePath);
 
         // Act/Assert
         AssertValidCall(absolutePath,
@@ -191,14 +191,14 @@ public class PathValidatorTests
                         true);
 
         // Cleanup
-        DeleteTestFiles(absolutePath);
+        DeleteTestDirectory(absolutePath);
     }
 
     [Fact]
     public void ValidateFullPathWhenRequiredAbsoluteDirectoryPathNotFound_ShouldThrowException()
     {
         // Arrange
-        string absolutePath = NextAbsoluteName;
+        string absolutePath = NextAbsoluteDirectoryPath;
         string expectedMessage = FormatMessage(MsgDirectoryNotFound, absolutePath);
 
         // Act/Assert
@@ -213,8 +213,8 @@ public class PathValidatorTests
     public void ValidateFullPathWhenRequiredAbsoluteFilePathExists_ShouldReturnAbsoluteFilePath()
     {
         // Arrange
-        string absolutePath = NextAbsoluteName;
-        string fileName = CreateTestFiles(absolutePath);
+        string absolutePath = NextAbsoluteDirectoryPath;
+        string fileName = CreateTestFile(absolutePath);
         string filePath = Path.Combine(absolutePath, fileName);
 
         // Act/Assert
@@ -225,7 +225,7 @@ public class PathValidatorTests
                         true);
 
         // Cleanup
-        DeleteTestFiles(absolutePath);
+        DeleteTestDirectory(absolutePath);
     }
 
     [Fact]
@@ -247,9 +247,9 @@ public class PathValidatorTests
     public void ValidateFullPathWhenRequiredRelativeDirectoryPathExists_ShouldReturnFullDirectoryPath()
     {
         // Arrange
-        string relativePath = NextRelativeName;
+        string relativePath = NextRelativeDirectoryPath;
         string fullDirectoryPath = Path.Combine(CurrentDirectory, relativePath);
-        CreateTestFiles(fullDirectoryPath, true);
+        CreateTestDirectory(fullDirectoryPath);
 
         // Act/Assert
         AssertValidCall(relativePath,
@@ -259,14 +259,14 @@ public class PathValidatorTests
                         true);
 
         // Cleanup
-        DeleteTestFiles(fullDirectoryPath);
+        DeleteTestDirectory(fullDirectoryPath);
     }
 
     [Fact]
     public void ValidateFullPathWhenRequiredRelativeDirectoryPathNotFound_ShouldThrowException()
     {
         // Arrange
-        string relativePath = NextRelativeName;
+        string relativePath = NextRelativeDirectoryPath;
         string fullDirectoryPath = Path.Combine(CurrentDirectory, relativePath);
         string expectedMessage = FormatMessage(MsgDirectoryNotFound, fullDirectoryPath);
 
@@ -282,9 +282,9 @@ public class PathValidatorTests
     public void ValidateFullPathWhenRequiredRelativeFilePathExists_ShouldReturnFullFilePath()
     {
         // Arrange
-        string relativePath = NextRelativeName;
+        string relativePath = NextRelativeDirectoryPath;
         string fullDirectoryPath = Path.Combine(CurrentDirectory, relativePath);
-        string fileName = CreateTestFiles(fullDirectoryPath);
+        string fileName = CreateTestFile(fullDirectoryPath);
         string filePath = Path.Combine(relativePath, fileName);
         string fullFilePath = Path.Combine(CurrentDirectory, filePath);
 
@@ -296,7 +296,7 @@ public class PathValidatorTests
                         true);
 
         // Cleanup
-        DeleteTestFiles(fullDirectoryPath);
+        DeleteTestDirectory(fullDirectoryPath);
     }
 
     [Fact]
@@ -320,7 +320,7 @@ public class PathValidatorTests
     public void ValidatePathWhenDirectoryPathContainsInvalidPathCharacters_ShouldThrowException(string invalidChar)
     {
         // Arrange
-        string filePath = $"{VolumeRoot}{Path.DirectorySeparatorChar}x{invalidChar}x{Path.DirectorySeparatorChar}{NextFileName}";
+        string filePath = $"{VolumeRootPath}x{invalidChar}x{Path.DirectorySeparatorChar}{NextFileName}";
 
         // Act/Assert
         AssertException(filePath,
@@ -350,7 +350,7 @@ public class PathValidatorTests
     public void ValidatePathWhenFileNameContainsInvalidFileNameCharacters_ShouldThrowException(string invalidChar)
     {
         // Arrange
-        string filePath = $"{NextAbsoluteName}{Path.DirectorySeparatorChar}x{invalidChar}x.test";
+        string filePath = $"{NextAbsoluteDirectoryPath}{Path.DirectorySeparatorChar}x{invalidChar}x.test";
 
         // Act/Assert
         AssertException(filePath,
@@ -365,7 +365,7 @@ public class PathValidatorTests
     public void ValidatePathWhenFileNameIsEmptyOrWhitespace_ShouldThrowException(string whitespace)
     {
         // Arrange
-        string filePath = $"{NextAbsoluteName}{Path.DirectorySeparatorChar}{whitespace}";
+        string filePath = $"{NextAbsoluteDirectoryPath}{Path.DirectorySeparatorChar}{whitespace}";
 
         // Act/Assert
         AssertException(filePath,
@@ -391,7 +391,7 @@ public class PathValidatorTests
     public void ValidatePathWhenOkayIfAbsoluteDirectoryPathNotFound_ShouldNotThrowException()
     {
         // Act/Assert
-        AssertValidCall(NextAbsoluteName,
+        AssertValidCall(NextAbsoluteDirectoryPath,
                         false,
                         false,
                         string.Empty,
@@ -413,7 +413,7 @@ public class PathValidatorTests
     public void ValidatePathWhenOkayIfRelativeDirectoryPathNotFound_ShouldNotThrowException()
     {
         // Act/Assert
-        AssertValidCall(NextRelativeName,
+        AssertValidCall(NextRelativeDirectoryPath,
                         false,
                         false,
                         string.Empty,
@@ -436,7 +436,7 @@ public class PathValidatorTests
     public void ValidatePathWhenPathContainsInvalidPathCharacters_ShouldThrowException(string invalidChar)
     {
         // Arrange
-        string filePath = $"{VolumeRoot}{Path.DirectorySeparatorChar}x{invalidChar}x";
+        string filePath = $"{VolumeRootPath}x{invalidChar}x";
 
         // Act/Assert
         AssertException(filePath,
@@ -473,8 +473,8 @@ public class PathValidatorTests
     public void ValidatePathWhenRequiredAbsoluteDirectoryPathExists_ShouldNotThrowException()
     {
         // Arrange
-        string path = NextAbsoluteName;
-        CreateTestFiles(path, true);
+        string path = NextAbsoluteDirectoryPath;
+        CreateTestDirectory(path);
 
         // Act/Assert
         AssertValidCall(path,
@@ -484,14 +484,14 @@ public class PathValidatorTests
                         false);
 
         // Cleanup
-        DeleteTestFiles(path);
+        DeleteTestDirectory(path);
     }
 
     [Fact]
     public void ValidatePathWhenRequiredAbsoluteDirectoryPathNotFound_ShouldThrowException()
     {
         // Arrange
-        string path = NextAbsoluteName;
+        string path = NextAbsoluteDirectoryPath;
         string expectedMessage = FormatMessage(MsgDirectoryNotFound, path);
 
         // Act/Assert
@@ -506,8 +506,8 @@ public class PathValidatorTests
     public void ValidatePathWhenRequiredAbsoluteFilePathExists_ShouldNotThrowException()
     {
         // Arrange
-        string absolutePath = NextAbsoluteName;
-        string fileName = CreateTestFiles(absolutePath);
+        string absolutePath = NextAbsoluteDirectoryPath;
+        string fileName = CreateTestFile(absolutePath);
         string filePath = Path.Combine(absolutePath, fileName);
 
         // Act/Assert
@@ -518,7 +518,7 @@ public class PathValidatorTests
                         false);
 
         // Cleanup
-        DeleteTestFiles(absolutePath);
+        DeleteTestDirectory(absolutePath);
     }
 
     [Fact]
@@ -540,9 +540,9 @@ public class PathValidatorTests
     public void ValidatePathWhenRequiredRelativeDirectoryPathExists_ShouldNotThrowException()
     {
         // Arrange
-        string relativePath = NextRelativeName;
+        string relativePath = NextRelativeDirectoryPath;
         string fullDirectoryPath = Path.Combine(CurrentDirectory, relativePath);
-        CreateTestFiles(fullDirectoryPath, true);
+        CreateTestDirectory(fullDirectoryPath);
 
         // Act/Assert
         AssertValidCall(relativePath,
@@ -552,14 +552,14 @@ public class PathValidatorTests
                         false);
 
         // Cleanup
-        DeleteTestFiles(fullDirectoryPath);
+        DeleteTestDirectory(fullDirectoryPath);
     }
 
     [Fact]
     public void ValidatePathWhenRequiredRelativeDirectoryPathNotFound_ShouldThrowException()
     {
         // Arrange
-        string relativePath = NextRelativeName;
+        string relativePath = NextRelativeDirectoryPath;
         string fullDirectoryPath = Path.Combine(CurrentDirectory, relativePath);
         string expectedMessage = FormatMessage(MsgDirectoryNotFound, fullDirectoryPath);
 
@@ -575,9 +575,9 @@ public class PathValidatorTests
     public void ValidatePathWhenRequiredRelativeFilePathExists_ShouldNotThrowException()
     {
         // Arrange
-        string relativePath = NextRelativeName;
+        string relativePath = NextRelativeDirectoryPath;
         string fullDirectoryPath = Path.Combine(CurrentDirectory, relativePath);
-        string fileName = CreateTestFiles(fullDirectoryPath);
+        string fileName = CreateTestFile(fullDirectoryPath);
         string filePath = Path.Combine(relativePath, fileName);
 
         // Act/Assert
@@ -588,7 +588,7 @@ public class PathValidatorTests
                         false);
 
         // Cleanup
-        DeleteTestFiles(fullDirectoryPath);
+        DeleteTestDirectory(fullDirectoryPath);
     }
 
     [Fact]

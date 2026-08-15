@@ -19,7 +19,7 @@ public class LocaterTests
     }
 
     [Theory]
-    [InlineData("", 0)]
+    [InlineData(EmptyString, 0)]
     [InlineData("Segment1", 5)]
     public void Location_ShouldReturnCurrentSegmentAndLineNumber(string expectedSegmentName, int expectedLineNumber)
     {
@@ -45,7 +45,7 @@ public class LocaterTests
     }
 
     [Theory]
-    [InlineData("", 0)]
+    [InlineData(EmptyString, 0)]
     [InlineData("Segment1", 42)]
     public void Reset_ShouldResetCurrentSegmentAndLineNumber(string initialSegmentName, int initialLineNumber)
     {
@@ -95,7 +95,7 @@ public class LocaterTests
 
     [Theory]
     [InlineData("Segment1", 42)]
-    [InlineData("", 42)]
+    [InlineData(EmptyString, 42)]
     [InlineData("Segment1", 0)]
     public void IsEmpty_ShouldReturnFalseWhenLocationIsNotEmpty(string segmentName, int lineNumber)
     {
@@ -131,7 +131,7 @@ public class LocaterTests
     }
 
     [Theory]
-    [InlineData("", 0, "")]
+    [InlineData(EmptyString, 0, EmptyString)]
     [InlineData("Segment1", 42, "Segment1[42]")]
     public void ToString_ShouldReturnFormattedString(string segmentName, int lineNumber, string expected)
     {

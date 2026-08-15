@@ -122,7 +122,7 @@ internal class FileAndDirectoryService : IFileAndDirectoryService
         }
         catch (Exception ex)
         {
-            string message = FormatMessage(MsgUnableToCreateDirectory, directoryPath);
+            string message = FormatMessage(MsgUnableToCreateDirectory, directoryPath ?? string.Empty);
             throw new FileAndDirectoryServiceException(message, ex);
         }
 

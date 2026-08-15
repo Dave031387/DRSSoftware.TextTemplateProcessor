@@ -11,7 +11,7 @@ public class FileAndDirectoryServiceTests
     {
         // Arrange
         FileAndDirectoryService service = new();
-        string path = NextAbsoluteName;
+        string path = NextAbsoluteDirectoryPath;
 
         // Act
         Action action = () => service.ClearDirectory(path);
@@ -30,7 +30,7 @@ public class FileAndDirectoryServiceTests
     {
         // Arrange
         FileAndDirectoryService service = new();
-        string path = NextAbsoluteName;
+        string path = NextAbsoluteDirectoryPath;
         CreateTestFiles(path, 3);
 
         // Act
@@ -45,7 +45,7 @@ public class FileAndDirectoryServiceTests
             .BeEmpty();
 
         // Cleanup
-        DeleteTestFiles(path);
+        DeleteTestDirectory(path);
     }
 
     [Fact]
@@ -53,8 +53,8 @@ public class FileAndDirectoryServiceTests
     {
         // Arrange
         FileAndDirectoryService service = new();
-        string path = NextAbsoluteName;
-        CreateTestFiles(path, true);
+        string path = NextAbsoluteDirectoryPath;
+        CreateTestDirectory(path);
 
         // Act
         Action action = () => service.ClearDirectory(TemplateDirectoryPath);
@@ -68,7 +68,7 @@ public class FileAndDirectoryServiceTests
             .BeTrue();
 
         // Cleanup
-        DeleteTestFiles(path);
+        DeleteTestDirectory(path);
     }
 
     [Fact]
@@ -76,7 +76,7 @@ public class FileAndDirectoryServiceTests
     {
         // Arrange
         FileAndDirectoryService service = new();
-        string absolutePath = NextAbsoluteName;
+        string absolutePath = NextAbsoluteDirectoryPath;
         string fileName = NextFileName;
         string expected = $@"{absolutePath}{Path.DirectorySeparatorChar}{fileName}";
 
@@ -94,7 +94,7 @@ public class FileAndDirectoryServiceTests
     {
         // Arrange
         FileAndDirectoryService service = new();
-        string relativePath = NextRelativeName;
+        string relativePath = NextRelativeDirectoryPath;
         string fileName = NextFileName;
         string expected = $@"{relativePath}{Path.DirectorySeparatorChar}{fileName}";
 
@@ -119,7 +119,7 @@ public class FileAndDirectoryServiceTests
         void action() => service.CombinePaths(null!, fileName);
 
         // Assert
-        AssertException<FileAndDirectoryServiceException>((Action)action, expectedMessage);
+        AssertException<FileAndDirectoryServiceException>(action, expectedMessage);
     }
 
     [Fact]
@@ -134,6 +134,64 @@ public class FileAndDirectoryServiceTests
         void action() => service.CombinePaths(fileName, null!);
 
         // Assert
-        AssertException<FileAndDirectoryServiceException>((Action)action, expectedMessage);
+        AssertException<FileAndDirectoryServiceException>(action, expectedMessage);
+    }
+
+    [Theory]
+    [InlineData(EmptyString, EmptyString)]
+    [InlineData(Whitespace, Whitespace)]
+    [InlineData(EmptyString, Whitespace)]
+    [InlineData(Whitespace, EmptyString)]
+    public void CreateDirectoryWhenDirectoryPathAndRootDirectoryAreBothEmptyOrWhitespace_ShouldReturnCurrentWorkingDirectory(string directoryPath, string rootDirectory)
+    {
+        // Arrange
+        FileAndDirectoryService service = new();
+        string expected = CurrentDirectory;
+
+        // Act
+        string actual = service.CreateDirectory(directoryPath, rootDirectory);
+
+        // Assert
+        actual
+            .Should()
+            .Be(expected);
+    }
+
+    [Fact]
+    public void CreateDirectoryWhenDirectoryPathIsEmptyAndRootDirectoryIsNotEmpty_ShouldReturnRootDirectory()
+    {
+        // Arrange
+        FileAndDirectoryService service = new();
+        string rootDirectory = NextAbsoluteDirectoryPath;
+        string expected = rootDirectory;
+
+        // Act
+        string actual = service.CreateDirectory(EmptyString, rootDirectory);
+
+        // Assert
+        actual
+            .Should()
+            .Be(expected);
+        Directory.Exists(rootDirectory)
+            .Should()
+            .BeTrue();
+
+        // Cleanup
+        DeleteTestDirectory(rootDirectory);
+    }
+
+    [Fact]
+    public void CreateDirectoryWhenDirectoryPathIsNull_ShouldThrowException()
+    {
+        // Arrange
+        FileAndDirectoryService service = new();
+        string expectedInnerMessage = MsgNullDirectoryPath;
+        string expectedOuterMessage = FormatMessage(MsgUnableToCreateDirectory, string.Empty);
+
+        // Act
+        void action() => service.CreateDirectory(null!);
+
+        // Assert
+        AssertException<FileAndDirectoryServiceException>(action, expectedInnerMessage, expectedOuterMessage);
     }
 }
