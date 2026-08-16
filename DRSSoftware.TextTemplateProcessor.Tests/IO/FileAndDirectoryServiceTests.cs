@@ -78,7 +78,7 @@ public class FileAndDirectoryServiceTests
         FileAndDirectoryService service = new();
         string absolutePath = NextAbsoluteDirectoryPath;
         string fileName = NextFileName;
-        string expected = $@"{absolutePath}{Path.DirectorySeparatorChar}{fileName}";
+        string expected = $"{absolutePath}{Path.DirectorySeparatorChar}{fileName}";
 
         // Act
         string actual = service.CombinePaths(absolutePath, fileName);
@@ -96,7 +96,7 @@ public class FileAndDirectoryServiceTests
         FileAndDirectoryService service = new();
         string relativePath = NextRelativeDirectoryPath;
         string fileName = NextFileName;
-        string expected = $@"{relativePath}{Path.DirectorySeparatorChar}{fileName}";
+        string expected = $"{relativePath}{Path.DirectorySeparatorChar}{fileName}";
 
         // Act
         string actual = service.CombinePaths(relativePath, fileName);
@@ -158,7 +158,7 @@ public class FileAndDirectoryServiceTests
     }
 
     [Fact]
-    public void CreateDirectoryWhenDirectoryPathIsEmptyAndRootDirectoryIsNotEmpty_ShouldReturnRootDirectory()
+    public void CreateDirectoryWhenDirectoryPathIsEmptyAndRootDirectoryIsAbsolutePath_ShouldReturnRootDirectory()
     {
         // Arrange
         FileAndDirectoryService service = new();
@@ -178,6 +178,29 @@ public class FileAndDirectoryServiceTests
 
         // Cleanup
         DeleteTestDirectory(rootDirectory);
+    }
+
+    [Fact]
+    public void CreateDirectoryWhenDirectoryPathIsEmptyAndRootDirectoryIsRelativePath_ShouldReturnRootDirectory()
+    {
+        // Arrange
+        FileAndDirectoryService service = new();
+        string rootDirectory = NextRelativeDirectoryPath;
+        string expected = Path.Combine(CurrentDirectory, rootDirectory);
+
+        // Act
+        string actual = service.CreateDirectory(EmptyString, rootDirectory);
+
+        // Assert
+        actual
+            .Should()
+            .Be(expected);
+        Directory.Exists(expected)
+            .Should()
+            .BeTrue();
+
+        // Cleanup
+        DeleteTestDirectory(expected);
     }
 
     [Fact]

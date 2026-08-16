@@ -14,38 +14,25 @@ internal class PathValidator : IPathValidator
     /// <param name="isFilePath">
     /// Indicates whether the <paramref name="path" /> argument is a file path (
     /// <see langword="true" />) or a directory path ( <see langword="false" />). The default if not
-    /// specified is directory path ( <see langword="false" />).
+    /// specified is <see langword="false" />.
     /// </param>
     /// <param name="shouldExist">
     /// Indicates whether or not the file or directory must already exist. The default if not
     /// specified is <see langword="false" /> (doesn't have to exist).
     /// </param>
     /// <returns>
-    /// The full path if <paramref name="path" /> represents a valid path string. Otherwise, returns
-    /// an empty string.
+    /// The full path if <paramref name="path" /> represents a valid path string.
     /// </returns>
     /// <exception cref="PathValidatorException">
     /// Exception is thrown if <paramref name="path" /> isn't valid or if the path doesn't exist and
     /// <paramref name="shouldExist" /> is set to <see langword="true" />.
     /// </exception>
-    public string ValidateFullPath(string path, bool isFilePath = false, bool shouldExist = false)
+    public string ValidatePath(string path, bool isFilePath = false, bool shouldExist = false)
     {
-        path = CheckForNullOrEmpty(path, isFilePath);
-        GetDirectoryAndFileNameParts(path, isFilePath, out string directoryPart, out string fileNamePart);
-        CheckDirectoryPath(directoryPart);
+        ValidatePathString(path, isFilePath, out string directoryPart, out string fileNamePart);
 
         string fullDirectoryPath = GetFullDirectoryPath(directoryPart);
-        string fullPath;
-
-        if (isFilePath)
-        {
-            CheckFileName(fileNamePart);
-            fullPath = Path.Combine(fullDirectoryPath, fileNamePart);
-        }
-        else
-        {
-            fullPath = fullDirectoryPath;
-        }
+        string fullPath = Path.Combine(fullDirectoryPath, fileNamePart);
 
         if (shouldExist)
         {
@@ -53,45 +40,6 @@ internal class PathValidator : IPathValidator
         }
 
         return fullPath;
-    }
-
-    /// <summary>
-    /// Validates a path string to verify that it represents a valid directory path or file path.
-    /// <br /> Also, optionally validates that the directory or file exists if requested.
-    /// </summary>
-    /// <param name="path">
-    /// A file path or directory path to be validated.
-    /// </param>
-    /// <param name="isFilePath">
-    /// Indicates whether the <paramref name="path" /> argument is a file path (
-    /// <see langword="true" />) or a directory path ( <see langword="false" />). The default if not
-    /// specified is directory path ( <see langword="false" />).
-    /// </param>
-    /// <param name="shouldExist">
-    /// Indicates whether or not the file or directory must already exist. The default if not
-    /// specified is <see langword="false" /> (doesn't have to exist).
-    /// </param>
-    /// <exception cref="PathValidatorException">
-    /// Exception is thrown if <paramref name="path" /> isn't valid or if the path doesn't exist and
-    /// <paramref name="shouldExist" /> is set to <see langword="true" />.
-    /// </exception>
-    public void ValidatePath(string path, bool isFilePath = false, bool shouldExist = false)
-    {
-        path = CheckForNullOrEmpty(path, isFilePath);
-        GetDirectoryAndFileNameParts(path, isFilePath, out string directoryPart, out string fileNamePart);
-        CheckDirectoryPath(directoryPart);
-
-        if (isFilePath)
-        {
-            CheckFileName(fileNamePart);
-        }
-
-        if (shouldExist)
-        {
-            string fullPath = Path.IsPathRooted(path) ? path : Path.GetFullPath(path);
-
-            VerifyExists(fullPath, isFilePath);
-        }
     }
 
     /// <summary>
@@ -234,6 +182,40 @@ internal class PathValidator : IPathValidator
         return string.IsNullOrWhiteSpace(directoryPath)
             ? Directory.GetCurrentDirectory()
             : Path.IsPathRooted(directoryPath) ? directoryPath : Path.GetFullPath(directoryPath);
+    }
+
+    /// <summary>
+    /// Validates the given <paramref name="path" /> string to verify that it represents a valid
+    /// directory path or file path.
+    /// </summary>
+    /// <param name="path">
+    /// The path string to validate.
+    /// </param>
+    /// <param name="isFilePath">
+    /// Indicates whether the given <paramref name="path" /> is a file path.
+    /// </param>
+    /// <param name="directoryPart">
+    /// The directory part of the given <paramref name="path" />. Will be empty if
+    /// <paramref name="isFilePath" /> is <see langword="true" /> and the <paramref name="path" />
+    /// doesn't contain a directory part.
+    /// </param>
+    /// <param name="fileNamePart">
+    /// The file name part of the given <paramref name="path" />. Will be empty if
+    /// <paramref name="isFilePath" /> is <see langword="false" />.
+    /// </param>
+    /// <exception cref="PathValidatorException">
+    /// Thrown if the given <paramref name="path" /> is not a valid directory or file path string.
+    /// </exception>
+    private static void ValidatePathString(string path, bool isFilePath, out string directoryPart, out string fileNamePart)
+    {
+        path = CheckForNullOrEmpty(path, isFilePath);
+        GetDirectoryAndFileNameParts(path, isFilePath, out directoryPart, out fileNamePart);
+        CheckDirectoryPath(directoryPart);
+
+        if (isFilePath)
+        {
+            CheckFileName(fileNamePart);
+        }
     }
 
     /// <summary>
