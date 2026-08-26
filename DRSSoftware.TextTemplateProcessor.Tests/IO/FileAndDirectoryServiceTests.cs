@@ -526,8 +526,8 @@ public class FileAndDirectoryServiceTests
         // Arrange
         FileAndDirectoryService service = new();
         string directoryPath = NextAbsoluteDirectoryPath;
-        string[] expected = ["Line 1", "Line 2", "Line 3"];
-        string filePath = CreateTestFile(directoryPath, expected);
+        string[] expected = SampleText;
+        string filePath = CreateTestFile(directoryPath, SampleText);
 
         // Act
         IEnumerable<string> actual = service.ReadTextFile(filePath);
@@ -566,11 +566,11 @@ public class FileAndDirectoryServiceTests
         FileAndDirectoryService service = new();
         string directoryPath = NextAbsoluteDirectoryPath;
         string filePath = Path.Combine(directoryPath, NextFileName);
-        string[] inputText = ["Line 1", "Line 2", "Line 3"];
+        string[] expected = SampleText;
         CreateTestDirectory(directoryPath);
 
         // Act
-        service.WriteTextFile(filePath, inputText);
+        service.WriteTextFile(filePath, SampleText);
 
         // Assert
         File.Exists(filePath)
@@ -579,7 +579,7 @@ public class FileAndDirectoryServiceTests
         string[] actual = File.ReadAllLines(filePath);
         actual
             .Should()
-            .BeEqualTo(inputText);
+            .BeEqualTo(expected);
 
         // Cleanup
         DeleteTestDirectory(directoryPath);
@@ -594,7 +594,7 @@ public class FileAndDirectoryServiceTests
         string expectedInnerMessage = FormatMessage(ArgumentNullMessage, "filePath");
 
         // Act
-        void action() => service.WriteTextFile(null!, ["Line 1", "Line 2"]);
+        void action() => service.WriteTextFile(null!, SampleText);
 
         // Assert
         AssertException<ArgumentNullException, FileAndDirectoryServiceException>(action, expectedInnerMessage, expectedOuterMessage);
