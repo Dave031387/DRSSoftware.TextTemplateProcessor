@@ -18,12 +18,10 @@ internal class MessageWriter : DependencyCheckerBase, IMessageWriter
     /// </exception>
     internal MessageWriter(IConsoleWriter consoleWriter)
     {
-        NullDependencyCheck(consoleWriter,
-                            nameof(MessageWriter),
-                            nameof(IConsoleWriter),
-                            nameof(consoleWriter));
-
-        ConsoleWriter = consoleWriter;
+        ConsoleWriter = NullDependencyCheck(consoleWriter,
+                                            nameof(MessageWriter),
+                                            nameof(IConsoleWriter),
+                                            nameof(consoleWriter));
     }
 
     /// <summary>

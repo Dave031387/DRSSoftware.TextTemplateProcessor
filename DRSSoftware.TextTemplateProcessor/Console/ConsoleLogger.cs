@@ -23,12 +23,10 @@ internal class ConsoleLogger : LoggerBase
     /// </exception>
     internal ConsoleLogger(ILocater locater, IMessageWriter messageWriter) : base(locater)
     {
-        NullDependencyCheck(messageWriter,
-                            nameof(ConsoleLogger),
-                            nameof(IMessageWriter),
-                            nameof(messageWriter));
-
-        MessageWriter = messageWriter;
+        MessageWriter = NullDependencyCheck(messageWriter,
+                                            nameof(ConsoleLogger),
+                                            nameof(IMessageWriter),
+                                            nameof(messageWriter));
     }
 
     /// <summary>

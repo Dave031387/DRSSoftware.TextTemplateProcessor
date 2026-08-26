@@ -8,12 +8,10 @@ internal abstract class LoggerBase : DependencyCheckerBase, ILogger
 {
     internal LoggerBase(ILocater locater)
     {
-        NullDependencyCheck(locater,
-                            nameof(LoggerBase),
-                            nameof(ILocater),
-                            nameof(locater));
-
-        Locater = locater;
+        Locater = NullDependencyCheck(locater,
+                                      nameof(LoggerBase),
+                                      nameof(ILocater),
+                                      nameof(locater));
     }
 
     /// <summary>
