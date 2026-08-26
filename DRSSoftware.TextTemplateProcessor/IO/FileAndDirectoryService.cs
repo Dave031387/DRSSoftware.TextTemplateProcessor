@@ -10,6 +10,11 @@ namespace DRSSoftware.TextTemplateProcessor.IO;
 internal class FileAndDirectoryService : IFileAndDirectoryService
 {
     /// <summary>
+    /// The string constant to be used in messages when a file or directory path is null.
+    /// </summary>
+    private const string NullPath = "null";
+
+    /// <summary>
     /// Clears the contents of the given <paramref name="directoryPath" /> if the directory exists.
     /// </summary>
     /// <param name="directoryPath">
@@ -122,7 +127,7 @@ internal class FileAndDirectoryService : IFileAndDirectoryService
         }
         catch (Exception ex)
         {
-            string message = FormatMessage(MsgUnableToCreateDirectory, directoryPath ?? string.Empty);
+            string message = FormatMessage(MsgUnableToCreateDirectory, directoryPath ?? NullPath);
             throw new FileAndDirectoryServiceException(message, ex);
         }
 
@@ -139,7 +144,7 @@ internal class FileAndDirectoryService : IFileAndDirectoryService
     /// character found in the string.
     /// </remarks>
     /// <param name="path">
-    /// A directory or file path string.
+    /// A file path string.
     /// </param>
     /// <returns>
     /// The directory path string from the <paramref name="path" />, or an empty string if the
@@ -154,11 +159,15 @@ internal class FileAndDirectoryService : IFileAndDirectoryService
 
         int endOfDirectoryName = GetIndexOfLastDirectorySeparatorChar(path);
 
-        return endOfDirectoryName is <= 0
+        return endOfDirectoryName <= 0
             ? string.Empty
-            : endOfDirectoryName is 2 && path[1] == Path.VolumeSeparatorChar
-                ? string.Empty
-                : path[..endOfDirectoryName];
+            : endOfDirectoryName == 2 && path[1] == Path.VolumeSeparatorChar
+                ? path[..3]
+                : path[0] == Path.DirectorySeparatorChar
+                    ? path[1] == Path.DirectorySeparatorChar
+                        ? string.Empty
+                        : path[1..endOfDirectoryName]
+                    : path[..endOfDirectoryName];
     }
 
     /// <summary>
@@ -185,11 +194,13 @@ internal class FileAndDirectoryService : IFileAndDirectoryService
 
         int startOfFileName = GetIndexOfLastDirectorySeparatorChar(path) + 1;
 
-        return startOfFileName is <= 0
-            ? string.Empty
+        return startOfFileName < 1
+            ? path
             : startOfFileName >= path.Length
                 ? string.Empty
-                : path[startOfFileName..];
+                : startOfFileName > 1 && path[..2] == $"{Path.DirectorySeparatorChar}{Path.DirectorySeparatorChar}"
+                    ? string.Empty
+                    : path[startOfFileName..];
     }
 
     /// <summary>
@@ -329,13 +340,13 @@ internal class FileAndDirectoryService : IFileAndDirectoryService
     /// </exception>
     public IEnumerable<string> ReadTextFile(string fullFilePath)
     {
-        if (!File.Exists(fullFilePath))
+        List<string> textLines = [];
+
+        if (string.IsNullOrWhiteSpace(fullFilePath) || !File.Exists(fullFilePath))
         {
-            string message = FormatMessage(MsgFileNotFound, fullFilePath);
+            string message = FormatMessage(MsgFileNotFound, fullFilePath ?? NullPath);
             throw new FileAndDirectoryServiceException(message);
         }
-
-        List<string> textLines = [];
 
         try
         {
@@ -376,6 +387,9 @@ internal class FileAndDirectoryService : IFileAndDirectoryService
     {
         try
         {
+            ArgumentNullException.ThrowIfNull(filePath, nameof(filePath));
+            ArgumentNullException.ThrowIfNull(textLines, nameof(textLines));
+
             using StreamWriter writer = new(filePath);
             foreach (string textLine in textLines)
             {
@@ -384,7 +398,7 @@ internal class FileAndDirectoryService : IFileAndDirectoryService
         }
         catch (Exception ex)
         {
-            string message = FormatMessage(MsgUnableToWriteToTextFile, filePath);
+            string message = FormatMessage(MsgUnableToWriteToTextFile, filePath ?? NullPath);
             throw new FileAndDirectoryServiceException(message, ex);
         }
     }

@@ -137,6 +137,33 @@ public class FileAndDirectoryServiceTests
         AssertException<FileAndDirectoryServiceException>(action, expectedMessage);
     }
 
+    [Fact]
+    public void CreateDirectoryWhenDirectoryPathAndRootDirectoryAreBothAbsolutePaths_ShouldReturnDirectoryPath()
+    {
+        // Arrange
+        FileAndDirectoryService service = new();
+        string directoryPath = NextAbsoluteDirectoryPath;
+        string rootDirectory = NextAbsoluteDirectoryPath;
+        string expected = directoryPath;
+
+        // Act
+        string actual = service.CreateDirectory(directoryPath, rootDirectory);
+
+        // Assert
+        actual
+            .Should()
+            .Be(expected);
+        Directory.Exists(directoryPath)
+            .Should()
+            .BeTrue();
+        Directory.Exists(rootDirectory)
+            .Should()
+            .BeFalse();
+
+        // Cleanup
+        DeleteTestDirectory(directoryPath);
+    }
+
     [Theory]
     [InlineData(EmptyString, EmptyString)]
     [InlineData(Whitespace, Whitespace)]
@@ -155,6 +182,31 @@ public class FileAndDirectoryServiceTests
         actual
             .Should()
             .Be(expected);
+    }
+
+    [Fact]
+    public void CreateDirectoryWhenDirectoryPathAndRootDirectoryAreBothRelativePaths_ShouldReturnCombinedPath()
+    {
+        // Arrange
+        FileAndDirectoryService service = new();
+        string directoryPath = NextRelativeDirectoryPath;
+        string rootDirectory = NextRelativeDirectoryPath;
+        string absoluteRootDirectory = Path.Combine(CurrentDirectory, rootDirectory);
+        string expected = Path.Combine(absoluteRootDirectory, directoryPath);
+
+        // Act
+        string actual = service.CreateDirectory(directoryPath, rootDirectory);
+
+        // Assert
+        actual
+            .Should()
+            .Be(expected);
+        Directory.Exists(expected)
+            .Should()
+            .BeTrue();
+
+        // Cleanup
+        DeleteTestDirectory(absoluteRootDirectory);
     }
 
     [Fact]
@@ -209,12 +261,358 @@ public class FileAndDirectoryServiceTests
         // Arrange
         FileAndDirectoryService service = new();
         string expectedInnerMessage = MsgNullDirectoryPath;
-        string expectedOuterMessage = FormatMessage(MsgUnableToCreateDirectory, string.Empty);
+        string expectedOuterMessage = FormatMessage(MsgUnableToCreateDirectory, "null");
 
         // Act
         void action() => service.CreateDirectory(null!);
 
         // Assert
         AssertException<FileAndDirectoryServiceException>(action, expectedInnerMessage, expectedOuterMessage);
+    }
+
+    [Fact]
+    public void CreateDirectoryWhenDirectoryPathIsRelativeAndRootDirectoryIsNull_ShouldReturnFullDirectoryPath()
+    {
+        // Arrange
+        FileAndDirectoryService service = new();
+        string directoryPath = NextRelativeDirectoryPath;
+        string expected = Path.Combine(CurrentDirectory, directoryPath);
+
+        // Act
+        string actual = service.CreateDirectory(directoryPath);
+
+        // Assert
+        actual
+            .Should()
+            .Be(expected);
+        Directory.Exists(expected)
+            .Should()
+            .BeTrue();
+
+        // Cleanup
+        DeleteTestDirectory(expected);
+    }
+
+    [Theory]
+    [MemberData(nameof(TestData.PathStrings), MemberType = typeof(TestData))]
+    public void GetDirectoryName_ShouldReturnDirectoryName(string? path, string expected, string _)
+    {
+        // Arrange
+        FileAndDirectoryService service = new();
+
+        // Act
+        string actual = service.GetDirectoryName(path!);
+
+        // Assert
+        actual
+            .Should()
+            .Be(expected);
+    }
+
+    [Theory]
+    [MemberData(nameof(TestData.PathStrings), MemberType = typeof(TestData))]
+    public void GetFileName_ShouldReturnFileName(string? path, string _, string expected)
+    {
+        // Arrange
+        FileAndDirectoryService service = new();
+
+        // Act
+        string actual = service.GetFileName(path!);
+
+        // Assert
+        actual
+            .Should()
+            .Be(expected);
+    }
+
+    [Fact]
+    public void GetFullPathWhenDirectoryPathAndRootDirectoryAreBothAbsolutePaths_ShouldReturnDirectoryPath()
+    {
+        // Arrange
+        FileAndDirectoryService service = new();
+        string directoryPath = NextAbsoluteDirectoryPath;
+        string rootDirectory = NextAbsoluteDirectoryPath;
+        string expected = directoryPath;
+
+        // Act
+        string actual = service.GetFullPath(directoryPath, rootDirectory);
+
+        // Assert
+        actual
+            .Should()
+            .Be(expected);
+    }
+
+    [Fact]
+    public void GetFullPathWhenDirectoryPathAndRootDirectoryAreBothRelativePaths_ShouldReturnCombinedPath()
+    {
+        // Arrange
+        FileAndDirectoryService service = new();
+        string directoryPath = NextRelativeDirectoryPath;
+        string rootDirectory = NextRelativeDirectoryPath;
+        string absoluteRootDirectory = Path.Combine(CurrentDirectory, rootDirectory);
+        string expected = Path.Combine(absoluteRootDirectory, directoryPath);
+
+        // Act
+        string actual = service.GetFullPath(directoryPath, rootDirectory);
+
+        // Assert
+        actual
+            .Should()
+            .Be(expected);
+    }
+
+    [Theory]
+    [InlineData(EmptyString, null)]
+    [InlineData(EmptyString, EmptyString)]
+    [InlineData(EmptyString, Whitespace)]
+    [InlineData(Whitespace, null)]
+    [InlineData(Whitespace, EmptyString)]
+    [InlineData(Whitespace, Whitespace)]
+    public void GetFullPathWhenDirectoryPathAndRootDirectoryAreNullOrWhitespace_ShouldReturnCurrentWorkingDirectory(string directoryPath, string? rootDirectory)
+    {
+        // Arrange
+        FileAndDirectoryService service = new();
+        string expected = CurrentDirectory;
+
+        // Act
+        string actual = service.GetFullPath(directoryPath, rootDirectory);
+
+        // Assert
+        actual
+            .Should()
+            .Be(expected);
+    }
+
+    [Theory]
+    [InlineData(null)]
+    [InlineData(EmptyString)]
+    [InlineData(Whitespace)]
+    public void GetFullPathWhenDirectoryPathIsAbsolutePathAndRootDirectoryIsNullOrWhitespace_ShouldReturnDirectoryPath(string? rootDirectory)
+    {
+        // Arrange
+        FileAndDirectoryService service = new();
+        string directoryPath = NextAbsoluteDirectoryPath;
+        string expected = directoryPath;
+
+        // Act
+        string actual = service.GetFullPath(directoryPath, rootDirectory);
+
+        // Assert
+        actual
+            .Should()
+            .Be(expected);
+    }
+
+    [Theory]
+    [InlineData(EmptyString)]
+    [InlineData(Whitespace)]
+    public void GetFullPathWhenDirectoryPathIsEmptyOrWhitespaceAndRootDirectoryIsAbsolutePath_ShouldReturnRootDirectory(string directoryPath)
+    {
+        // Arrange
+        FileAndDirectoryService service = new();
+        string rootDirectory = NextAbsoluteDirectoryPath;
+        string expected = rootDirectory;
+
+        // Act
+        string actual = service.GetFullPath(directoryPath, rootDirectory);
+
+        // Assert
+        actual
+            .Should()
+            .Be(expected);
+    }
+
+    [Fact]
+    public void GetFullPathWhenDirectoryPathIsNull_ShouldThrowException()
+    {
+        // Arrange
+        FileAndDirectoryService service = new();
+        string expectedMessage = MsgNullDirectoryPath;
+
+        // Act
+        void action() => service.GetFullPath(null!);
+
+        // Assert
+        AssertException<FileAndDirectoryServiceException>(action, expectedMessage);
+    }
+
+    [Fact]
+    public void GetFullPathWhenDirectoryPathIsRelativeAndRootDirectoryIsAbsolutePath_ShouldReturnCombinedPath()
+    {
+        // Arrange
+        FileAndDirectoryService service = new();
+        string directoryPath = NextRelativeDirectoryPath;
+        string rootDirectory = NextAbsoluteDirectoryPath;
+        string expected = Path.Combine(rootDirectory, directoryPath);
+
+        // Act
+        string actual = service.GetFullPath(directoryPath, rootDirectory);
+
+        // Assert
+        actual
+            .Should()
+            .Be(expected);
+    }
+
+    [Theory]
+    [InlineData(null)]
+    [InlineData(EmptyString)]
+    [InlineData(Whitespace)]
+    public void GetFullPathWhenDirectoryPathIsRelativeAndRootDirectoryIsNullOrWhitespace_ShouldReturnFullDirectoryPath(string? rootDirectory)
+    {
+        // Arrange
+        FileAndDirectoryService service = new();
+        string directoryPath = NextRelativeDirectoryPath;
+        string expected = Path.Combine(CurrentDirectory, directoryPath);
+
+        // Act
+        string actual = service.GetFullPath(directoryPath, rootDirectory);
+
+        // Assert
+        actual
+            .Should()
+            .Be(expected);
+    }
+
+    [Fact]
+    public void GetFullPathWhenFilePathIsNull_ShouldThrowException()
+    {
+        // Arrange
+        FileAndDirectoryService service = new();
+        string expectedMessage = MsgNullFilePath;
+
+        // Act
+        void action() => service.GetFullPath(null!, null, true);
+
+        // Assert
+        AssertException<FileAndDirectoryServiceException>(action, expectedMessage);
+    }
+
+    [Fact]
+    public void GetSolutionDirectory_ShouldReturnSolutionDirectory()
+    {
+        // Arrange
+        FileAndDirectoryService service = new();
+        string expected = SolutionDirectory;
+
+        // Act
+        string actual = service.GetSolutionDirectory();
+
+        // Assert
+        actual
+            .Should()
+            .Be(expected);
+    }
+
+    [Fact]
+    public void ReadTextFileWhenFileDoesNotExist_ShouldThrowException()
+    {
+        // Arrange
+        FileAndDirectoryService service = new();
+        string filePath = NextAbsoluteFilePath;
+        string expectedMessage = FormatMessage(MsgFileNotFound, filePath);
+
+        // Act
+        void action() => service.ReadTextFile(filePath);
+
+        // Assert
+        AssertException<FileAndDirectoryServiceException>(action, expectedMessage);
+    }
+
+    [Fact]
+    public void ReadTextFileWhenFileExists_ShouldReturnFileContents()
+    {
+        // Arrange
+        FileAndDirectoryService service = new();
+        string directoryPath = NextAbsoluteDirectoryPath;
+        string[] expected = ["Line 1", "Line 2", "Line 3"];
+        string filePath = CreateTestFile(directoryPath, expected);
+
+        // Act
+        IEnumerable<string> actual = service.ReadTextFile(filePath);
+
+        // Assert
+        actual
+            .Should()
+            .BeEqualTo(expected);
+
+        // Cleanup
+        DeleteTestDirectory(directoryPath);
+    }
+
+    [Theory]
+    [InlineData(null)]
+    [InlineData(EmptyString)]
+    [InlineData(Whitespace)]
+    public void ReadTextFileWhenFilePathIsNullOrWhitespace_ShouldThrowException(string? filePath)
+    {
+        // Arrange
+        FileAndDirectoryService service = new();
+        string pathString = filePath is null ? "null" : filePath;
+        string expectedMessage = FormatMessage(MsgFileNotFound, pathString);
+
+        // Act
+        void action() => service.ReadTextFile(filePath!);
+
+        // Assert
+        AssertException<FileAndDirectoryServiceException>(action, expectedMessage);
+    }
+
+    [Fact]
+    public void WriteTextFileUsingValidPathAndInputText_ShouldWriteFileSuccessfully()
+    {
+        // Arrange
+        FileAndDirectoryService service = new();
+        string directoryPath = NextAbsoluteDirectoryPath;
+        string filePath = Path.Combine(directoryPath, NextFileName);
+        string[] inputText = ["Line 1", "Line 2", "Line 3"];
+        CreateTestDirectory(directoryPath);
+
+        // Act
+        service.WriteTextFile(filePath, inputText);
+
+        // Assert
+        File.Exists(filePath)
+            .Should()
+            .BeTrue();
+        string[] actual = File.ReadAllLines(filePath);
+        actual
+            .Should()
+            .BeEqualTo(inputText);
+
+        // Cleanup
+        DeleteTestDirectory(directoryPath);
+    }
+
+    [Fact]
+    public void WriteTextFileWhenFilePathIsNull_ShouldThrowException()
+    {
+        // Arrange
+        FileAndDirectoryService service = new();
+        string expectedOuterMessage = FormatMessage(MsgUnableToWriteToTextFile, "null");
+        string expectedInnerMessage = FormatMessage(ArgumentNullMessage, "filePath");
+
+        // Act
+        void action() => service.WriteTextFile(null!, ["Line 1", "Line 2"]);
+
+        // Assert
+        AssertException<ArgumentNullException, FileAndDirectoryServiceException>(action, expectedInnerMessage, expectedOuterMessage);
+    }
+
+    [Fact]
+    public void WriteTextFileWhenInputTextIsNull_ShouldThrowException()
+    {
+        // Arrange
+        FileAndDirectoryService service = new();
+        string filePath = NextAbsoluteFilePath;
+        string expectedOuterMessage = FormatMessage(MsgUnableToWriteToTextFile, filePath);
+        string expectedInnerMessage = FormatMessage(ArgumentNullMessage, "textLines");
+
+        // Act
+        void action() => service.WriteTextFile(filePath, null!);
+
+        // Assert
+        AssertException<ArgumentNullException, FileAndDirectoryServiceException>(action, expectedInnerMessage, expectedOuterMessage);
     }
 }

@@ -106,13 +106,17 @@ internal class PathValidator : IPathValidator
     {
         if (path is null)
         {
-            string msg = isFilePath ? MsgNullFilePath : MsgNullDirectoryPath;
+            string msg = isFilePath
+                ? MsgNullFilePath
+                : MsgNullDirectoryPath;
             throw new PathValidatorException(msg);
         }
 
         if (string.IsNullOrWhiteSpace(path))
         {
-            string msg = isFilePath ? MsgFilePathIsEmptyOrWhitespace : MsgDirectoryPathIsEmptyOrWhitespace;
+            string msg = isFilePath
+                ? MsgFilePathIsEmptyOrWhitespace
+                : MsgDirectoryPathIsEmptyOrWhitespace;
             throw new PathValidatorException(msg);
         }
 
@@ -148,15 +152,23 @@ internal class PathValidator : IPathValidator
 
         if (indexOfLastSeparator < 0)
         {
-            directoryPart = isFilePath ? string.Empty : pathString;
-            fileNamePart = isFilePath ? pathString : string.Empty;
+            directoryPart = isFilePath
+                ? string.Empty
+                : pathString;
+            fileNamePart = isFilePath
+                ? pathString
+                : string.Empty;
         }
         else
         {
             if (isFilePath)
             {
-                directoryPart = indexOfLastSeparator > 0 ? pathString[..indexOfLastSeparator] : string.Empty;
-                fileNamePart = fileNameStart < pathString.Length ? pathString[fileNameStart..] : string.Empty;
+                directoryPart = indexOfLastSeparator > 0
+                    ? pathString[..indexOfLastSeparator]
+                    : string.Empty;
+                fileNamePart = fileNameStart < pathString.Length
+                    ? pathString[fileNameStart..]
+                    : string.Empty;
             }
             else
             {
@@ -181,7 +193,7 @@ internal class PathValidator : IPathValidator
     {
         return string.IsNullOrWhiteSpace(directoryPath)
             ? Directory.GetCurrentDirectory()
-            : Path.IsPathRooted(directoryPath) ? directoryPath : Path.GetFullPath(directoryPath);
+            : Path.GetFullPath(directoryPath);
     }
 
     /// <summary>
@@ -209,6 +221,14 @@ internal class PathValidator : IPathValidator
     private static void ValidatePathString(string path, bool isFilePath, out string directoryPart, out string fileNamePart)
     {
         path = CheckForNullOrEmpty(path, isFilePath);
+
+        // UNC paths are not supported, so check for that and throw an exception if found.
+        if (path.Length > 1 && path[..2] == $"{Path.DirectorySeparatorChar}{Path.DirectorySeparatorChar}")
+        {
+            string message = FormatMessage(MsgUncPathIsNotSupported, path);
+            throw new PathValidatorException(message);
+        }
+
         GetDirectoryAndFileNameParts(path, isFilePath, out directoryPart, out fileNamePart);
         CheckDirectoryPath(directoryPart);
 

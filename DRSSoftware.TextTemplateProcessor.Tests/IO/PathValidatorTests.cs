@@ -165,6 +165,20 @@ public class PathValidatorTests
     }
 
     [Fact]
+    public void ValidatePathWhenPathIsUncPath_ShouldThrowException()
+    {
+        // Arrange
+        string filePath = $"{Path.DirectorySeparatorChar}{Path.DirectorySeparatorChar}server{Path.DirectorySeparatorChar}share";
+        string expectedMessage = FormatMessage(MsgUncPathIsNotSupported, filePath);
+
+        // Act/Assert
+        AssertException(filePath,
+                        false,
+                        false,
+                        expectedMessage);
+    }
+
+    [Fact]
     public void ValidatePathWhenRequiredAbsoluteDirectoryPathExists_ShouldReturnAbsoluteDirectoryPath()
     {
         // Arrange

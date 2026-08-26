@@ -114,6 +114,7 @@ internal static class Messages
     // internal const string MsgUnableToWriteFile = "Unable to write to output file. {0}";
     // internal const string MsgUnableToWriteGeneratedTextToFile = "Unable to write generated text to file.\nReason: {0}";
     internal const string MsgUnableToWriteToTextFile = "An unexpected exception occurred while attempting to write to text file \"{0}\"";
+    internal const string MsgUncPathIsNotSupported = "UNC paths are not supported in this version of the Text Template Processor. The specified path was \"{0}\"";
     // internal const string MsgUnknownSegmentName = "A request was made to generate segment \"{0}\" but that segment wasn't found in the template file.";
     // internal const string MsgUnknownSegmentOptionFound = "An unknown segment option \"{1}\" was found on segment \"{0}\". It will be ignored.";
     // internal const string MsgUnknownTokenName = "An unknown token name \"{1}\" was supplied for segment \"{0}\". It will be ignored.";
