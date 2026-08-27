@@ -57,12 +57,4 @@ internal interface ILogger
     /// the <paramref name="message" /> parameter.
     /// </param>
     void Log(LogSeverity logSeverity, OperationType operationType, string message, params string[] args);
-
-    /// <summary>
-    /// Write the given <paramref name="logEntry" /> to the log.
-    /// </summary>
-    /// <param name="logEntry">
-    /// The <see cref="LogEntry" /> instance that is to be written out to the log.
-    /// </param>
-    void WriteLogEntry(LogEntry logEntry);
 }

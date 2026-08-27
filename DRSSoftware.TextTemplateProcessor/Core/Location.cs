@@ -28,8 +28,7 @@ internal record Location(string LocationName, int LineNumber)
     /// <returns>
     /// <see langword="true" /> if the location is empty; otherwise, <see langword="false" />.
     /// </returns>
-    public bool IsEmpty
-        => LocationName == Empty.LocationName && LineNumber == Empty.LineNumber;
+    public bool IsEmpty => Equals(Empty);
 
     /// <summary>
     /// Gets the string representation of the current location.

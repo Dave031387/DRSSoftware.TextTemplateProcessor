@@ -32,7 +32,9 @@ internal class Locater : ILocater
     public string CurrentLocationName
     {
         get;
-        set => field = string.IsNullOrWhiteSpace(value) ? Location.Empty.LocationName : value.Trim();
+        set => field = string.IsNullOrWhiteSpace(value)
+            ? Location.Empty.LocationName
+            : value.Trim();
     }
 
     /// <summary>
@@ -43,8 +45,7 @@ internal class Locater : ILocater
     /// <see langword="true" /> if the current location is empty; otherwise,
     /// <see langword="false" />.
     /// </returns>
-    public bool IsEmpty => CurrentLocationName == Location.Empty.LocationName
-        && LineNumber == Location.Empty.LineNumber;
+    public bool IsEmpty => Location.Equals(Location.Empty);
 
     /// <summary>
     /// Gets or sets the current line number of the location that is being processed in the text
@@ -78,7 +79,5 @@ internal class Locater : ILocater
     /// A <see langword="string" /> containing the current location name and line number, or an
     /// empty string if the current location is empty.
     /// </returns>
-    public override string ToString() => IsEmpty
-        ? string.Empty
-        : $"{CurrentLocationName}[{LineNumber}]";
+    public override string ToString() => Location.ToString();
 }

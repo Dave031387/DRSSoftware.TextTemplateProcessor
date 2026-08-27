@@ -39,7 +39,7 @@ internal static class GlobalConstants
     /// <summary>
     /// The string that is used for denoting debug severity level in a log message.
     /// </summary>
-    public const string DebugSeverity = "DEBUG--->";
+    public const string DebugSeverity = "DEBUG::::";
 
     /// <summary>
     /// The default string that is used to indicate the end of a token in a text template file.
@@ -93,7 +93,7 @@ internal static class GlobalConstants
     /// <summary>
     /// The string that is used for denoting error severity level in a log message.
     /// </summary>
-    public const string ErrorSeverity = "ERROR--->";
+    public const string ErrorSeverity = "ERROR::::";
 
     /// <summary>
     /// The string that represents the First Time Indent option.
@@ -103,7 +103,7 @@ internal static class GlobalConstants
     /// <summary>
     /// The string that is used for denoting information severity level in a log message.
     /// </summary>
-    public const string InfoSeverity = "INFO---->";
+    public const string InfoSeverity = "INFO:::::";
 
     /// <summary>
     /// Used in a token to indicate that the first character of the token value should be converted
@@ -209,7 +209,7 @@ internal static class GlobalConstants
     /// <summary>
     /// The string that is used for denoting warning severity level in a log message.
     /// </summary>
-    public const string WarningSeverity = "WARNING->";
+    public const string WarningSeverity = "WARNING::";
 
     /// <summary>
     /// Gets an array of characters that can be used for separating options on a segment header

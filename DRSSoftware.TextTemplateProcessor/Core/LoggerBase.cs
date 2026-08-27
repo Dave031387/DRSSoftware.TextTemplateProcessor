@@ -96,7 +96,7 @@ internal abstract class LoggerBase : DependencyCheckerBase, ILogger
     /// <param name="logEntry">
     /// The <see cref="LogEntry" /> instance that is to be written out to the log.
     /// </param>
-    public abstract void WriteLogEntry(LogEntry logEntry);
+    protected abstract void WriteLogEntry(LogEntry logEntry);
 
     /// <summary>
     /// Creates a <see cref="LogEntry" /> instance to be written to the log.

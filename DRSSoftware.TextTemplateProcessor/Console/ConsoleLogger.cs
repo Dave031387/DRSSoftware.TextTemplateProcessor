@@ -44,5 +44,5 @@ internal class ConsoleLogger : LoggerBase
     /// <param name="logEntry">
     /// The log entry to be written to the console.
     /// </param>
-    public override void WriteLogEntry(LogEntry logEntry) => MessageWriter.WriteLine(logEntry.ToString());
+    protected override void WriteLogEntry(LogEntry logEntry) => MessageWriter.WriteLine(logEntry.ToString());
 }
