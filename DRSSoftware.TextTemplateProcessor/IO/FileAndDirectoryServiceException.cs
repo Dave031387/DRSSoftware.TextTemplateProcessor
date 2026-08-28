@@ -3,6 +3,7 @@
 /// <summary>
 /// This exception class is used for all exceptions related to file path and directory path issues.
 /// </summary>
+[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 [Serializable]
 public class FileAndDirectoryServiceException : Exception
 {

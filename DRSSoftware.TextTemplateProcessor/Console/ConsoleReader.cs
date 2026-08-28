@@ -4,6 +4,7 @@
 /// The <see cref="ConsoleReader" /> class provides a single method for reading user input from the
 /// console.
 /// </summary>
+[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 internal class ConsoleReader : IConsoleReader
 {
     /// <summary>

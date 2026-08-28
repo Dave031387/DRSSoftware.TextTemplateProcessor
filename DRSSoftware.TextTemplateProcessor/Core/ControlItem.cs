@@ -9,6 +9,7 @@
 /// Each <see cref="ControlItem" /> object is associated with a single segment in the text template
 /// file. This segment is called the associated segment.
 /// </remarks>
+[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 internal class ControlItem
 {
     internal ControlItem(int firstTimeIndent, string padSegment, int tabSize)

@@ -4,6 +4,7 @@
 /// The <see cref="ConsoleWriter" /> class provides a single method for writing a string of text to
 /// the console.
 /// </summary>
+[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 internal class ConsoleWriter : IConsoleWriter
 {
     /// <summary>

@@ -4,6 +4,7 @@
 /// This exception class is used for all exceptions thrown by the <see cref="PathValidator" />
 /// class.
 /// </summary>
+[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 [Serializable]
 public class PathValidatorException : Exception
 {

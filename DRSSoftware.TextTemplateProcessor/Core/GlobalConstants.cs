@@ -10,6 +10,7 @@ namespace DRSSoftware.TextTemplateProcessor.Core;
 /// This static class defines certain constant values and fixed properties that are used throughout
 /// the Text Template Processor application.
 /// </summary>
+[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 internal static class GlobalConstants
 {
     /// <summary>

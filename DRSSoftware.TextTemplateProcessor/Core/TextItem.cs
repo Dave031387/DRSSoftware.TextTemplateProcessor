@@ -26,4 +26,5 @@
 /// This is the text from a single line of the text template file, including any optional
 /// placeholder tokens.
 /// </param>
+[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 internal record TextItem(int Indent, bool IsRelative, bool IsOneTime, string Text);
