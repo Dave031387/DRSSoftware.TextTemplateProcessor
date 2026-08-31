@@ -32,7 +32,7 @@ internal interface ILogger
     /// An array of <see langword="string" /> values to be substituted for the format arguments in
     /// the <paramref name="message" /> parameter.
     /// </param>
-    void Log(LogSeverity logSeverity, string message, params string[] args);
+    void Log(LogSeverity logSeverity, string message, params string?[] args);
 
     /// <summary>
     /// Formats a new log entry and writes it to the log.
@@ -56,5 +56,5 @@ internal interface ILogger
     /// An array of <see langword="string" /> values to be substituted for the format arguments in
     /// the <paramref name="message" /> parameter.
     /// </param>
-    void Log(LogSeverity logSeverity, OperationType operationType, string message, params string[] args);
+    void Log(LogSeverity logSeverity, OperationType operationType, string message, params string?[] args);
 }

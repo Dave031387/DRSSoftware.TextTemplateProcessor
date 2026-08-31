@@ -54,7 +54,7 @@ internal abstract class LoggerBase : DependencyCheckerBase, ILogger
     /// An array of <see langword="string" /> values to be substituted for the format arguments in
     /// the <paramref name="message" /> parameter.
     /// </param>
-    public void Log(LogSeverity logSeverity, string message, params string[] args)
+    public void Log(LogSeverity logSeverity, string message, params string?[] args)
     {
         LogEntry logEntry = CreateLogEntry(logSeverity, CurrentOperationType, message, args);
 
@@ -83,7 +83,7 @@ internal abstract class LoggerBase : DependencyCheckerBase, ILogger
     /// An array of <see langword="string" /> values to be substituted for the format arguments in
     /// the <paramref name="message" /> parameter.
     /// </param>
-    public void Log(LogSeverity logSeverity, OperationType operationType, string message, params string[] args)
+    public void Log(LogSeverity logSeverity, OperationType operationType, string message, params string?[] args)
     {
         LogEntry logEntry = CreateLogEntry(logSeverity, operationType, message, args);
 
@@ -119,7 +119,7 @@ internal abstract class LoggerBase : DependencyCheckerBase, ILogger
     /// A <see cref="LogEntry" /> object representing the log message that is to be written to the
     /// log.
     /// </returns>
-    private LogEntry CreateLogEntry(LogSeverity logSeverity, OperationType operationType, string message, params string[] args)
+    private LogEntry CreateLogEntry(LogSeverity logSeverity, OperationType operationType, string message, params string?[] args)
     {
         Location location = operationType switch
         {

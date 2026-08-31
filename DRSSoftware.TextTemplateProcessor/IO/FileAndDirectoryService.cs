@@ -127,7 +127,7 @@ internal class FileAndDirectoryService : IFileAndDirectoryService
         }
         catch (Exception ex)
         {
-            string message = FormatMessage(MsgUnableToCreateDirectory, directoryPath ?? NullPath);
+            string message = FormatMessage(MsgUnableToCreateDirectory, directoryPath);
             throw new FileAndDirectoryServiceException(message, ex);
         }
 
@@ -236,16 +236,16 @@ internal class FileAndDirectoryService : IFileAndDirectoryService
     /// </exception>
     public string GetFullPath(string path, string? rootPath = null, bool isFilePath = false)
     {
-        if (path is null)
-        {
-            string msg = isFilePath ? MsgNullFilePath : MsgNullDirectoryPath;
-            throw new FileAndDirectoryServiceException(msg);
-        }
-
         string fullPath;
 
         try
         {
+            if (path is null)
+            {
+                string msg = isFilePath ? MsgNullFilePath : MsgNullDirectoryPath;
+                throw new FileAndDirectoryServiceException(msg);
+            }
+
             fullPath = string.IsNullOrWhiteSpace(path)
                 ? string.IsNullOrWhiteSpace(rootPath)
                     ? Directory.GetCurrentDirectory()
@@ -341,15 +341,15 @@ internal class FileAndDirectoryService : IFileAndDirectoryService
     public IEnumerable<string> ReadTextFile(string fullFilePath)
     {
         List<string> textLines = [];
-
-        if (string.IsNullOrWhiteSpace(fullFilePath) || !File.Exists(fullFilePath))
-        {
-            string message = FormatMessage(MsgFileNotFound, fullFilePath ?? NullPath);
-            throw new FileAndDirectoryServiceException(message);
-        }
-
+        
         try
         {
+            if (string.IsNullOrWhiteSpace(fullFilePath) || !File.Exists(fullFilePath))
+            {
+                string message = FormatMessage(MsgFileNotFound, fullFilePath);
+                throw new FileAndDirectoryServiceException(message);
+            }
+
             using StreamReader reader = new(fullFilePath);
             while (!reader.EndOfStream)
             {
@@ -398,7 +398,7 @@ internal class FileAndDirectoryService : IFileAndDirectoryService
         }
         catch (Exception ex)
         {
-            string message = FormatMessage(MsgUnableToWriteToTextFile, filePath ?? NullPath);
+            string message = FormatMessage(MsgUnableToWriteToTextFile, filePath);
             throw new FileAndDirectoryServiceException(message, ex);
         }
     }

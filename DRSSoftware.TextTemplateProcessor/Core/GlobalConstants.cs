@@ -1,5 +1,4 @@
 ﻿using System.Runtime.CompilerServices;
-using DRSSoftware.TextTemplateProcessor.Console;
 
 [assembly: InternalsVisibleTo("DRSSoftware.TextTemplateProcessor.Tests")]
 [assembly: InternalsVisibleTo("DynamicProxyGenAssembly2")]
@@ -141,6 +140,12 @@ internal static class GlobalConstants
     /// Character used to indicate a normal indent (as opposed to a one-time indent).
     /// </summary>
     public const string Normal = "@";
+
+    /// <summary>
+    /// String value that is used to represent a null value when one is encountered while processing
+    /// a text template file.
+    /// </summary>
+    public const string NullStringValue = "!!NULL!!";
 
     /// <summary>
     /// Character used to indicate a one-time indent (as opposed to a normal indent).

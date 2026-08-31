@@ -43,6 +43,6 @@ internal class MessageWriter : DependencyCheckerBase, IMessageWriter
     /// <param name="args">
     /// Zero or more arguments to use for formatting the message.
     /// </param>
-    public void WriteLine(string message, params string[] args)
+    public void WriteLine(string message, params string?[] args)
         => ConsoleWriter.WriteLine(FormatMessage(message, args));
 }

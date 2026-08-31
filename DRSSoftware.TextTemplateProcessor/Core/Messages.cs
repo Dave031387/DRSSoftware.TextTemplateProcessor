@@ -25,7 +25,7 @@ internal static class Messages
     internal const string MsgFileNotFound = "The specified file was not found. Full file path: {0}";
     internal const string MsgFilePathIsEmptyOrWhitespace = "The file path must not be empty or contain only whitespace.";
     // internal const string MsgFileSuccessfullyRead = "The text template file has been successfully read.";
-    // internal const string MsgFirstTimeIndentHasBeenTruncated = "The calculated first time indent for segment \"{0}\" went negative. It will be set to zero.";
+    internal const string MsgFirstTimeIndentHasBeenTruncated = "The calculated first time indent for segment {0} went negative. It will be set to zero.";
     // internal const string MsgFirstTimeIndentIsInvalid = "The First Time Indent for segment \"{0}\" must be a number between -9 and 9. The value found was \"{1}\"";
     // internal const string MsgFirstTimeIndentSetToZero = "Found a First Time Indent option value of zero for segment \"{0}\". This value disables the First Time Indent processing.";
     // internal const string MsgFoundDuplicateOptionNameOnHeaderLine = "The option \"{1}\" appears more than once for segment \"{0}\". Only the first occurrence will be used.";
@@ -36,8 +36,8 @@ internal static class Messages
     // internal const string MsgGeneratedTextHasBeenReset = "The generated text cache for template file \"{0}\" has been reset.";
     // internal const string MsgGeneratedTextIsEmpty = "The generated text is empty. Unable to write to output file \"{0}\"";
     // internal const string MsgGeneratedTextIsNull = "Unable to write to the output file because the generated text is null.";
-    // internal const string MsgIndentValueMustBeValidNumber = "The indent value \"{0}\" is not a valid integer value.";
-    // internal const string MsgIndentValueOutOfRange = "The FTI option value must be a number between -9 and 9. The value given was {0}.";
+    internal const string MsgIndentValueMustBeValidNumber = "The specified indent value \"{0}\" is not a valid integer value.";
+    internal const string MsgIndentValueOutOfRange = "The indent value must be a number between -9 and 9 but the specified value was {0}.";
     // internal const string MsgInvalidControlCode = "The following template line doesn't begin with a valid control code:\n{0}\n^^^";
     internal const string MsgInvalidDirectoryCharacters = "The directory path contains invalid characters.";
     internal const string MsgInvalidFileNameCharacters = "The file name contains invalid characters.";
@@ -45,7 +45,7 @@ internal static class Messages
     // internal const string MsgInvalidPadSegmentName = "\"{1}\" is not a valid name for the PAD option for segment \"{0}\". It will be ignored.";
     // internal const string MsgInvalidSegmentName = "\"{0}\" is not a valid segment name. The default name \"{1}\" will be used instead.";
     // internal const string MsgInvalidTabSizeOption = "The Tab Size option for segment \"{0}\" was invalid and will be ignored.";
-    // internal const string MsgLeftIndentHasBeenTruncated = "The calculated line indent for segment \"{0}\" went negative. It will be set to zero.";
+    internal const string MsgLeftIndentHasBeenTruncated = "The calculated line indent for segment {0} went negative. It will be set to zero.";
     // internal const string MsgLoadingTemplateFile = "Loading template file \"{0}\"";
     // internal const string MsgMinimumLineLengthInTemplateFileIs3 = "All lines in the template file must be at least 3 characters long.";
     // internal const string MsgMissingDirectoryPath = "The specified file path doesn't contain a valid directory path.";
@@ -72,10 +72,10 @@ internal static class Messages
     // internal const string MsgSegmentNameIsMissing = "The segment name is missing on the segment header. The default name \"{0}\" will be used instead.\nSegment header: {1}\n                    ^";
     // internal const string MsgSegmentNameIsNullOrWhitespace = "The segment name passed into the GenerateSegment method was null, empty or whitespace.";
     // internal const string MsgSegmentNameMustStartInColumn5 = "The segment name must start in column 5 of the segment header line. The default name \"{0}\" will be used instead.\n{1}\n    ^";
-    // internal const string MsgTabSizeTooLarge = "The requested tab size is too large. The maximum value \"{0}\" will be used.";
-    // internal const string MsgTabSizeTooSmall = "The requested tab size is too small. The minimum value \"{0}\" will be used.";
-    // internal const string MsgTabSizeValueMustBeValidNumber = "The tab size value \"{0}\" is not a valid integer value.";
-    // internal const string MsgTabSizeValueOutOfRange = "The tab size must be an integer between 1 and 9, but the specified value was \"{0}\".";
+    internal const string MsgTabSizeTooLarge = "The requested tab size {0} is too large. The maximum value {1} will be used.";
+    internal const string MsgTabSizeTooSmall = "The requested tab size {0} is too small. The minimum value {1} will be used.";
+    internal const string MsgTabSizeValueMustBeValidNumber = "The specified tab size value \"{0}\" is not a valid integer value.";
+    internal const string MsgTabSizeValueOutOfRange = "The tab size must be an integer between 1 and 9, but the specified value was {0}.";
     // internal const string MsgTemplateFileIsEmpty = "This template file is empty: {0}";
     // internal const string MsgTemplateFilePathNotSet = "Unable to load the template file because a valid file path has not been set.";
     // internal const string MsgTemplateHasBeenReset = "The environment for template file \"{0}\" has been reset.";
@@ -133,8 +133,15 @@ internal static class Messages
     /// <returns>
     /// The formatted version of <paramref name="message"/> having all format items replaced with the appropriate string values.
     /// </returns>
-    internal static string FormatMessage(string message, params string[] strings)
-        => HasFormatItems(message)
+    internal static string FormatMessage(string message, params string?[] strings)
+    {
+        for (int i = 0; i < strings.Length; i++)
+        {
+            strings[i] = strings[i] ?? NullStringValue;
+        }
+
+        return HasFormatItems(message)
             ? string.Format(message, strings)
             : message;
+    }
 }
