@@ -135,9 +135,11 @@ internal static class Messages
     /// </returns>
     internal static string FormatMessage(string message, params string?[] strings)
     {
+        strings ??= [null];
+
         for (int i = 0; i < strings.Length; i++)
         {
-            strings[i] = strings[i] ?? NullStringValue;
+            strings[i] ??= NullStringValue;
         }
 
         return HasFormatItems(message)

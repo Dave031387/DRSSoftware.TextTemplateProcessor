@@ -798,7 +798,7 @@ public class IndentProcessorTests
     [InlineData("")]
     [InlineData("abc")]
     [InlineData("1x")]
-    public void IsValidIndentValue_ShouldLogMessageAndReturnsFalseWhenNumberStringIsInvalid(string? numberString)
+    public void IsValidIndentValue_ShouldLogMessageAndReturnFalseWhenNumberStringIsInvalid(string? numberString)
     {
         // Arrange
         InitializeMocks();
