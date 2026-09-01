@@ -237,10 +237,10 @@ internal class IndentProcessor : DependencyCheckerBase, IIndentProcessor
         {
             Logger.Log(LogSeverity.Error,
                        MsgTabSizeValueMustBeValidNumber,
-                       stringValue.Trim());
+                       stringValue);
         }
 
-        tabSize = 0;
+        tabSize = DefaultTabSize;
         return false;
     }
 

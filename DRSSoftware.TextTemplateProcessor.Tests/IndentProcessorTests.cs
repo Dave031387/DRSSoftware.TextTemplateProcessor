@@ -805,10 +805,10 @@ public class IndentProcessorTests
         LoggerMock
             .Setup(logger => logger.Log(LogSeverity.Error, MsgIndentValueMustBeValidNumber, numberString))
             .Verifiable(Times.Once);
-        IndentProcessor processor = GetIndentProcessor();
+        IndentProcessor indentProcessor = GetIndentProcessor();
 
         // Act
-        bool isValid = processor.IsValidIndentValue(numberString!, out int actual);
+        bool isValid = indentProcessor.IsValidIndentValue(numberString!, out int actual);
 
         // Assert
         isValid
@@ -820,13 +820,298 @@ public class IndentProcessorTests
         VerifyMocks();
     }
 
-    private static void SetCurrentIndent(IndentProcessor processor, int indent)
+    [Theory]
+    [InlineData("-12")]
+    [InlineData("-11")]
+    [InlineData("-10")]
+    [InlineData("10")]
+    [InlineData("11")]
+    [InlineData("12")]
+    public void IsValidIndentValue_ShouldLogMessageAndReturnFalseWhenValueIsOutOfRange(string numberString)
+    {
+        // Arrange
+        InitializeMocks();
+        LoggerMock
+            .Setup(logger => logger.Log(LogSeverity.Error, MsgIndentValueOutOfRange, numberString))
+            .Verifiable(Times.Once);
+        IndentProcessor indentProcessor = GetIndentProcessor();
+
+        // Act
+        bool isValid = indentProcessor.IsValidIndentValue(numberString, out int actual);
+
+        // Assert
+        isValid
+            .Should()
+            .BeFalse();
+        actual
+            .Should()
+            .Be(0);
+        VerifyMocks();
+    }
+
+    [Theory]
+    [InlineData("-9", -9)]
+    [InlineData("  -8", -8)]
+    [InlineData("-7  ", -7)]
+    [InlineData("0", 0)]
+    [InlineData("7", 7)]
+    [InlineData("  8  ", 8)]
+    [InlineData("9", 9)]
+    public void IsValidIndentValue_ShouldParseValueAndReturnTrueWhenNumberStringIsValid(string numberString, int expected)
+    {
+        // Arrange
+        InitializeMocks();
+        IndentProcessor indentProcessor = GetIndentProcessor();
+
+        // Act
+        bool isValid = indentProcessor.IsValidIndentValue(numberString, out int actual);
+
+        // Assert
+        isValid
+            .Should()
+            .BeTrue();
+        actual
+            .Should()
+            .Be(expected);
+        MocksVerifyNoOtherCalls();
+    }
+
+    [Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    [InlineData("nine")]
+    [InlineData("3 4")]
+    public void IsValidTabSizeValue_ShouldLogMessageAndReturnFalseWhenNumberStringIsInvalid(string? numberString)
+    {
+        // Arrange
+        InitializeMocks();
+        LoggerMock
+            .Setup(logger => logger.Log(LogSeverity.Error, MsgTabSizeValueMustBeValidNumber, numberString))
+            .Verifiable(Times.Once);
+        IndentProcessor indentProcessor = GetIndentProcessor();
+
+        // Act
+        bool isValid = indentProcessor.IsValidTabSizeValue(numberString!, out int actual);
+
+        // Assert
+        isValid
+            .Should()
+            .BeFalse();
+        actual
+            .Should()
+            .Be(DefaultTabSize);
+        VerifyMocks();
+    }
+
+    [Theory]
+    [InlineData("-2")]
+    [InlineData("-1")]
+    [InlineData("0")]
+    [InlineData("10")]
+    [InlineData("11")]
+    [InlineData("12")]
+    public void IsValidTabSizeValue_ShouldLogMessageAndReturnsFalseWhenValueIsOutOfRange(string numberString)
+    {
+        // Arrange
+        InitializeMocks();
+        LoggerMock
+            .Setup(logger => logger.Log(LogSeverity.Error, MsgTabSizeValueOutOfRange, numberString))
+            .Verifiable(Times.Once);
+        IndentProcessor indentProcessor = GetIndentProcessor();
+
+        // Act
+        bool isValid = indentProcessor.IsValidTabSizeValue(numberString, out int actual);
+
+        // Assert
+        isValid
+            .Should()
+            .BeFalse();
+        actual
+            .Should()
+            .Be(DefaultTabSize);
+        VerifyMocks();
+    }
+
+    [Theory]
+    [InlineData("1", 1)]
+    [InlineData(" 2", 2)]
+    [InlineData("3", 3)]
+    [InlineData("7 ", 7)]
+    [InlineData("8", 8)]
+    [InlineData(" 9 ", 9)]
+    public void IsValidTabSizeValue_ShouldParseValueAndReturnTrueWhenNumberStringIsValid(string numberString, int expected)
+    {
+        // Arrange
+        InitializeMocks();
+        IndentProcessor indentProcessor = GetIndentProcessor();
+
+        // Act
+        bool isValid = indentProcessor.IsValidTabSizeValue(numberString, out int actual);
+
+        // Assert
+        isValid
+            .Should()
+            .BeTrue();
+        actual
+            .Should()
+            .Be(expected);
+        MocksVerifyNoOtherCalls();
+    }
+
+    [Fact]
+    public void Reset_ShouldResetCurrentIndentAndTabSize()
+    {
+        // Arrange
+        InitializeMocks();
+        IndentProcessor indentProcessor = GetIndentProcessor();
+        SetCurrentIndent(indentProcessor, 4);
+        indentProcessor.SetTabSize(DefaultTabSize + 2);
+
+        // Act
+        indentProcessor.Reset();
+
+        // Assert
+        indentProcessor.CurrentIndent
+            .Should()
+            .Be(0);
+        indentProcessor.TabSize
+            .Should()
+            .Be(DefaultTabSize);
+        MocksVerifyNoOtherCalls();
+    }
+
+    [Fact]
+    public void RestoreCurrentState_ShouldDoNothingWhenNoStateIsSaved()
+    {
+        // Arrange
+        InitializeMocks();
+        IndentProcessor indentProcessor = GetIndentProcessor();
+        int expectedTabSize = DefaultTabSize + 1;
+        int tabCount = 3;
+        indentProcessor.SetTabSize(expectedTabSize);
+        SetCurrentIndent(indentProcessor, tabCount);
+        int expectedCurrentIndent = tabCount * expectedTabSize;
+
+        // Act
+        indentProcessor.RestoreCurrentState();
+
+        // Assert
+        indentProcessor.TabSize
+            .Should()
+            .Be(expectedTabSize);
+        indentProcessor.CurrentIndent
+            .Should()
+            .Be(expectedCurrentIndent);
+        MocksVerifyNoOtherCalls();
+    }
+
+    [Fact]
+    public void RestoreCurrentState_ShouldRestoreSavedState()
+    {
+        // Arrange (part 1) - change tab size and current indent and save the current state
+        IndentProcessor indentProcessor = GetIndentProcessor();
+        int expectedTabSize = DefaultTabSize + 1;
+        int tabCount = 3;
+        indentProcessor.SetTabSize(expectedTabSize);
+        SetCurrentIndent(indentProcessor, tabCount);
+        indentProcessor.SaveCurrentState();
+
+        // Arrange (part 2) - change tab size and current indent to new values
+        InitializeMocks();
+        SetCurrentIndent(indentProcessor, tabCount + 2);
+        indentProcessor.SetTabSize(DefaultTabSize - 1);
+        int expectedCurrentIndent = tabCount * expectedTabSize;
+
+        // Act
+        indentProcessor.RestoreCurrentState();
+
+        // Assert
+        indentProcessor.TabSize
+            .Should()
+            .Be(expectedTabSize);
+        indentProcessor.CurrentIndent
+            .Should()
+            .Be(expectedCurrentIndent);
+        MocksVerifyNoOtherCalls();
+    }
+
+    [Theory]
+    [InlineData(10)]
+    [InlineData(11)]
+    [InlineData(12)]
+    public void SetTabSize_ShouldLogMessageAndSetTabSizeToMaximumWhenValueIsTooLarge(int tabSize)
+    {
+        // Arrange
+        InitializeMocks();
+        int expectedTabSize = MaxTabSize;
+        LoggerMock
+            .Setup(logger => logger.Log(LogSeverity.Warning, MsgTabSizeTooLarge, tabSize.ToString(), expectedTabSize.ToString()))
+            .Verifiable(Times.Once);
+        IndentProcessor indentProcessor = GetIndentProcessor();
+
+        // Act
+        indentProcessor.SetTabSize(tabSize);
+
+        // Assert
+        indentProcessor.TabSize
+            .Should()
+            .Be(expectedTabSize);
+        VerifyMocks();
+    }
+
+    [Theory]
+    [InlineData(0)]
+    [InlineData(-1)]
+    [InlineData(-2)]
+    public void SetTabSize_ShouldLogMessageAndSetTabSizeToMinimumWhenValueIsTooSmall(int tabSize)
+    {
+        // Arrange
+        InitializeMocks();
+        int expectedTabSize = MinTabSize;
+        LoggerMock
+            .Setup(logger => logger.Log(LogSeverity.Warning, MsgTabSizeTooSmall, tabSize.ToString(), expectedTabSize.ToString()))
+            .Verifiable(Times.Once);
+        IndentProcessor indentProcessor = GetIndentProcessor();
+
+        // Act
+        indentProcessor.SetTabSize(tabSize);
+
+        // Assert
+        indentProcessor.TabSize
+            .Should()
+            .Be(expectedTabSize);
+        VerifyMocks();
+    }
+
+    [Theory]
+    [InlineData(1)]
+    [InlineData(2)]
+    [InlineData(5)]
+    [InlineData(8)]
+    [InlineData(9)]
+    public void SetTabSize_ShouldSetTabSizeToValueWhenValueIsWithinValidRange(int expectedTabSize)
+    {
+        // Arrange
+        InitializeMocks();
+        IndentProcessor indentProcessor = GetIndentProcessor();
+
+        // Act
+        indentProcessor.SetTabSize(expectedTabSize);
+
+        // Assert
+        indentProcessor.TabSize
+            .Should()
+            .Be(expectedTabSize);
+        MocksVerifyNoOtherCalls();
+    }
+
+    private static void SetCurrentIndent(IndentProcessor indentProcessor, int indent)
     {
         TextItem textItem = new(indent,
                                 false,
                                 false,
                                 EmptyString);
-        processor.GetIndent(textItem);
+        indentProcessor.GetIndent(textItem);
     }
 
     private IndentProcessor GetIndentProcessor()
