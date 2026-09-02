@@ -12,21 +12,24 @@
 [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 internal class ControlItem
 {
-    internal ControlItem(int firstTimeIndent, string padSegment, int tabSize)
+    /// <summary>
+    /// Creates a new instance of the <see cref="ControlItem" /> class with default values.
+    /// </summary>
+    internal ControlItem()
     {
-        FirstTimeIndent = firstTimeIndent;
-        PadSegment = string.IsNullOrWhiteSpace(padSegment) ? string.Empty : padSegment;
-        TabSize = tabSize;
+        FirstTimeIndent = 0;
+        PadSegment = string.Empty;
+        TabSize = 0;
         IsFirstTime = true;
     }
 
     /// <summary>
-    /// Gets an integer value indicating how many tab stops the first line of the associated segment
+    /// Gets or sets an integer value indicating how many tab stops the first line of the associated segment
     /// should be indented the first time the segment is processed.
     /// </summary>
     internal int FirstTimeIndent
     {
-        get; init;
+        get; set;
     }
 
     /// <summary>
@@ -39,7 +42,7 @@ internal class ControlItem
     }
 
     /// <summary>
-    /// Gets the name of the pad segment that should be inserted ahead of the associated segment on
+    /// Gets or sets the name of the pad segment that should be inserted ahead of the associated segment on
     /// the second and subsequent times the associated segment is processed.
     /// </summary>
     /// <remarks>
@@ -48,11 +51,11 @@ internal class ControlItem
     /// </remarks>
     internal string PadSegment
     {
-        get; init;
+        get; set;
     }
 
     /// <summary>
-    /// Gets a value indicating whether or not the pad segment should be inserted the next time the
+    /// Gets or sets a value indicating whether or not the pad segment should be inserted the next time the
     /// associated segment is processed.
     /// </summary>
     /// <remarks>
@@ -66,6 +69,6 @@ internal class ControlItem
     /// </summary>
     internal int TabSize
     {
-        get; init;
+        get; set;
     }
 }

@@ -153,6 +153,12 @@ internal static class GlobalConstants
     public const string OneTime = "O";
 
     /// <summary>
+    /// Represents the character value used to separate an option name from its value in a segment
+    /// header line in a text template file.
+    /// </summary>
+    public const char OptionValueSeparator = '=';
+
+    /// <summary>
     /// The string that represents the Pad Segment Name option.
     /// </summary>
     public const string PadSegmentNameOption = "PAD";
@@ -205,6 +211,11 @@ internal static class GlobalConstants
     /// The string that represents the Tab Size option.
     /// </summary>
     public const string TabSizeOption = "TAB";
+
+    /// <summary>
+    /// The string that represents an unknown or missing segment name.
+    /// </summary>
+    public const string UnknownSegmentName = "UnknownSegment";
 
     /// <summary>
     /// Used in a token to indicate that the first character of the token value should be converted

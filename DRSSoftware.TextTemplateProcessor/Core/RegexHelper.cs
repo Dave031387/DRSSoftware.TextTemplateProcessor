@@ -253,6 +253,20 @@ internal static partial class RegexHelper
         => name is not null && ValidNameRegex().IsMatch(name);
 
     /// <summary>
+    /// Gets a value indicating whether or not the given <paramref name="option" /> is a valid
+    /// segment header option.
+    /// </summary>
+    /// <param name="option">
+    /// The segment header option to be validated.
+    /// </param>
+    /// <returns>
+    /// <see langword="true" /> if <paramref name="option" /> is a valid segment header option;
+    /// otherwise, <see langword="false" />.
+    /// </returns>
+    public static bool IsValidSegmentHeaderOption(string option)
+        => ValidSegmentHeaderOption().IsMatch(option);
+
+    /// <summary>
     /// Gets a <see cref="Regex" /> object used for matching text lines that begin with an absolute
     /// indent indicator string.
     /// </summary>
@@ -428,4 +442,15 @@ internal static partial class RegexHelper
     /// </returns>
     [GeneratedRegex($@"^({AnyLetter})({AnyLetter}|{AnyDigit}|_)*$", RegexOptions.Compiled | RegexOptions.IgnoreCase)]
     private static partial Regex ValidNameRegex();
+
+    /// <summary>
+    /// Gets a <see cref="Regex" /> object used for validating segment header options on a segment
+    /// header line.
+    /// </summary>
+    /// <returns>
+    /// A <see cref="Regex" /> object used for validating segment header options on a segment header
+    /// line.
+    /// </returns>
+    [GeneratedRegex($"^(({FirstTimeIndentOption})|({PadSegmentNameOption})|({TabSizeOption}))$", RegexOptions.Compiled)]
+    private static partial Regex ValidSegmentHeaderOption();
 }
