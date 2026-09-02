@@ -37,6 +37,11 @@ internal enum OperationType
     Reset,
 
     /// <summary>
+    /// Identifies operations pertaining to the status of the text template processing.
+    /// </summary>
+    Status,
+
+    /// <summary>
     /// Identifies operations pertaining to user interactions while processing the text template
     /// file.
     /// </summary>

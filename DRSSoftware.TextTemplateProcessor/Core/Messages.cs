@@ -17,6 +17,7 @@ internal static class Messages
     internal const string MsgDirectoryNotFound = "The specified directory was not found. Directory path: {0}";
     internal const string MsgDirectoryPathIsEmptyOrWhitespace = "The directory path must not be empty or contain only whitespace.";
     internal const string MsgDynamicallyGeneratedAssembliesNotSupported = "Dynamically-generated assemblies are not supported by the Text Template Processor.";
+    internal const string MsgErrorCount = "  Errors: {0}";
     // internal const string MsgErrorWhenClearingOutputDirectory = "An unexpected error occurred while trying to clear the output directory. {0}";
     // internal const string MsgErrorWhenCreatingOutputDirectory = "An unexpected error occurred when creating the output directory. {0}";
     // internal const string MsgErrorWhenLocatingSolutionDirectory = "An unexpected error occurred while trying to locate the solution directory. {0}";
@@ -65,6 +66,7 @@ internal static class Messages
     // internal const string MsgPadSegmentNameSameAsSegmentHeaderName = "The PAD segment name and segment header name for segment \"{0}\" are identical. The PAD segment name will be ignored.";
     // internal const string MsgPathIsNotRooted = "Expected a rooted path, but found \"{0}\"";
     // internal const string MsgProcessingSegment = "Processing segment \"{0}\"...";
+    internal const string MsgProcessingSummary = "Processing summary:";
     // internal const string MsgRootPathIsNull = "The root directory path must not be null.";
     // internal const string MsgSegmentHasBeenAdded = "Segment \"{0}\" has been added to the control dictionary.";
     // internal const string MsgSegmentHasBeenReset = "Segment \"{0}\" has been reset.";
@@ -118,6 +120,7 @@ internal static class Messages
     // internal const string MsgUnknownSegmentName = "A request was made to generate segment \"{0}\" but that segment wasn't found in the template file.";
     // internal const string MsgUnknownSegmentOptionFound = "An unknown segment option \"{1}\" was found on segment \"{0}\". It will be ignored.";
     // internal const string MsgUnknownTokenName = "An unknown token name \"{1}\" was supplied for segment \"{0}\". It will be ignored.";
+    internal const string MsgWarningCount = "  Warnings: {0}";
     // internal const string MsgWritingTextFile = "Writing generated text to file \"{0}\"";
     // internal const string MsgYesNoPrompt = "Enter Y (yes) or N (no)...";
 

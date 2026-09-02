@@ -6,6 +6,13 @@
 /// </summary>
 internal abstract class LoggerBase : DependencyCheckerBase, ILogger
 {
+    /// <summary>
+    /// Creates a new instance of the <see cref="LoggerBase" /> class.
+    /// </summary>
+    /// <param name="locater">
+    /// An <see cref="ILocater" /> object that is used to locate the current position in the text
+    /// template file.
+    /// </param>
     internal LoggerBase(ILocater locater)
     {
         Locater = NullDependencyCheck(locater,
@@ -26,6 +33,24 @@ internal abstract class LoggerBase : DependencyCheckerBase, ILogger
         get;
         set;
     } = DefaultOperationType;
+
+    /// <summary>
+    /// Gets the number of error messages that have been written to the log.
+    /// </summary>
+    public int ErrorCount
+    {
+        get;
+        protected set;
+    }
+
+    /// <summary>
+    /// Gets the number of warning messages that have been written to the log.
+    /// </summary>
+    public int WarningCount
+    {
+        get;
+        protected set;
+    }
 
     /// <summary>
     /// An <see cref="ILocater" /> object that is used to locate the current position in the text
@@ -59,6 +84,7 @@ internal abstract class LoggerBase : DependencyCheckerBase, ILogger
         LogEntry logEntry = CreateLogEntry(logSeverity, CurrentOperationType, message, args);
 
         WriteLogEntry(logEntry);
+        UpdateCounters(logSeverity);
     }
 
     /// <summary>
@@ -88,6 +114,34 @@ internal abstract class LoggerBase : DependencyCheckerBase, ILogger
         LogEntry logEntry = CreateLogEntry(logSeverity, operationType, message, args);
 
         WriteLogEntry(logEntry);
+        UpdateCounters(logSeverity);
+    }
+
+    /// <summary>
+    /// Logs a processing summary that includes the counts of errors and warnings.
+    /// </summary>
+    /// <remarks>
+    /// Writes three informational log entries with OperationType.Status: a header line and separate
+    /// lines for the current ErrorCount and WarningCount.
+    /// </remarks>
+    public void LogProcessingSummary()
+    {
+        Log(LogSeverity.Information, OperationType.Status, MsgProcessingSummary);
+        Log(LogSeverity.Information, OperationType.Status, MsgErrorCount, ErrorCount.ToString());
+        Log(LogSeverity.Information, OperationType.Status, MsgWarningCount, WarningCount.ToString());
+    }
+
+    /// <summary>
+    /// Resets the error and warning counters to zero.
+    /// </summary>
+    /// <remarks>
+    /// This operation should typically be performed after completing the processing of a text
+    /// template file, so that the counters are ready for the next file to be processed.
+    /// </remarks>
+    public void ResetCounters()
+    {
+        ErrorCount = 0;
+        WarningCount = 0;
     }
 
     /// <summary>
@@ -132,5 +186,30 @@ internal abstract class LoggerBase : DependencyCheckerBase, ILogger
         string formattedMessage = FormatMessage(message, args);
 
         return new(logSeverity, operationType, location, formattedMessage);
+    }
+
+    /// <summary>
+    /// Update the error and warning counters based on the given <paramref name="logSeverity" />.
+    /// </summary>
+    /// <param name="logSeverity">
+    /// The severity level of the log message.
+    /// </param>
+    private void UpdateCounters(LogSeverity logSeverity)
+    {
+        switch (logSeverity)
+        {
+            case LogSeverity.Error:
+                ErrorCount++;
+                break;
+
+            case LogSeverity.Warning:
+                WarningCount++;
+                break;
+
+            case LogSeverity.Debug:
+            case LogSeverity.Information:
+            default:
+                break;
+        }
     }
 }
