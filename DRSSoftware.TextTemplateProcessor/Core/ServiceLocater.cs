@@ -13,11 +13,14 @@ internal static class ServiceLocater
     private static readonly IContainer _container = ContainerBuilder.GetInstance("DRS_TTP")
         .AddSingleton<IConsoleReader, ConsoleReader>()
         .AddSingleton<IConsoleWriter, ConsoleWriter>()
+        .AddSingleton<IControlItemBuilder, ControlItemBuilder>()
         .AddSingleton<IFileAndDirectoryService, FileAndDirectoryService>()
+        .AddSingleton<IIndentProcessor, IndentProcessor>()
         .AddSingleton<ILocater, Locater>()
         .AddSingleton<ILogger, ConsoleLogger>()
         .AddSingleton<IMessageWriter, MessageWriter>()
         .AddSingleton<IPathValidator, PathValidator>()
+        .AddSingleton<ISegmentHeaderParser, SegmentHeaderParser>()
         .Build();
 
     /// <summary>

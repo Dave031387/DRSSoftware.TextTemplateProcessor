@@ -45,7 +45,7 @@ internal static class Messages
     internal const string MsgInvalidFormOfOption = "Segment options must follow the form \"option=value\" with no intervening spaces. Found \"{1}\" on the \"{0}\" segment header.";
     internal const string MsgInvalidPadSegmentName = "\"{1}\" is not a valid name for the PAD option for segment \"{0}\". It will be ignored.";
     internal const string MsgInvalidSegmentName = "\"{0}\" is not a valid segment name. The segment will be ignored.";
-    internal const string MsgInvalidTabSizeOption = "The Tab Size option for segment \"{0}\" was invalid and will be ignored.";
+    internal const string MsgInvalidTabSizeOption = "The Tab Size option value \"{1}\" for segment \"{0}\" was invalid and will be ignored.";
     internal const string MsgLeftIndentHasBeenTruncated = "The calculated line indent for segment {0} went negative. It will be set to zero.";
     // internal const string MsgLoadingTemplateFile = "Loading template file \"{0}\"";
     // internal const string MsgMinimumLineLengthInTemplateFileIs3 = "All lines in the template file must be at least 3 characters long.";

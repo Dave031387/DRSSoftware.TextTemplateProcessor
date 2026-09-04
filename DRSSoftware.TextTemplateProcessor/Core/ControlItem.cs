@@ -19,17 +19,19 @@ internal class ControlItem
     {
         FirstTimeIndent = 0;
         PadSegment = string.Empty;
+        SegmentName = string.Empty;
         TabSize = 0;
         IsFirstTime = true;
     }
 
     /// <summary>
-    /// Gets or sets an integer value indicating how many tab stops the first line of the associated segment
-    /// should be indented the first time the segment is processed.
+    /// Gets or sets an integer value indicating how many tab stops the first line of the associated
+    /// segment should be indented the first time the segment is processed.
     /// </summary>
     internal int FirstTimeIndent
     {
-        get; set;
+        get;
+        init;
     }
 
     /// <summary>
@@ -38,12 +40,13 @@ internal class ControlItem
     /// </summary>
     internal bool IsFirstTime
     {
-        get; set;
+        get;
+        set;
     }
 
     /// <summary>
-    /// Gets or sets the name of the pad segment that should be inserted ahead of the associated segment on
-    /// the second and subsequent times the associated segment is processed.
+    /// Gets or sets the name of the pad segment that should be inserted ahead of the associated
+    /// segment on the second and subsequent times the associated segment is processed.
     /// </summary>
     /// <remarks>
     /// This property will be an empty string if nothing should be inserted ahead of the associated
@@ -51,12 +54,22 @@ internal class ControlItem
     /// </remarks>
     internal string PadSegment
     {
-        get; set;
+        get;
+        init;
     }
 
     /// <summary>
-    /// Gets or sets a value indicating whether or not the pad segment should be inserted the next time the
-    /// associated segment is processed.
+    /// Gets or sets the name of the segment that this control item object belongs to.
+    /// </summary>
+    internal string SegmentName
+    {
+        get;
+        init;
+    }
+
+    /// <summary>
+    /// Gets or sets a value indicating whether or not the pad segment should be inserted the next
+    /// time the associated segment is processed.
     /// </summary>
     /// <remarks>
     /// Returns <see langword="true" /> only when a valid pad segment has been specified and the
@@ -69,6 +82,7 @@ internal class ControlItem
     /// </summary>
     internal int TabSize
     {
-        get; set;
+        get;
+        init;
     }
 }

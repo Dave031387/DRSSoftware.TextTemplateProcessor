@@ -10,12 +10,11 @@ internal class SegmentHeaderParser : DependencyCheckerBase, ISegmentHeaderParser
     /// Constructor that creates an instance of the <see cref="SegmentHeaderParser" /> class and
     /// initializes dependencies.
     /// </summary>
+    /// <param name="controlItemBuilder">
+    /// A reference to a control item builder object used for creating control item objects.
+    /// </param>
     /// <param name="logger">
     /// A reference to a logger object used for logging messages.
-    /// </param>
-    /// <param name="locater">
-    /// A reference to a locater object for keeping track of the current location being processed
-    /// within a text template file.
     /// </param>
     /// <param name="indentProcessor">
     /// A reference to an indent processor object used for managing line indentation in the
@@ -25,18 +24,17 @@ internal class SegmentHeaderParser : DependencyCheckerBase, ISegmentHeaderParser
     /// Exception is thrown if any of the dependencies passed into the constructor are
     /// <see langword="null" />.
     /// </exception>
-    internal SegmentHeaderParser(IIndentProcessor indentProcessor,
-                                 ILocater locater,
+    internal SegmentHeaderParser(IControlItemBuilder controlItemBuilder, IIndentProcessor indentProcessor,
                                  ILogger logger)
     {
+        ControlItemBuilder = NullDependencyCheck(controlItemBuilder,
+                                                 nameof(SegmentHeaderParser),
+                                                 nameof(IControlItemBuilder),
+                                                 nameof(controlItemBuilder));
         IndentProcessor = NullDependencyCheck(indentProcessor,
                                               nameof(SegmentHeaderParser),
                                               nameof(IIndentProcessor),
                                               nameof(indentProcessor));
-        Locater = NullDependencyCheck(locater,
-                                      nameof(SegmentHeaderParser),
-                                      nameof(ILocater),
-                                      nameof(locater));
         Logger = NullDependencyCheck(logger,
                                      nameof(SegmentHeaderParser),
                                      nameof(ILogger),
@@ -44,17 +42,17 @@ internal class SegmentHeaderParser : DependencyCheckerBase, ISegmentHeaderParser
     }
 
     /// <summary>
-    /// Gets a reference to the indent processor service.
+    /// Gets a reference to the control item builder service.
     /// </summary>
-    private IIndentProcessor IndentProcessor
+    private IControlItemBuilder ControlItemBuilder
     {
         get; init;
     }
 
     /// <summary>
-    /// Gets a reference to the locater service.
+    /// Gets a reference to the indent processor service.
     /// </summary>
-    private ILocater Locater
+    private IIndentProcessor IndentProcessor
     {
         get; init;
     }
@@ -79,30 +77,28 @@ internal class SegmentHeaderParser : DependencyCheckerBase, ISegmentHeaderParser
     /// </returns>
     public ControlItem ParseSegmentHeader(string headerLine)
     {
-        ControlItem controlItem = new();
-
-        Locater.CurrentLocationName = string.Empty;
+        ControlItemBuilder.Initialize();
 
         if (headerLine.Length < 5 || headerLine[4] == ' ')
         {
-            Locater.CurrentLocationName = UnknownSegmentName;
+            ControlItemBuilder.SegmentName = UnknownSegmentName;
             Logger.Log(LogSeverity.Error,
                        MsgSegmentNameIsMissing);
         }
 
         string[] args = headerLine.Split(OptionSeparatorChars, StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
 
-        if (string.IsNullOrEmpty(Locater.CurrentLocationName))
+        if (string.IsNullOrEmpty(ControlItemBuilder.SegmentName))
         {
             string segmentName = args[1];
 
             if (IsValidName(segmentName))
             {
-                Locater.CurrentLocationName = segmentName;
+                ControlItemBuilder.SegmentName = segmentName;
             }
             else
             {
-                Locater.CurrentLocationName = UnknownSegmentName;
+                ControlItemBuilder.SegmentName = UnknownSegmentName;
                 Logger.Log(LogSeverity.Error,
                            MsgInvalidSegmentName,
                            segmentName);
@@ -111,10 +107,10 @@ internal class SegmentHeaderParser : DependencyCheckerBase, ISegmentHeaderParser
 
         if (args.Length > 2)
         {
-            ParseSegmentOptions(controlItem, args);
+            ParseSegmentOptions(args);
         }
 
-        return controlItem;
+        return ControlItemBuilder.Build();
     }
 
     /// <summary>
@@ -129,6 +125,7 @@ internal class SegmentHeaderParser : DependencyCheckerBase, ISegmentHeaderParser
     /// </returns>
     private (string optionName, string optionValue) ParseSegmentOption(string arg)
     {
+        string segmentName = ControlItemBuilder.SegmentName;
         (string optionName, string optionValue) result = (string.Empty, string.Empty);
 
         int optionIndex;
@@ -141,7 +138,7 @@ internal class SegmentHeaderParser : DependencyCheckerBase, ISegmentHeaderParser
         {
             Logger.Log(LogSeverity.Error,
                        MsgInvalidFormOfOption,
-                       Locater.CurrentLocationName,
+                       segmentName,
                        arg);
             return result;
         }
@@ -150,7 +147,7 @@ internal class SegmentHeaderParser : DependencyCheckerBase, ISegmentHeaderParser
         {
             Logger.Log(LogSeverity.Error,
                        MsgOptionNameMustPrecedeEqualsSign,
-                       Locater.CurrentLocationName);
+                       segmentName);
             return result;
         }
 
@@ -160,7 +157,7 @@ internal class SegmentHeaderParser : DependencyCheckerBase, ISegmentHeaderParser
         {
             Logger.Log(LogSeverity.Error,
                        MsgUnknownSegmentOptionFound,
-                       Locater.CurrentLocationName,
+                       segmentName,
                        arg);
             return result;
         }
@@ -171,7 +168,7 @@ internal class SegmentHeaderParser : DependencyCheckerBase, ISegmentHeaderParser
         {
             Logger.Log(LogSeverity.Error,
                        MsgOptionValueMustFollowEqualsSign,
-                       Locater.CurrentLocationName,
+                       segmentName,
                        result.optionName);
             return result;
         }
@@ -185,14 +182,12 @@ internal class SegmentHeaderParser : DependencyCheckerBase, ISegmentHeaderParser
     /// Parse the segment options from a segment header line and set the corresponding properties on
     /// the given control item.
     /// </summary>
-    /// <param name="controlItem">
-    /// The control item to set the options on.
-    /// </param>
     /// <param name="args">
     /// The option arguments from the segment header line.
     /// </param>
-    private void ParseSegmentOptions(ControlItem controlItem, string[] args)
+    private void ParseSegmentOptions(string[] args)
     {
+        string segmentName = ControlItemBuilder.SegmentName;
         bool firstTimeIndentOptionFound = false;
         bool padSegmentOptionFound = false;
         bool tabOptionFound = false;
@@ -212,7 +207,7 @@ internal class SegmentHeaderParser : DependencyCheckerBase, ISegmentHeaderParser
             {
                 Logger.Log(LogSeverity.Warning,
                            MsgFoundDuplicateOptionNameOnHeaderLine,
-                           Locater.CurrentLocationName,
+                           segmentName,
                            optionName);
                 continue;
             }
@@ -220,17 +215,17 @@ internal class SegmentHeaderParser : DependencyCheckerBase, ISegmentHeaderParser
             switch (optionName)
             {
                 case FirstTimeIndentOption:
-                    SetFirstTimeIndentOption(controlItem, optionValue);
+                    SetFirstTimeIndentOption(optionValue);
                     firstTimeIndentOptionFound = true;
                     break;
 
                 case PadSegmentNameOption:
-                    SetPadSegmentOption(controlItem, optionValue);
+                    SetPadSegmentOption(optionValue);
                     padSegmentOptionFound = true;
                     break;
 
                 case TabSizeOption:
-                    SetTabSizeOption(controlItem, optionValue);
+                    SetTabSizeOption(optionValue);
                     tabOptionFound = true;
                     break;
 
@@ -244,13 +239,10 @@ internal class SegmentHeaderParser : DependencyCheckerBase, ISegmentHeaderParser
     /// Validate the first time indent option and set the corresponding property on the given
     /// control item if the option value is valid.
     /// </summary>
-    /// <param name="controlItem">
-    /// The control item to set the option on.
-    /// </param>
     /// <param name="optionValue">
     /// The value of the option to validate.
     /// </param>
-    private void SetFirstTimeIndentOption(ControlItem controlItem, string optionValue)
+    private void SetFirstTimeIndentOption(string optionValue)
     {
         if (IndentProcessor.IsValidIndentValue(optionValue, out int indentValue))
         {
@@ -258,16 +250,16 @@ internal class SegmentHeaderParser : DependencyCheckerBase, ISegmentHeaderParser
             {
                 Logger.Log(LogSeverity.Warning,
                            MsgFirstTimeIndentSetToZero,
-                           Locater.CurrentLocationName);
+                           ControlItemBuilder.SegmentName);
             }
 
-            controlItem.FirstTimeIndent = indentValue;
+            ControlItemBuilder.FirstTimeIndent = indentValue;
         }
         else
         {
             Logger.Log(LogSeverity.Error,
                        MsgFirstTimeIndentIsInvalid,
-                       Locater.CurrentLocationName,
+                       ControlItemBuilder.SegmentName,
                        optionValue);
         }
     }
@@ -276,23 +268,20 @@ internal class SegmentHeaderParser : DependencyCheckerBase, ISegmentHeaderParser
     /// Validate the pad segment option and set the corresponding property on the given control item
     /// if the option value is valid.
     /// </summary>
-    /// <param name="controlItem">
-    /// The control item to set the option on.
-    /// </param>
     /// <param name="optionValue">
     /// The value of the option to validate.
     /// </param>
-    private void SetPadSegmentOption(ControlItem controlItem, string optionValue)
+    private void SetPadSegmentOption(string optionValue)
     {
         if (IsValidName(optionValue))
         {
-            controlItem.PadSegment = optionValue;
+            ControlItemBuilder.PadSegment = optionValue;
         }
         else
         {
             Logger.Log(LogSeverity.Error,
                        MsgInvalidPadSegmentName,
-                       Locater.CurrentLocationName,
+                       ControlItemBuilder.SegmentName,
                        optionValue);
         }
     }
@@ -301,23 +290,21 @@ internal class SegmentHeaderParser : DependencyCheckerBase, ISegmentHeaderParser
     /// Validate the tab size option and set the corresponding property on the given control item if
     /// the option value is valid.
     /// </summary>
-    /// <param name="controlItem">
-    /// The control item to set the option on.
-    /// </param>
     /// <param name="optionValue">
     /// The value of the option to validate.
     /// </param>
-    private void SetTabSizeOption(ControlItem controlItem, string optionValue)
+    private void SetTabSizeOption(string optionValue)
     {
         if (IndentProcessor.IsValidTabSizeValue(optionValue, out int tabValue))
         {
-            controlItem.TabSize = tabValue;
+            ControlItemBuilder.TabSize = tabValue;
         }
         else
         {
             Logger.Log(LogSeverity.Error,
                        MsgInvalidTabSizeOption,
-                       Locater.CurrentLocationName);
+                       ControlItemBuilder.SegmentName,
+                       optionValue);
         }
     }
 }
