@@ -117,9 +117,19 @@ internal static class GlobalConstants
     public const int MaxIndentValue = 9;
 
     /// <summary>
+    /// A string representation of the maximum indent value.
+    /// </summary>
+    public const string MaxIndentValueString = "9";
+
+    /// <summary>
     /// The maximum supported tab size value.
     /// </summary>
     public const int MaxTabSize = 9;
+
+    /// <summary>
+    /// A string representation of the maximum tab size value.
+    /// </summary>
+    public const string MaxTabSizeString = "9";
 
     /// <summary>
     /// The minimum supported indent value.
@@ -127,9 +137,19 @@ internal static class GlobalConstants
     public const int MinIndentValue = -9;
 
     /// <summary>
+    /// A string representation of the minimum indent value.
+    /// </summary>
+    public const string MinIndentValueString = "-9";
+
+    /// <summary>
     /// The minimum supported tab size value.
     /// </summary>
     public const int MinTabSize = 1;
+
+    /// <summary>
+    /// A string representation of the minimum tab size value.
+    /// </summary>
+    public const string MinTabSizeString = "1";
 
     /// <summary>
     /// Placeholder value indicating the absence of a control code.
