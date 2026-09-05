@@ -71,12 +71,14 @@ internal class FileAndDirectoryService : IFileAndDirectoryService
     {
         if (path1 is null)
         {
-            throw new FileAndDirectoryServiceException(MsgCombinePathsArgument1IsNull);
+            string msg = FormatMessage(MsgCombinePathsArgument1IsNull, nameof(CombinePaths));
+            throw new FileAndDirectoryServiceException(msg);
         }
 
         if (path2 is null)
         {
-            throw new FileAndDirectoryServiceException(MsgCombinePathsArgument2IsNull);
+            string msg = FormatMessage(MsgCombinePathsArgument2IsNull, nameof(CombinePaths));
+            throw new FileAndDirectoryServiceException(msg);
         }
 
         string combinedPath;

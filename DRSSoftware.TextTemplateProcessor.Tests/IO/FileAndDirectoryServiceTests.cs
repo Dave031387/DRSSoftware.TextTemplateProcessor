@@ -113,7 +113,7 @@ public class FileAndDirectoryServiceTests
         // Arrange
         FileAndDirectoryService service = new();
         string fileName = NextFileName;
-        string expectedMessage = MsgCombinePathsArgument1IsNull;
+        string expectedMessage = FormatMessage(MsgCombinePathsArgument1IsNull, nameof(service.CombinePaths));
 
         // Act
         void action() => service.CombinePaths(null!, fileName);
@@ -128,7 +128,7 @@ public class FileAndDirectoryServiceTests
         // Arrange
         FileAndDirectoryService service = new();
         string fileName = NextFileName;
-        string expectedMessage = MsgCombinePathsArgument2IsNull;
+        string expectedMessage = FormatMessage(MsgCombinePathsArgument2IsNull, nameof(service.CombinePaths));
 
         // Act
         void action() => service.CombinePaths(fileName, null!);

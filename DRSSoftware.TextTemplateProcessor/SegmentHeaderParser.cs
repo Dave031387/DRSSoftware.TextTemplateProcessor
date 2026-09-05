@@ -230,6 +230,8 @@ internal class SegmentHeaderParser : DependencyCheckerBase, ISegmentHeaderParser
                     break;
 
                 default:
+                    // This case should never be reached because the option name is validated in the
+                    // ParseSegmentOption method.
                     break;
             }
         }
@@ -252,8 +254,10 @@ internal class SegmentHeaderParser : DependencyCheckerBase, ISegmentHeaderParser
                            MsgFirstTimeIndentSetToZero,
                            ControlItemBuilder.SegmentName);
             }
-
-            ControlItemBuilder.FirstTimeIndent = indentValue;
+            else
+            {
+                ControlItemBuilder.FirstTimeIndent = indentValue;
+            }
         }
         else
         {
