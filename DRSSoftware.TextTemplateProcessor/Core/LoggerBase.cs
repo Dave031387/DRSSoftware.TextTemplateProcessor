@@ -75,13 +75,9 @@ internal abstract class LoggerBase : DependencyCheckerBase, ILogger
     /// <param name="message">
     /// The log message that is being written to the log.
     /// </param>
-    /// <param name="args">
-    /// An array of <see langword="string" /> values to be substituted for the format arguments in
-    /// the <paramref name="message" /> parameter.
-    /// </param>
-    public void Log(LogSeverity logSeverity, string message, params string?[] args)
+    public void Log(LogSeverity logSeverity, string message)
     {
-        LogEntry logEntry = CreateLogEntry(logSeverity, CurrentOperationType, message, args);
+        LogEntry logEntry = CreateLogEntry(logSeverity, CurrentOperationType, message);
 
         WriteLogEntry(logEntry);
         UpdateCounters(logSeverity);
@@ -105,13 +101,9 @@ internal abstract class LoggerBase : DependencyCheckerBase, ILogger
     /// <param name="message">
     /// The log message that is being written to the log.
     /// </param>
-    /// <param name="args">
-    /// An array of <see langword="string" /> values to be substituted for the format arguments in
-    /// the <paramref name="message" /> parameter.
-    /// </param>
-    public void Log(LogSeverity logSeverity, OperationType operationType, string message, params string?[] args)
+    public void Log(LogSeverity logSeverity, OperationType operationType, string message)
     {
-        LogEntry logEntry = CreateLogEntry(logSeverity, operationType, message, args);
+        LogEntry logEntry = CreateLogEntry(logSeverity, operationType, message);
 
         WriteLogEntry(logEntry);
         UpdateCounters(logSeverity);
@@ -126,9 +118,13 @@ internal abstract class LoggerBase : DependencyCheckerBase, ILogger
     /// </remarks>
     public void LogProcessingSummary()
     {
-        Log(LogSeverity.Information, OperationType.Status, MsgProcessingSummary);
-        Log(LogSeverity.Information, OperationType.Status, MsgErrorCount, ErrorCount.ToString());
-        Log(LogSeverity.Information, OperationType.Status, MsgWarningCount, WarningCount.ToString());
+        CurrentOperationType = OperationType.Status;
+        string msgSummaryLine1 = GetMessage(MsgProcessingSummary);
+        string msgSummaryLine2 = GetMessage(MsgErrorCount, ErrorCount.ToString());
+        string msgSummaryLine3 = GetMessage(MsgWarningCount, WarningCount.ToString());
+        Log(LogSeverity.Information, msgSummaryLine1);
+        Log(LogSeverity.Information, msgSummaryLine2);
+        Log(LogSeverity.Information, msgSummaryLine3);
     }
 
     /// <summary>
@@ -165,15 +161,11 @@ internal abstract class LoggerBase : DependencyCheckerBase, ILogger
     /// <param name="message">
     /// The log message that is being written to the log.
     /// </param>
-    /// <param name="args">
-    /// An array of <see langword="string" /> values to be substituted for the format arguments in
-    /// the <paramref name="message" /> parameter.
-    /// </param>
     /// <returns>
     /// A <see cref="LogEntry" /> object representing the log message that is to be written to the
     /// log.
     /// </returns>
-    private LogEntry CreateLogEntry(LogSeverity logSeverity, OperationType operationType, string message, params string?[] args)
+    private LogEntry CreateLogEntry(LogSeverity logSeverity, OperationType operationType, string message)
     {
         Location location = operationType switch
         {
@@ -183,9 +175,8 @@ internal abstract class LoggerBase : DependencyCheckerBase, ILogger
             OperationType.Writing => Locater.Location,
             _ => Location.Empty
         };
-        string formattedMessage = FormatMessage(message, args);
 
-        return new(logSeverity, operationType, location, formattedMessage);
+        return new(logSeverity, operationType, location, message);
     }
 
     /// <summary>

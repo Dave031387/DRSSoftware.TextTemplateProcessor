@@ -4,6 +4,6 @@ global using DRSSoftware.DRSBasicDI;
 global using DRSSoftware.TextTemplateProcessor.Console;
 global using DRSSoftware.TextTemplateProcessor.Core;
 global using static DRSSoftware.TextTemplateProcessor.Core.GlobalConstants;
-global using static DRSSoftware.TextTemplateProcessor.Core.Messages;
+global using static DRSSoftware.TextTemplateProcessor.Core.MessageService;
 global using static DRSSoftware.TextTemplateProcessor.Core.RegexHelper;
 global using DRSSoftware.TextTemplateProcessor.IO;

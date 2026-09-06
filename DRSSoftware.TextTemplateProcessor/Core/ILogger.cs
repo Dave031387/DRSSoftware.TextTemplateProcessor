@@ -44,11 +44,7 @@ internal interface ILogger
     /// <param name="message">
     /// The log message that is being written to the log.
     /// </param>
-    /// <param name="args">
-    /// An array of <see langword="string" /> values to be substituted for the format arguments in
-    /// the <paramref name="message" /> parameter.
-    /// </param>
-    void Log(LogSeverity logSeverity, string message, params string?[] args);
+    void Log(LogSeverity logSeverity, string message);
 
     /// <summary>
     /// Formats a new log entry and writes it to the log.
@@ -68,11 +64,7 @@ internal interface ILogger
     /// <param name="message">
     /// The log message that is being written to the log.
     /// </param>
-    /// <param name="args">
-    /// An array of <see langword="string" /> values to be substituted for the format arguments in
-    /// the <paramref name="message" /> parameter.
-    /// </param>
-    void Log(LogSeverity logSeverity, OperationType operationType, string message, params string?[] args);
+    void Log(LogSeverity logSeverity, OperationType operationType, string message);
 
     /// <summary>
     /// Logs a processing summary that includes the counts of errors and warnings.

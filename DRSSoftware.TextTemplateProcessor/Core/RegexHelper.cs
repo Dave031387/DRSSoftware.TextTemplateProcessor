@@ -9,6 +9,18 @@ namespace DRSSoftware.TextTemplateProcessor.Core;
 internal static partial class RegexHelper
 {
     /// <summary>
+    /// Counts the number of format items in the given <paramref name="compositeString" />.
+    /// </summary>
+    /// <param name="compositeString">
+    /// The composite string containing zero or more format items.
+    /// </param>
+    /// <returns>
+    /// The number of format items in <paramref name="compositeString" />.
+    /// </returns>
+    public static int GetFormatItemCount(string compositeString)
+        => FormatItemRegex().Count(compositeString);
+
+    /// <summary>
     /// Gets a value indicating whether or not the given <paramref name="textLine" /> begins with an
     /// absolute indent indicator string.
     /// </summary>
@@ -42,20 +54,6 @@ internal static partial class RegexHelper
     /// </returns>
     public static bool HasAbsoluteIndentCode(string textLine)
         => AbsoluteIndentCodeRegex().IsMatch(textLine);
-
-    /// <summary>
-    /// Gets a value indicating whether the given <paramref name="compositeString" /> contains any
-    /// format items.
-    /// </summary>
-    /// <param name="compositeString">
-    /// The composite string containing zero or more format items.
-    /// </param>
-    /// <returns>
-    /// <see langword="true" /> if <paramref name="compositeString" /> contains format items;
-    /// otherwise, <see langword="false" />.
-    /// </returns>
-    public static bool HasFormatItems(string compositeString)
-        => FormatItemRegex().IsMatch(compositeString);
 
     /// <summary>
     /// Gets a value indicating whether or not the given <paramref name="textLine" /> begins with

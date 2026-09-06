@@ -57,7 +57,8 @@ internal class PathValidator : IPathValidator
     {
         if (directoryPath.IndexOfAny(Path.GetInvalidPathChars()) > -1)
         {
-            throw new PathValidatorException(MsgInvalidDirectoryCharacters);
+            string message = GetMessage(MsgInvalidDirectoryCharacters);
+            throw new PathValidatorException(message);
         }
     }
 
@@ -76,12 +77,14 @@ internal class PathValidator : IPathValidator
     {
         if (string.IsNullOrWhiteSpace(fileName))
         {
-            throw new PathValidatorException(MsgMissingFileName);
+            string message = GetMessage(MsgMissingFileName);
+            throw new PathValidatorException(message);
         }
 
         if (fileName.IndexOfAny(Path.GetInvalidFileNameChars()) > -1)
         {
-            throw new PathValidatorException(MsgInvalidFileNameCharacters);
+            string message = GetMessage(MsgInvalidFileNameCharacters);
+            throw new PathValidatorException(message);
         }
     }
 
@@ -106,18 +109,18 @@ internal class PathValidator : IPathValidator
     {
         if (path is null)
         {
-            string msg = isFilePath
-                ? MsgNullFilePath
-                : MsgNullDirectoryPath;
-            throw new PathValidatorException(msg);
+            string message = isFilePath
+                ? GetMessage(MsgNullFilePath)
+                : GetMessage(MsgNullDirectoryPath);
+            throw new PathValidatorException(message);
         }
 
         if (string.IsNullOrWhiteSpace(path))
         {
-            string msg = isFilePath
-                ? MsgFilePathIsEmptyOrWhitespace
-                : MsgDirectoryPathIsEmptyOrWhitespace;
-            throw new PathValidatorException(msg);
+            string message = isFilePath
+                ? GetMessage(MsgFilePathIsEmptyOrWhitespace)
+                : GetMessage(MsgDirectoryPathIsEmptyOrWhitespace);
+            throw new PathValidatorException(message);
         }
 
         return path.Trim();
@@ -225,7 +228,8 @@ internal class PathValidator : IPathValidator
         // UNC paths are not supported, so check for that and throw an exception if found.
         if (path.Length > 1 && path[..2] == $"{Path.DirectorySeparatorChar}{Path.DirectorySeparatorChar}")
         {
-            string message = FormatMessage(MsgUncPathIsNotSupported, path);
+            string message = GetMessage(MsgUncPathIsNotSupported,
+                                        path);
             throw new PathValidatorException(message);
         }
 
@@ -261,7 +265,8 @@ internal class PathValidator : IPathValidator
         {
             if (!File.Exists(fullPath))
             {
-                string message = FormatMessage(MsgFileNotFound, fullPath);
+                string message = GetMessage(MsgFileNotFound,
+                                            fullPath);
                 throw new PathValidatorException(message);
             }
         }
@@ -269,7 +274,8 @@ internal class PathValidator : IPathValidator
         {
             if (!Directory.Exists(fullPath))
             {
-                string message = FormatMessage(MsgDirectoryNotFound, fullPath);
+                string message = GetMessage(MsgDirectoryNotFound,
+                                            fullPath);
                 throw new PathValidatorException(message);
             }
         }

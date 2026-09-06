@@ -39,7 +39,7 @@ internal abstract class DependencyCheckerBase
     {
         if (dependencyObject is null)
         {
-            string message = FormatMessage(MsgDependencyIsNull, className, serviceName);
+            string message = GetMessage(MsgDependencyIsNull, className, serviceName);
             throw new ArgumentNullException(parameterName, message);
         }
 

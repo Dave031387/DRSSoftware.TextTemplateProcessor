@@ -25,33 +25,40 @@ public class PathValidatorTests
     {
         // Arrange
         string filePath = $"{VolumeRootPath}x{invalidChar}x";
+        string expectedMessage = GetMessage(MsgInvalidDirectoryCharacters);
 
         // Act/Assert
         AssertException(filePath,
                         false,
                         false,
-                        MsgInvalidDirectoryCharacters);
+                        expectedMessage);
     }
 
     [Theory]
     [MemberData(nameof(TestData.Whitespace), MemberType = typeof(TestData))]
     public void ValidateDirectoryPathWhenPathIsEmptyOrWhitespace_ShouldThrowException(string whitespace)
     {
+        // Arrange
+        string expectedMessage = GetMessage(MsgDirectoryPathIsEmptyOrWhitespace);
+
         // Act/Assert
         AssertException(whitespace,
                         false,
                         false,
-                        MsgDirectoryPathIsEmptyOrWhitespace);
+                        expectedMessage);
     }
 
     [Fact]
     public void ValidateDirectoryPathWhenPathIsNull_ShouldThrowException()
     {
+        // Arrange
+        string expectedMessage = GetMessage(MsgNullDirectoryPath);
+
         // Act/Assert
         AssertException(null,
                         false,
                         false,
-                        MsgNullDirectoryPath);
+                        expectedMessage);
     }
 
     [Fact]
@@ -73,7 +80,8 @@ public class PathValidatorTests
     {
         // Arrange
         string filePath = $"{Path.DirectorySeparatorChar}{Path.DirectorySeparatorChar}server{Path.DirectorySeparatorChar}share";
-        string expectedMessage = FormatMessage(MsgUncPathIsNotSupported, filePath);
+        string expectedMessage = GetMessage(MsgUncPathIsNotSupported,
+                                            filePath);
 
         // Act/Assert
         AssertException(filePath,
@@ -104,7 +112,8 @@ public class PathValidatorTests
     {
         // Arrange
         string absolutePath = NextAbsoluteDirectoryPath;
-        string expectedMessage = FormatMessage(MsgDirectoryNotFound, absolutePath);
+        string expectedMessage = GetMessage(MsgDirectoryNotFound,
+                                            absolutePath);
 
         // Act/Assert
         AssertException(absolutePath,
@@ -137,7 +146,8 @@ public class PathValidatorTests
         // Arrange
         string relativePath = NextRelativeDirectoryPath;
         string fullDirectoryPath = Path.Combine(CurrentDirectory, relativePath);
-        string expectedMessage = FormatMessage(MsgDirectoryNotFound, fullDirectoryPath);
+        string expectedMessage = GetMessage(MsgDirectoryNotFound,
+                                            fullDirectoryPath);
 
         // Act/Assert
         AssertException(relativePath,
@@ -152,12 +162,13 @@ public class PathValidatorTests
     {
         // Arrange
         string filePath = $"{VolumeRootPath}x{invalidChar}x{Path.DirectorySeparatorChar}{NextFileName}";
+        string expectedMessage = GetMessage(MsgInvalidDirectoryCharacters);
 
         // Act/Assert
         AssertException(filePath,
                         true,
                         false,
-                        MsgInvalidDirectoryCharacters);
+                        expectedMessage);
     }
 
     [Fact]
@@ -196,12 +207,13 @@ public class PathValidatorTests
     {
         // Arrange
         string filePath = $"{NextAbsoluteDirectoryPath}{Path.DirectorySeparatorChar}x{invalidChar}x.test";
+        string expectedMessage = GetMessage(MsgInvalidFileNameCharacters);
 
         // Act/Assert
         AssertException(filePath,
                         true,
                         false,
-                        MsgInvalidFileNameCharacters);
+                        expectedMessage);
     }
 
     [Theory]
@@ -210,12 +222,13 @@ public class PathValidatorTests
     {
         // Arrange
         string filePath = $"{NextAbsoluteDirectoryPath}{Path.DirectorySeparatorChar}{whitespace}";
+        string expectedMessage = GetMessage(MsgMissingFileName);
 
         // Act/Assert
         AssertException(filePath,
                         true,
                         false,
-                        MsgMissingFileName);
+                        expectedMessage);
     }
 
     [Fact]
@@ -249,21 +262,27 @@ public class PathValidatorTests
     [MemberData(nameof(TestData.Whitespace), MemberType = typeof(TestData))]
     public void ValidateFilePathWhenPathIsEmptyOrWhitespace_ShouldThrowException(string whitespace)
     {
+        // Arrange
+        string expectedMessage = GetMessage(MsgFilePathIsEmptyOrWhitespace);
+
         // Act/Assert
         AssertException(whitespace,
                         true,
                         false,
-                        MsgFilePathIsEmptyOrWhitespace);
+                        expectedMessage);
     }
 
     [Fact]
     public void ValidateFilePathWhenPathIsNull_ShouldThrowException()
     {
+        // Arrange
+        string expectedMessage = GetMessage(MsgNullFilePath);
+
         // Act/Assert
         AssertException(null,
                         true,
                         false,
-                        MsgNullFilePath);
+                        expectedMessage);
     }
 
     [Fact]
@@ -289,7 +308,8 @@ public class PathValidatorTests
     {
         // Arrange
         string filePath = NextAbsoluteFilePath;
-        string expectedMessage = FormatMessage(MsgFileNotFound, filePath);
+        string expectedMessage = GetMessage(MsgFileNotFound,
+                                            filePath);
 
         // Act/Assert
         AssertException(filePath,
@@ -324,7 +344,8 @@ public class PathValidatorTests
         // Arrange
         string filePath = NextRelativeFilePath;
         string fullFilePath = $"{CurrentDirectory}{Path.DirectorySeparatorChar}{filePath}";
-        string expectedMessage = FormatMessage(MsgFileNotFound, fullFilePath);
+        string expectedMessage = GetMessage(MsgFileNotFound,
+                                            fullFilePath);
 
         // Act/Assert
         AssertException(filePath,

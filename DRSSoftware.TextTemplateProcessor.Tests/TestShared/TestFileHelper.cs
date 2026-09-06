@@ -40,7 +40,8 @@ internal static class TestFileHelper
 
             if (pathIndex < 0)
             {
-                throw new DirectoryNotFoundException(MsgUnableToLocateSolutionDirectory);
+                string message = GetMessage(MsgUnableToLocateSolutionDirectory);
+                throw new DirectoryNotFoundException(message);
             }
 
             path = path[..pathIndex];

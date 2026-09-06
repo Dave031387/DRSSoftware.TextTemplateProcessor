@@ -109,8 +109,10 @@ public class SegmentHeaderParserTests
         int counter = 0;
         int Counter() => ++counter;
         SetupControlItemBuilderMock(expected, Counter);
+        string expectedMessage = string.Format(MsgInvalidSegmentName,
+                                               invalidSegmentName);
         LoggerMock
-            .Setup(x => x.Log(LogSeverity.Error, MsgInvalidSegmentName, invalidSegmentName))
+            .Setup(x => x.Log(LogSeverity.Error, expectedMessage))
             .Verifiable(Times.Once);
         SegmentHeaderParser parser = GetSegmentHeaderParser();
 
@@ -140,8 +142,9 @@ public class SegmentHeaderParserTests
             TabSize = 0
         };
         SetupControlItemBuilderMock(expected);
+        string expectedMessage = GetMessage(MsgSegmentNameIsMissing);
         LoggerMock
-            .Setup(static x => x.Log(LogSeverity.Error, MsgSegmentNameIsMissing))
+            .Setup(x => x.Log(LogSeverity.Error, expectedMessage))
             .Verifiable(Times.Once);
         SegmentHeaderParser parser = GetSegmentHeaderParser();
 
@@ -203,11 +206,11 @@ public class SegmentHeaderParserTests
         int counter = 0;
         int Counter() => ++counter;
         SetupControlItemBuilderMock(expected, Counter);
+        string expectedMessage = GetMessage(MsgInvalidFormOfOption,
+                                            segmentName,
+                                            FirstTimeIndentOption);
         LoggerMock
-            .Setup(x => x.Log(LogSeverity.Error,
-                              MsgInvalidFormOfOption,
-                              segmentName,
-                              FirstTimeIndentOption))
+            .Setup(x => x.Log(LogSeverity.Error, expectedMessage))
             .Verifiable(Times.Once);
         SegmentHeaderParser parser = GetSegmentHeaderParser();
 
@@ -239,10 +242,10 @@ public class SegmentHeaderParserTests
         int counter = 0;
         int Counter() => ++counter;
         SetupControlItemBuilderMock(expected, Counter);
+        string expectedMessage = GetMessage(MsgOptionNameMustPrecedeEqualsSign,
+                                            segmentName);
         LoggerMock
-            .Setup(x => x.Log(LogSeverity.Error,
-                              MsgOptionNameMustPrecedeEqualsSign,
-                              segmentName))
+            .Setup(x => x.Log(LogSeverity.Error, expectedMessage))
             .Verifiable(Times.Once);
         SegmentHeaderParser parser = GetSegmentHeaderParser();
 
@@ -275,11 +278,11 @@ public class SegmentHeaderParserTests
         int counter = 0;
         int Counter() => ++counter;
         SetupControlItemBuilderMock(expected, Counter);
+        string expectedMessage = GetMessage(MsgOptionValueMustFollowEqualsSign,
+                                            segmentName,
+                                            segmentOption);
         LoggerMock
-            .Setup(x => x.Log(LogSeverity.Error,
-                              MsgOptionValueMustFollowEqualsSign,
-                              segmentName,
-                              segmentOption))
+            .Setup(x => x.Log(LogSeverity.Error, expectedMessage))
             .Verifiable(Times.Once);
         SegmentHeaderParser parser = GetSegmentHeaderParser();
 
@@ -318,11 +321,11 @@ public class SegmentHeaderParserTests
             .Setup(x => x.IsValidIndentValue(stringValue, out intValue))
             .Returns(false)
             .Verifiable(Times.Once);
+        string expectedMessage = GetMessage(MsgFirstTimeIndentIsInvalid,
+                                            segmentName,
+                                            stringValue);
         LoggerMock
-            .Setup(x => x.Log(LogSeverity.Error,
-                              MsgFirstTimeIndentIsInvalid,
-                              segmentName,
-                              stringValue))
+            .Setup(x => x.Log(LogSeverity.Error, expectedMessage))
             .Verifiable(Times.Once);
         SegmentHeaderParser parser = GetSegmentHeaderParser();
 
@@ -360,10 +363,10 @@ public class SegmentHeaderParserTests
             .Setup(x => x.IsValidIndentValue(stringValue, out intValue))
             .Returns(true)
             .Verifiable(Times.Once);
+        string expectedMessage = GetMessage(MsgFirstTimeIndentSetToZero,
+                                            segmentName);
         LoggerMock
-            .Setup(x => x.Log(LogSeverity.Warning,
-                              MsgFirstTimeIndentSetToZero,
-                              segmentName))
+            .Setup(x => x.Log(LogSeverity.Warning, expectedMessage))
             .Verifiable(Times.Once);
         SegmentHeaderParser parser = GetSegmentHeaderParser();
 
@@ -396,11 +399,11 @@ public class SegmentHeaderParserTests
         int counter = 0;
         int Counter() => ++counter;
         SetupControlItemBuilderMock(expected, Counter);
+        string expectedMessage = GetMessage(MsgInvalidPadSegmentName,
+                                            segmentName,
+                                            invalidPadSegmentName);
         LoggerMock
-            .Setup(x => x.Log(LogSeverity.Error,
-                              MsgInvalidPadSegmentName,
-                              segmentName,
-                              invalidPadSegmentName))
+            .Setup(x => x.Log(LogSeverity.Error, expectedMessage))
             .Verifiable(Times.Once);
         SegmentHeaderParser parser = GetSegmentHeaderParser();
 
@@ -433,11 +436,11 @@ public class SegmentHeaderParserTests
         int counter = 0;
         int Counter() => ++counter;
         SetupControlItemBuilderMock(expected, Counter);
+        string expectedMessage = GetMessage(MsgUnknownSegmentOptionFound,
+                                            segmentName,
+                                            invalidOption);
         LoggerMock
-            .Setup(x => x.Log(LogSeverity.Error,
-                              MsgUnknownSegmentOptionFound,
-                              segmentName,
-                              invalidOption))
+            .Setup(x => x.Log(LogSeverity.Error, expectedMessage))
             .Verifiable(Times.Once);
         SegmentHeaderParser parser = GetSegmentHeaderParser();
 
@@ -476,11 +479,11 @@ public class SegmentHeaderParserTests
             .Setup(x => x.IsValidIndentValue(stringValue, out firstValue))
             .Returns(true)
             .Verifiable(Times.Once);
+        string expectedMessage = GetMessage(MsgFoundDuplicateOptionNameOnHeaderLine,
+                                            segmentName,
+                                            FirstTimeIndentOption);
         LoggerMock
-            .Setup(x => x.Log(LogSeverity.Warning,
-                              MsgFoundDuplicateOptionNameOnHeaderLine,
-                              segmentName,
-                              FirstTimeIndentOption))
+            .Setup(x => x.Log(LogSeverity.Warning, expectedMessage))
             .Verifiable(Times.Once);
         SegmentHeaderParser parser = GetSegmentHeaderParser();
 
@@ -514,11 +517,11 @@ public class SegmentHeaderParserTests
         int counter = 0;
         int Counter() => ++counter;
         SetupControlItemBuilderMock(expected, Counter);
+        string expectedMessage = GetMessage(MsgFoundDuplicateOptionNameOnHeaderLine,
+                                            segmentName,
+                                            PadSegmentNameOption);
         LoggerMock
-            .Setup(x => x.Log(LogSeverity.Warning,
-                              MsgFoundDuplicateOptionNameOnHeaderLine,
-                              segmentName,
-                              PadSegmentNameOption))
+            .Setup(x => x.Log(LogSeverity.Warning, expectedMessage))
             .Verifiable(Times.Once);
         SegmentHeaderParser parser = GetSegmentHeaderParser();
 
@@ -557,11 +560,11 @@ public class SegmentHeaderParserTests
             .Setup(x => x.IsValidTabSizeValue(stringValue, out firstValue))
             .Returns(true)
             .Verifiable(Times.Once);
+        string expectedMessage = GetMessage(MsgFoundDuplicateOptionNameOnHeaderLine,
+                                            segmentName,
+                                            TabSizeOption);
         LoggerMock
-            .Setup(x => x.Log(LogSeverity.Warning,
-                              MsgFoundDuplicateOptionNameOnHeaderLine,
-                              segmentName,
-                              TabSizeOption))
+            .Setup(x => x.Log(LogSeverity.Warning, expectedMessage))
             .Verifiable(Times.Once);
         SegmentHeaderParser parser = GetSegmentHeaderParser();
 
@@ -641,11 +644,11 @@ public class SegmentHeaderParserTests
             .Setup(x => x.IsValidTabSizeValue(stringValue, out intValue))
             .Returns(false)
             .Verifiable(Times.Once);
+        string expectedMessage = GetMessage(MsgInvalidTabSizeOption,
+                                            segmentName,
+                                            stringValue);
         LoggerMock
-            .Setup(x => x.Log(LogSeverity.Error,
-                              MsgInvalidTabSizeOption,
-                              segmentName,
-                              stringValue))
+            .Setup(x => x.Log(LogSeverity.Error, expectedMessage))
             .Verifiable(Times.Once);
         SegmentHeaderParser parser = GetSegmentHeaderParser();
 

@@ -102,9 +102,9 @@ internal class IndentProcessor : DependencyCheckerBase, IIndentProcessor
 
             if (indent < 0)
             {
-                Logger.Log(LogSeverity.Warning,
-                           MsgFirstTimeIndentHasBeenTruncated,
-                           Locater.CurrentLocationName);
+                string message = GetMessage(MsgFirstTimeIndentHasBeenTruncated,
+                                        Locater.CurrentLocationName);
+                Logger.Log(LogSeverity.Warning, message);
                 indent = 0;
             }
 
@@ -142,9 +142,9 @@ internal class IndentProcessor : DependencyCheckerBase, IIndentProcessor
 
         if (indent < 0)
         {
-            Logger.Log(LogSeverity.Warning,
-                       MsgLeftIndentHasBeenTruncated,
-                       Locater.CurrentLocationName);
+            string message = GetMessage(MsgLeftIndentHasBeenTruncated,
+                                        Locater.CurrentLocationName);
+            Logger.Log(LogSeverity.Warning, message);
             indent = 0;
         }
 
@@ -179,9 +179,9 @@ internal class IndentProcessor : DependencyCheckerBase, IIndentProcessor
         {
             if (indentValue is < MinIndentValue or > MaxIndentValue)
             {
-                Logger.Log(LogSeverity.Error,
-                           MsgIndentValueOutOfRange,
-                           indentValue.ToString());
+                string message = GetMessage(MsgIndentValueOutOfRange,
+                                            indentValue.ToString());
+                Logger.Log(LogSeverity.Error, message);
             }
             else
             {
@@ -191,9 +191,9 @@ internal class IndentProcessor : DependencyCheckerBase, IIndentProcessor
         }
         else
         {
-            Logger.Log(LogSeverity.Error,
-                       MsgIndentValueMustBeValidNumber,
-                       stringValue);
+            string message = GetMessage(MsgIndentValueMustBeValidNumber,
+                                        stringValue);
+            Logger.Log(LogSeverity.Error, message);
         }
 
         indent = 0;
@@ -223,9 +223,9 @@ internal class IndentProcessor : DependencyCheckerBase, IIndentProcessor
         {
             if (tabValue is < MinTabSize or > MaxTabSize)
             {
-                Logger.Log(LogSeverity.Error,
-                           MsgTabSizeValueOutOfRange,
-                           tabValue.ToString());
+                string message = GetMessage(MsgTabSizeValueOutOfRange,
+                                            tabValue.ToString());
+                Logger.Log(LogSeverity.Error, message);
             }
             else
             {
@@ -235,9 +235,9 @@ internal class IndentProcessor : DependencyCheckerBase, IIndentProcessor
         }
         else
         {
-            Logger.Log(LogSeverity.Error,
-                       MsgTabSizeValueMustBeValidNumber,
-                       stringValue);
+            string message = GetMessage(MsgTabSizeValueMustBeValidNumber,
+                                        stringValue);
+            Logger.Log(LogSeverity.Error, message);
         }
 
         tabSize = DefaultTabSize;
@@ -294,18 +294,18 @@ internal class IndentProcessor : DependencyCheckerBase, IIndentProcessor
     {
         if (tabSize < MinTabSize)
         {
-            Logger.Log(LogSeverity.Warning,
-                       MsgTabSizeTooSmall,
-                       tabSize.ToString(),
-                       MinTabSize.ToString());
+            string message = GetMessage(MsgTabSizeTooSmall,
+                                        tabSize.ToString(),
+                                        MinTabSize.ToString());
+            Logger.Log(LogSeverity.Warning, message);
             TabSize = MinTabSize;
         }
         else if (tabSize > MaxTabSize)
         {
-            Logger.Log(LogSeverity.Warning,
-                       MsgTabSizeTooLarge,
-                       tabSize.ToString(),
-                       MaxTabSize.ToString());
+            string message = GetMessage(MsgTabSizeTooLarge,
+                                        tabSize.ToString(),
+                                        MaxTabSize.ToString());
+            Logger.Log(LogSeverity.Warning, message);
             TabSize = MaxTabSize;
         }
         else

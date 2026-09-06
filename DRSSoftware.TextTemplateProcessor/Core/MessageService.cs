@@ -1,10 +1,10 @@
 ﻿namespace DRSSoftware.TextTemplateProcessor.Core;
 
 /// <summary>
-/// The <see cref="Messages" /> static class defines all the message strings that are used for
-/// exceptions, log entries, etc, in the Text Template Processor class library.
+/// The <see cref="MessageService" /> static class for formatting and delivering messages to the
+/// rest of the application.
 /// </summary>
-internal static class Messages
+internal static class MessageService
 {
     // internal const string MsgAttemptingToReadFile = "Attempting to read text template file:\n{0}";
     // internal const string MsgAttemptToGenerateSegmentBeforeItWasLoaded = "An attempt was made to generate segment \"{0}\" before the template was loaded.";
@@ -123,28 +123,47 @@ internal static class Messages
     // internal const string MsgYesNoPrompt = "Enter Y (yes) or N (no)...";
 
     /// <summary>
-    /// Format the given <paramref name="message"/> composite string by replacing each format item with the given <paramref name="strings"/>.
+    /// Format the given <paramref name="message"/> composite string by replacing each format item
+    /// with the given <paramref name="strings"/>.
     /// </summary>
+    /// <remarks>
+    /// This method assumes that if the given <paramref name="message"/> contains format items, they
+    /// are numbered sequentially starting with 0 and that each format item appears only once in the
+    /// message string. If this is not the case, the message may be formatted incorrectly or an
+    /// exception may be thrown.
+    /// </remarks>
     /// <param name="message">
-    /// A composite string containing zero or more format items which are to be replaced by the strings contained in <paramref name="strings"/>.
+    /// A composite string containing zero or more format items which are to be replaced by the
+    /// strings contained in <paramref name="strings" />.
     /// </param>
     /// <param name="strings">
-    /// An array of string values to be substituted for the corresponding format items found in <paramref name="message"/>.
+    /// An array of string values to be substituted for the corresponding format items found in
+    /// <paramref name="message" />.
     /// </param>
     /// <returns>
-    /// The formatted version of <paramref name="message"/> having all format items replaced with the appropriate string values.
+    /// The formatted version of <paramref name="message"/> having all format items replaced with
+    /// the appropriate string values.
     /// </returns>
-    internal static string FormatMessage(string message, params string?[] strings)
+    internal static string GetMessage(string message, params string?[] strings)
     {
-        strings ??= [null];
+        int numberOfFormatItems = GetFormatItemCount(message);
 
-        for (int i = 0; i < strings.Length; i++)
+        if (numberOfFormatItems is 0)
         {
-            strings[i] ??= NullStringValue;
+            return message;
         }
 
-        return HasFormatItems(message)
-            ? string.Format(message, strings)
-            : message;
+        strings ??= [null];
+        int numberOfStrings = strings.Length;
+        string[] args = new string[numberOfFormatItems];
+
+        for (int i = 0; i < numberOfFormatItems; i++)
+        {
+            args[i] = i < numberOfStrings
+                ? strings[i] ?? NullStringValue
+                : NullStringValue;
+        }
+
+        return string.Format(message, args);
     }
 }

@@ -3,9 +3,7 @@
 [ExcludeFromCodeCoverage]
 public class ConsoleLoggerTests
 {
-    private const string SampleLogMessage = SampleLogMessagePrefix + "{0}" + SampleLogMessageSuffix;
-    private const string SampleLogMessagePrefix = "Sample log message for ";
-    private const string SampleLogMessageSuffix = " operation type.";
+    private const string SampleLogMessage = "Sample log message for {0} operation type.";
 
     private Mock<ILocater> LocaterMock
     {
@@ -162,14 +160,13 @@ public class ConsoleLoggerTests
         LogSeverity logSeverity = LogSeverity.Debug;
         OperationType currentOperationType = OperationType.Loading;
         OperationType operationType = OperationType.Generating;
-        string operationTypeText = operationType.ToString();
-        string formattedMessage = SampleLogMessagePrefix + operationTypeText + SampleLogMessageSuffix;
+        string message = string.Format(SampleLogMessage, operationType.ToString());
         Location location = new("SampleSegment", 42);
-        SetupMocks(logSeverity, operationType, formattedMessage, location);
+        SetupMocks(logSeverity, operationType, message, location);
         ConsoleLogger consoleLogger = GetConsoleLogger(currentOperationType);
 
         // Act
-        consoleLogger.Log(logSeverity, operationType, SampleLogMessage, operationTypeText);
+        consoleLogger.Log(logSeverity, operationType, message);
 
         // Assert
         consoleLogger.CurrentOperationType
@@ -186,14 +183,13 @@ public class ConsoleLoggerTests
         LogSeverity logSeverity = LogSeverity.Warning;
         OperationType currentOperationType = OperationType.Parsing;
         OperationType operationType = OperationType.Loading;
-        string operationTypeText = operationType.ToString();
-        string formattedMessage = SampleLogMessagePrefix + operationTypeText + SampleLogMessageSuffix;
+        string message = string.Format(SampleLogMessage, operationType.ToString());
         Location location = new("TemplateFile", 42);
-        SetupMocks(logSeverity, operationType, formattedMessage, location);
+        SetupMocks(logSeverity, operationType, message, location);
         ConsoleLogger consoleLogger = GetConsoleLogger(currentOperationType);
 
         // Act
-        consoleLogger.Log(logSeverity, operationType, SampleLogMessage, operationTypeText);
+        consoleLogger.Log(logSeverity, operationType, message);
 
         // Assert
         consoleLogger.CurrentOperationType
@@ -210,14 +206,13 @@ public class ConsoleLoggerTests
         LogSeverity logSeverity = LogSeverity.Information;
         OperationType currentOperationType = OperationType.Reset;
         OperationType operationType = OperationType.Parsing;
-        string operationTypeText = operationType.ToString();
-        string formattedMessage = SampleLogMessagePrefix + operationTypeText + SampleLogMessageSuffix;
+        string message = string.Format(SampleLogMessage, operationType.ToString());
         Location location = new("SampleSegment", 42);
-        SetupMocks(logSeverity, operationType, formattedMessage, location);
+        SetupMocks(logSeverity, operationType, message, location);
         ConsoleLogger consoleLogger = GetConsoleLogger(currentOperationType);
 
         // Act
-        consoleLogger.Log(logSeverity, operationType, SampleLogMessage, operationTypeText);
+        consoleLogger.Log(logSeverity, operationType, message);
 
         // Assert
         consoleLogger.CurrentOperationType
@@ -234,13 +229,12 @@ public class ConsoleLoggerTests
         LogSeverity logSeverity = LogSeverity.Error;
         OperationType currentOperationType = OperationType.Setup;
         OperationType operationType = OperationType.Reset;
-        string operationTypeText = operationType.ToString();
-        string formattedMessage = SampleLogMessagePrefix + operationTypeText + SampleLogMessageSuffix;
-        SetupMocks(logSeverity, operationType, formattedMessage, Location.Empty);
+        string message = string.Format(SampleLogMessage, operationType.ToString());
+        SetupMocks(logSeverity, operationType, message, Location.Empty);
         ConsoleLogger consoleLogger = GetConsoleLogger(currentOperationType);
 
         // Act
-        consoleLogger.Log(logSeverity, operationType, SampleLogMessage, operationTypeText);
+        consoleLogger.Log(logSeverity, operationType, message);
 
         // Assert
         consoleLogger.CurrentOperationType
@@ -257,13 +251,12 @@ public class ConsoleLoggerTests
         LogSeverity logSeverity = LogSeverity.Warning;
         OperationType currentOperationType = OperationType.User;
         OperationType operationType = OperationType.Setup;
-        string operationTypeText = operationType.ToString();
-        string formattedMessage = SampleLogMessagePrefix + operationTypeText + SampleLogMessageSuffix;
-        SetupMocks(logSeverity, operationType, formattedMessage, Location.Empty);
+        string message = string.Format(SampleLogMessage, operationType.ToString());
+        SetupMocks(logSeverity, operationType, message, Location.Empty);
         ConsoleLogger consoleLogger = GetConsoleLogger(currentOperationType);
 
         // Act
-        consoleLogger.Log(logSeverity, operationType, SampleLogMessage, operationTypeText);
+        consoleLogger.Log(logSeverity, operationType, message);
 
         // Assert
         consoleLogger.CurrentOperationType
@@ -280,13 +273,12 @@ public class ConsoleLoggerTests
         LogSeverity logSeverity = LogSeverity.Warning;
         OperationType currentOperationType = OperationType.User;
         OperationType operationType = OperationType.Status;
-        string operationTypeText = operationType.ToString();
-        string formattedMessage = SampleLogMessagePrefix + operationTypeText + SampleLogMessageSuffix;
-        SetupMocks(logSeverity, operationType, formattedMessage, Location.Empty);
+        string message = string.Format(SampleLogMessage, operationType.ToString());
+        SetupMocks(logSeverity, operationType, message, Location.Empty);
         ConsoleLogger consoleLogger = GetConsoleLogger(currentOperationType);
 
         // Act
-        consoleLogger.Log(logSeverity, operationType, SampleLogMessage, operationTypeText);
+        consoleLogger.Log(logSeverity, operationType, message);
 
         // Assert
         consoleLogger.CurrentOperationType
@@ -303,13 +295,12 @@ public class ConsoleLoggerTests
         LogSeverity logSeverity = LogSeverity.Error;
         OperationType currentOperationType = OperationType.Writing;
         OperationType operationType = OperationType.User;
-        string operationTypeText = operationType.ToString();
-        string formattedMessage = SampleLogMessagePrefix + operationTypeText + SampleLogMessageSuffix;
-        SetupMocks(logSeverity, operationType, formattedMessage, Location.Empty);
+        string message = string.Format(SampleLogMessage, operationType.ToString());
+        SetupMocks(logSeverity, operationType, message, Location.Empty);
         ConsoleLogger consoleLogger = GetConsoleLogger(currentOperationType);
 
         // Act
-        consoleLogger.Log(logSeverity, operationType, SampleLogMessage, operationTypeText);
+        consoleLogger.Log(logSeverity, operationType, message);
 
         // Assert
         consoleLogger.CurrentOperationType
@@ -326,14 +317,13 @@ public class ConsoleLoggerTests
         LogSeverity logSeverity = LogSeverity.Debug;
         OperationType currentOperationType = OperationType.Generating;
         OperationType operationType = OperationType.Writing;
-        string operationTypeText = operationType.ToString();
-        string formattedMessage = SampleLogMessagePrefix + operationTypeText + SampleLogMessageSuffix;
+        string message = string.Format(SampleLogMessage, operationType.ToString());
         Location location = new("OutputFile", 42);
-        SetupMocks(logSeverity, operationType, formattedMessage, location);
+        SetupMocks(logSeverity, operationType, message, location);
         ConsoleLogger consoleLogger = GetConsoleLogger(currentOperationType);
 
         // Act
-        consoleLogger.Log(logSeverity, operationType, SampleLogMessage, operationTypeText);
+        consoleLogger.Log(logSeverity, operationType, message);
 
         // Assert
         consoleLogger.CurrentOperationType
@@ -349,13 +339,13 @@ public class ConsoleLoggerTests
         InitializeMocks();
         LogSeverity logSeverity = LogSeverity.Error;
         OperationType operationType = OperationType.Generating;
-        string formattedMessage = SampleLogMessagePrefix + OperationType.Generating.ToString() + SampleLogMessageSuffix;
+        string message = string.Format(SampleLogMessage, operationType.ToString());
         Location location = new("SampleSegment", 42);
-        SetupMocks(logSeverity, operationType, formattedMessage, location);
+        SetupMocks(logSeverity, operationType, message, location);
         ConsoleLogger consoleLogger = GetConsoleLogger(operationType);
 
         // Act
-        consoleLogger.Log(logSeverity, SampleLogMessage, "Generating");
+        consoleLogger.Log(logSeverity, message);
 
         // Assert
         VerifyMocks();
@@ -368,13 +358,13 @@ public class ConsoleLoggerTests
         InitializeMocks();
         LogSeverity logSeverity = LogSeverity.Information;
         OperationType operationType = OperationType.Loading;
-        string formattedMessage = SampleLogMessagePrefix + operationType.ToString() + SampleLogMessageSuffix;
+        string message = string.Format(SampleLogMessage, operationType.ToString());
         Location location = new("TemplateFile", 42);
-        SetupMocks(logSeverity, operationType, formattedMessage, location);
+        SetupMocks(logSeverity, operationType, message, location);
         ConsoleLogger consoleLogger = GetConsoleLogger(operationType);
 
         // Act
-        consoleLogger.Log(logSeverity, SampleLogMessage, "Loading");
+        consoleLogger.Log(logSeverity, message);
 
         // Assert
         VerifyMocks();
@@ -387,13 +377,13 @@ public class ConsoleLoggerTests
         InitializeMocks();
         LogSeverity logSeverity = LogSeverity.Debug;
         OperationType operationType = OperationType.Parsing;
-        string formattedMessage = SampleLogMessagePrefix + operationType.ToString() + SampleLogMessageSuffix;
+        string message = string.Format(SampleLogMessage, operationType.ToString());
         Location location = new("SampleSegment", 42);
-        SetupMocks(logSeverity, operationType, formattedMessage, location);
+        SetupMocks(logSeverity, operationType, message, location);
         ConsoleLogger consoleLogger = GetConsoleLogger(operationType);
 
         // Act
-        consoleLogger.Log(logSeverity, SampleLogMessage, "Parsing");
+        consoleLogger.Log(logSeverity, message);
 
         // Assert
         VerifyMocks();
@@ -406,12 +396,12 @@ public class ConsoleLoggerTests
         InitializeMocks();
         LogSeverity logSeverity = LogSeverity.Warning;
         OperationType operationType = OperationType.Reset;
-        string formattedMessage = SampleLogMessagePrefix + operationType.ToString() + SampleLogMessageSuffix;
-        SetupMocks(logSeverity, operationType, formattedMessage, Location.Empty);
+        string message = string.Format(SampleLogMessage, operationType.ToString());
+        SetupMocks(logSeverity, operationType, message, Location.Empty);
         ConsoleLogger consoleLogger = GetConsoleLogger(operationType);
 
         // Act
-        consoleLogger.Log(logSeverity, SampleLogMessage, "Reset");
+        consoleLogger.Log(logSeverity, message);
 
         // Assert
         VerifyMocks();
@@ -424,12 +414,12 @@ public class ConsoleLoggerTests
         InitializeMocks();
         LogSeverity logSeverity = LogSeverity.Information;
         OperationType operationType = OperationType.Setup;
-        string formattedMessage = SampleLogMessagePrefix + operationType.ToString() + SampleLogMessageSuffix;
-        SetupMocks(logSeverity, operationType, formattedMessage, Location.Empty);
+        string message = string.Format(SampleLogMessage, operationType.ToString());
+        SetupMocks(logSeverity, operationType, message, Location.Empty);
         ConsoleLogger consoleLogger = GetConsoleLogger(operationType);
 
         // Act
-        consoleLogger.Log(logSeverity, SampleLogMessage, "Setup");
+        consoleLogger.Log(logSeverity, message);
 
         // Assert
         VerifyMocks();
@@ -442,12 +432,12 @@ public class ConsoleLoggerTests
         InitializeMocks();
         LogSeverity logSeverity = LogSeverity.Information;
         OperationType operationType = OperationType.Status;
-        string formattedMessage = SampleLogMessagePrefix + operationType.ToString() + SampleLogMessageSuffix;
-        SetupMocks(logSeverity, operationType, formattedMessage, Location.Empty);
+        string message = string.Format(SampleLogMessage, operationType.ToString());
+        SetupMocks(logSeverity, operationType, message, Location.Empty);
         ConsoleLogger consoleLogger = GetConsoleLogger(operationType);
 
         // Act
-        consoleLogger.Log(logSeverity, SampleLogMessage, "Status");
+        consoleLogger.Log(logSeverity, message);
 
         // Assert
         VerifyMocks();
@@ -460,12 +450,12 @@ public class ConsoleLoggerTests
         InitializeMocks();
         LogSeverity logSeverity = LogSeverity.Warning;
         OperationType operationType = OperationType.User;
-        string formattedMessage = SampleLogMessagePrefix + operationType.ToString() + SampleLogMessageSuffix;
-        SetupMocks(logSeverity, operationType, formattedMessage, Location.Empty);
+        string message = string.Format(SampleLogMessage, operationType.ToString());
+        SetupMocks(logSeverity, operationType, message, Location.Empty);
         ConsoleLogger consoleLogger = GetConsoleLogger(operationType);
 
         // Act
-        consoleLogger.Log(logSeverity, SampleLogMessage, "User");
+        consoleLogger.Log(logSeverity, message);
 
         // Assert
         VerifyMocks();
@@ -478,13 +468,13 @@ public class ConsoleLoggerTests
         InitializeMocks();
         LogSeverity logSeverity = LogSeverity.Error;
         OperationType operationType = OperationType.Writing;
-        string formattedMessage = SampleLogMessagePrefix + operationType.ToString() + SampleLogMessageSuffix;
+        string message = string.Format(SampleLogMessage, operationType.ToString());
         Location location = new("OutputFile", 42);
-        SetupMocks(logSeverity, operationType, formattedMessage, location);
+        SetupMocks(logSeverity, operationType, message, location);
         ConsoleLogger consoleLogger = GetConsoleLogger(operationType);
 
         // Act
-        consoleLogger.Log(logSeverity, SampleLogMessage, "Writing");
+        consoleLogger.Log(logSeverity, message);
 
         // Assert
         VerifyMocks();
@@ -498,12 +488,12 @@ public class ConsoleLoggerTests
         int errorCount = 2;
         string errorMessage = "Error message";
         LogEntry errorLogEntry = new(LogSeverity.Error, DefaultOperationType, Location.Empty, errorMessage);
-        string errorCountMessage = FormatMessage(MsgErrorCount, errorCount.ToString());
+        string errorCountMessage = GetMessage(MsgErrorCount, errorCount.ToString());
         LogEntry errorCountLogEntry = new(LogSeverity.Information, OperationType.Status, Location.Empty, errorCountMessage);
         int warningCount = 3;
         string warningMessage = "Warning message";
         LogEntry warningLogEntry = new(LogSeverity.Warning, DefaultOperationType, Location.Empty, warningMessage);
-        string warningCountMessage = FormatMessage(MsgWarningCount, warningCount.ToString());
+        string warningCountMessage = GetMessage(MsgWarningCount, warningCount.ToString());
         LogEntry warningCountLogEntry = new(LogSeverity.Information, OperationType.Status, Location.Empty, warningCountMessage);
         LogEntry processingStatusLogEntry = new(LogSeverity.Information, OperationType.Status, Location.Empty, MsgProcessingSummary);
         MessageWriterMock

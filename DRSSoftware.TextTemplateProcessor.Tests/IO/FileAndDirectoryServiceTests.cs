@@ -113,7 +113,8 @@ public class FileAndDirectoryServiceTests
         // Arrange
         FileAndDirectoryService service = new();
         string fileName = NextFileName;
-        string expectedMessage = FormatMessage(MsgCombinePathsArgument1IsNull, nameof(service.CombinePaths));
+        string expectedMessage = GetMessage(MsgCombinePathsArgument1IsNull,
+                                            nameof(service.CombinePaths));
 
         // Act
         void action() => service.CombinePaths(null!, fileName);
@@ -128,7 +129,8 @@ public class FileAndDirectoryServiceTests
         // Arrange
         FileAndDirectoryService service = new();
         string fileName = NextFileName;
-        string expectedMessage = FormatMessage(MsgCombinePathsArgument2IsNull, nameof(service.CombinePaths));
+        string expectedMessage = GetMessage(MsgCombinePathsArgument2IsNull,
+                                            nameof(service.CombinePaths));
 
         // Act
         void action() => service.CombinePaths(fileName, null!);
@@ -260,8 +262,10 @@ public class FileAndDirectoryServiceTests
     {
         // Arrange
         FileAndDirectoryService service = new();
-        string expectedInnerMessage = FormatMessage(MsgUnableToGetFullPathString, NullStringValue);
-        string expectedOuterMessage = FormatMessage(MsgUnableToCreateDirectory, NullStringValue);
+        string expectedInnerMessage = GetMessage(MsgUnableToGetFullPathString,
+                                                 NullStringValue);
+        string expectedOuterMessage = GetMessage(MsgUnableToCreateDirectory,
+                                                 NullStringValue);
 
         // Act
         void action() => service.CreateDirectory(null!);
@@ -428,8 +432,9 @@ public class FileAndDirectoryServiceTests
     {
         // Arrange
         FileAndDirectoryService service = new();
-        string expectedInnerMessage = MsgNullDirectoryPath;
-        string expectedOuterMessage = FormatMessage(MsgUnableToGetFullPathString, NullStringValue);
+        string expectedInnerMessage = GetMessage(MsgNullDirectoryPath);
+        string expectedOuterMessage = GetMessage(MsgUnableToGetFullPathString,
+                                                 NullStringValue);
 
         // Act
         void action() => service.GetFullPath(null!);
@@ -481,8 +486,9 @@ public class FileAndDirectoryServiceTests
     {
         // Arrange
         FileAndDirectoryService service = new();
-        string expectedInnerMessage = MsgNullFilePath;
-        string expectedOuterMessage = FormatMessage(MsgUnableToGetFullPathString, NullStringValue);
+        string expectedInnerMessage = GetMessage(MsgNullFilePath);
+        string expectedOuterMessage = GetMessage(MsgUnableToGetFullPathString,
+                                                 NullStringValue);
 
         // Act
         void action() => service.GetFullPath(null!, null, true);
@@ -513,8 +519,10 @@ public class FileAndDirectoryServiceTests
         // Arrange
         FileAndDirectoryService service = new();
         string filePath = NextAbsoluteFilePath;
-        string expectedInnerMessage = FormatMessage(MsgFileNotFound, filePath);
-        string expectedOuterMessage = FormatMessage(MsgUnableToReadTextFile, filePath);
+        string expectedInnerMessage = GetMessage(MsgFileNotFound,
+                                                 filePath);
+        string expectedOuterMessage = GetMessage(MsgUnableToReadTextFile,
+                                                 filePath);
 
         // Act
         void action() => service.ReadTextFile(filePath);
@@ -553,8 +561,10 @@ public class FileAndDirectoryServiceTests
         // Arrange
         FileAndDirectoryService service = new();
         string pathString = filePath is null ? NullStringValue : filePath;
-        string expectedInnerMessage = FormatMessage(MsgFileNotFound, pathString);
-        string expectedOuterMessage = FormatMessage(MsgUnableToReadTextFile, pathString);
+        string expectedInnerMessage = GetMessage(MsgFileNotFound,
+                                                 pathString);
+        string expectedOuterMessage = GetMessage(MsgUnableToReadTextFile,
+                                                 pathString);
 
         // Act
         void action() => service.ReadTextFile(filePath!);
@@ -594,8 +604,9 @@ public class FileAndDirectoryServiceTests
     {
         // Arrange
         FileAndDirectoryService service = new();
-        string expectedInnerMessage = FormatMessage(ArgumentNullMessage, "filePath");
-        string expectedOuterMessage = FormatMessage(MsgUnableToWriteToTextFile, NullStringValue);
+        string expectedInnerMessage = GetMessage(ArgumentNullMessage, "filePath");
+        string expectedOuterMessage = GetMessage(MsgUnableToWriteToTextFile,
+                                                 NullStringValue);
 
         // Act
         void action() => service.WriteTextFile(null!, SampleText);
@@ -610,8 +621,9 @@ public class FileAndDirectoryServiceTests
         // Arrange
         FileAndDirectoryService service = new();
         string filePath = NextAbsoluteFilePath;
-        string expectedOuterMessage = FormatMessage(MsgUnableToWriteToTextFile, filePath);
-        string expectedInnerMessage = FormatMessage(ArgumentNullMessage, "textLines");
+        string expectedOuterMessage = GetMessage(MsgUnableToWriteToTextFile,
+                                                 filePath);
+        string expectedInnerMessage = GetMessage(ArgumentNullMessage, "textLines");
 
         // Act
         void action() => service.WriteTextFile(filePath, null!);

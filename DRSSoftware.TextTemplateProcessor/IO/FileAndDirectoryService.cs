@@ -44,7 +44,8 @@ internal class FileAndDirectoryService : IFileAndDirectoryService
             }
             catch (Exception ex)
             {
-                string message = FormatMessage(MsgUnableToClearDirectory, directoryPath);
+                string message = GetMessage(MsgUnableToClearDirectory,
+                                            directoryPath);
                 throw new FileAndDirectoryServiceException(message, ex);
             }
         }
@@ -71,14 +72,16 @@ internal class FileAndDirectoryService : IFileAndDirectoryService
     {
         if (path1 is null)
         {
-            string msg = FormatMessage(MsgCombinePathsArgument1IsNull, nameof(CombinePaths));
-            throw new FileAndDirectoryServiceException(msg);
+            string message = GetMessage(MsgCombinePathsArgument1IsNull,
+                                        nameof(CombinePaths));
+            throw new FileAndDirectoryServiceException(message);
         }
 
         if (path2 is null)
         {
-            string msg = FormatMessage(MsgCombinePathsArgument2IsNull, nameof(CombinePaths));
-            throw new FileAndDirectoryServiceException(msg);
+            string message = GetMessage(MsgCombinePathsArgument2IsNull,
+                                        nameof(CombinePaths));
+            throw new FileAndDirectoryServiceException(message);
         }
 
         string combinedPath;
@@ -89,7 +92,9 @@ internal class FileAndDirectoryService : IFileAndDirectoryService
         }
         catch (Exception ex)
         {
-            string message = FormatMessage(MsgUnableToCombineFilePaths, path1, path2);
+            string message = GetMessage(MsgUnableToCombineFilePaths,
+                                        path1,
+                                        path2);
             throw new FileAndDirectoryServiceException(message, ex);
         }
 
@@ -129,7 +134,8 @@ internal class FileAndDirectoryService : IFileAndDirectoryService
         }
         catch (Exception ex)
         {
-            string message = FormatMessage(MsgUnableToCreateDirectory, directoryPath);
+            string message = GetMessage(MsgUnableToCreateDirectory,
+                                        directoryPath);
             throw new FileAndDirectoryServiceException(message, ex);
         }
 
@@ -244,8 +250,10 @@ internal class FileAndDirectoryService : IFileAndDirectoryService
         {
             if (path is null)
             {
-                string msg = isFilePath ? MsgNullFilePath : MsgNullDirectoryPath;
-                throw new FileAndDirectoryServiceException(msg);
+                string message = isFilePath
+                    ? GetMessage(MsgNullFilePath)
+                    : GetMessage(MsgNullDirectoryPath);
+                throw new FileAndDirectoryServiceException(message);
             }
 
             fullPath = string.IsNullOrWhiteSpace(path)
@@ -260,7 +268,8 @@ internal class FileAndDirectoryService : IFileAndDirectoryService
         }
         catch (Exception ex)
         {
-            string message = FormatMessage(MsgUnableToGetFullPathString, path);
+            string message = GetMessage(MsgUnableToGetFullPathString,
+                                        path);
             throw new FileAndDirectoryServiceException(message, ex);
         }
 
@@ -282,14 +291,16 @@ internal class FileAndDirectoryService : IFileAndDirectoryService
 
         if (assembly.IsDynamic)
         {
-            throw new FileAndDirectoryServiceException(MsgDynamicallyGeneratedAssembliesNotSupported);
+            string message = GetMessage(MsgDynamicallyGeneratedAssembliesNotSupported);
+            throw new FileAndDirectoryServiceException(message);
         }
 
         string? path = Path.GetDirectoryName(assembly.Location);
 
         if (string.IsNullOrEmpty(path))
         {
-            throw new FileAndDirectoryServiceException(MsgUnableToLocateSolutionDirectory);
+            string message = GetMessage(MsgUnableToLocateSolutionDirectory);
+            throw new FileAndDirectoryServiceException(message);
         }
 
         while (true)
@@ -298,7 +309,8 @@ internal class FileAndDirectoryService : IFileAndDirectoryService
 
             if (pathIndex < 0)
             {
-                throw new FileAndDirectoryServiceException(MsgUnableToLocateSolutionDirectory);
+                string message = GetMessage(MsgUnableToLocateSolutionDirectory);
+                throw new FileAndDirectoryServiceException(message);
             }
 
             path = path[..pathIndex];
@@ -321,7 +333,8 @@ internal class FileAndDirectoryService : IFileAndDirectoryService
             }
             catch (Exception ex)
             {
-                throw new FileAndDirectoryServiceException(MsgUnableToLocateSolutionDirectory, ex);
+                string message = GetMessage(MsgUnableToLocateSolutionDirectory);
+                throw new FileAndDirectoryServiceException(message, ex);
             }
         }
 
@@ -348,7 +361,8 @@ internal class FileAndDirectoryService : IFileAndDirectoryService
         {
             if (string.IsNullOrWhiteSpace(fullFilePath) || !File.Exists(fullFilePath))
             {
-                string message = FormatMessage(MsgFileNotFound, fullFilePath);
+                string message = GetMessage(MsgFileNotFound,
+                                            fullFilePath);
                 throw new FileAndDirectoryServiceException(message);
             }
 
@@ -365,7 +379,8 @@ internal class FileAndDirectoryService : IFileAndDirectoryService
         }
         catch (Exception ex)
         {
-            string message = FormatMessage(MsgUnableToReadTextFile, fullFilePath);
+            string message = GetMessage(MsgUnableToReadTextFile,
+                                        fullFilePath);
             throw new FileAndDirectoryServiceException(message, ex);
         }
 
@@ -400,7 +415,8 @@ internal class FileAndDirectoryService : IFileAndDirectoryService
         }
         catch (Exception ex)
         {
-            string message = FormatMessage(MsgUnableToWriteToTextFile, filePath);
+            string message = GetMessage(MsgUnableToWriteToTextFile,
+                                        filePath);
             throw new FileAndDirectoryServiceException(message, ex);
         }
     }

@@ -10,7 +10,7 @@ public class MessagesTests
     public void FormatMessageHavingFewerFormatItemsThanArguments_ShouldReturnFormattedMessage(string message, string expected, params string[] args)
     {
         // Arrange/Act
-        string actual = FormatMessage(message, args);
+        string actual = GetMessage(message, args);
 
         // Assert
         actual
@@ -25,7 +25,7 @@ public class MessagesTests
     public void FormatMessageHavingFormatItemsAndMatchingNumberOfArguments_ShouldReturnFormattedMessage(string message, string expected, params string[] args)
     {
         // Arrange/Act
-        string actual = FormatMessage(message, args);
+        string actual = GetMessage(message, args);
 
         // Assert
         actual
@@ -41,7 +41,7 @@ public class MessagesTests
     public void FormatMessageHavingFormatItemsWithNullArguments_ShouldReturnFormattedMessage(string message, string expected, params string?[] args)
     {
         // Arrange/Act
-        string actual = FormatMessage(message, args);
+        string actual = GetMessage(message, args);
 
         // Assert
         actual
@@ -50,20 +50,18 @@ public class MessagesTests
     }
 
     [Theory]
-    [InlineData("This is a test message with one format item: {0}.")]
-    [InlineData("This is a test message with two format items: {0} and {1}.", "one")]
-    [InlineData("This is a test message with three format items: {0}, {1}, and {2}.", "one", "two")]
-    public void FormatMessageHavingMoreFormatItemsThanArguments_ShouldReturnFormattedMessage(string message, params string[] args)
+    [InlineData("This is a test message with one format item: {0}.", $"This is a test message with one format item: {NullStringValue}.")]
+    [InlineData("This is a test message with two format items: {0} and {1}.", $"This is a test message with two format items: one and {NullStringValue}.", "one")]
+    [InlineData("This is a test message with three format items: {0}, {1}, and {2}.", $"This is a test message with three format items: one, two, and {NullStringValue}.", "one", "two")]
+    public void FormatMessageHavingMoreFormatItemsThanArguments_ShouldSubstituteDefaultValuesForMissingArguments(string message, string expected, params string[] args)
     {
-        // Arrange - This was tested under .NET 10. The format of the following message may change
-        // in future versions of .NET, so this test may need to be updated if the message changes.
-        string expected = "Index (zero based) must be greater than or equal to zero and less than the size of the argument list.";
-
-        // Act
-        void action() => FormatMessage(message, args);
+        // Arrange/Act
+        string actual = GetMessage(message, args);
 
         // Assert
-        AssertException<FormatException>(action, expected);
+        actual
+            .Should()
+            .Be(expected);
     }
 
     [Fact]
@@ -73,7 +71,7 @@ public class MessagesTests
         string expected = "This is a test message with no format items.";
 
         // Act
-        string actual = FormatMessage(expected);
+        string actual = GetMessage(expected);
 
         // Assert
         actual
@@ -89,7 +87,7 @@ public class MessagesTests
         string[] args = ["one", "two", "three"];
 
         // Act
-        string actual = FormatMessage(expected, args);
+        string actual = GetMessage(expected, args);
 
         // Assert
         actual

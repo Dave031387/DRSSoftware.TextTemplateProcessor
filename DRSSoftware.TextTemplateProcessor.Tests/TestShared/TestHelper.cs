@@ -12,7 +12,7 @@ internal static class TestHelper
     public static string[] SampleText => ["Line 1", "Line 2", "Line 3"];
 
     public static string GetNullDependencyMessage(string className, string serviceName, string parameterName)
-        => string.Format(MsgDependencyIsNull, className, serviceName) + $" (Parameter '{parameterName}')";
+        => GetMessage(MsgDependencyIsNull, className, serviceName) + $" (Parameter '{parameterName}')";
 
     internal static void AssertException<T>(Action action, string message)
              where T : Exception

@@ -9,6 +9,47 @@ public class RegexHelperTests
     private readonly string _testString = "This is a test string.";
 
     [Theory]
+    [InlineData("Test string with no format items.", 0)]
+    [InlineData("{0} Test string with format item.", 1)]
+    [InlineData("Test string with format item. {1}", 1)]
+    [InlineData("Test string with {2} format item.", 1)]
+    [InlineData("{0}{1} Test string with format items.", 2)]
+    [InlineData("Test {0} string {1} with format item.", 2)]
+    [InlineData("{0} Test string with format item. {1}", 2)]
+    [InlineData("{0} Test {1}{2} string with format item.", 3)]
+    [InlineData("Test {1}{2} string with {0} format item. {4}{3}", 5)]
+    public void CountFormatItems_ShouldReturnCorrectNumberOfValidFormatItems(string text, int expected)
+    {
+        // Arrange/Act
+        int actual = GetFormatItemCount(text);
+
+        // Assert
+        actual
+            .Should()
+            .Be(expected);
+    }
+
+    [Theory]
+    [InlineData("Sample text with no format items.")]
+    [InlineData("{0 No format item here")]
+    [InlineData("No format item here 1}")]
+    [InlineData("No format {2 item here")]
+    [InlineData("No format 3} item here")]
+    [InlineData("No format item {4 } here")]
+    [InlineData("No { 5} format item here")]
+    public void CountFormatItems_ShouldReturnZeroIfTextDoesNotContainValidFormatItems(string text)
+    {
+        // Arrange/Act
+        int actual = GetFormatItemCount(text);
+        int expected = 0;
+
+        // Assert
+        actual
+            .Should()
+            .Be(expected);
+    }
+
+    [Theory]
     [InlineData(Normal + Absolute + "10")]
     [InlineData(Space + Normal + Absolute + "1")]
     [InlineData(Normal + Absolute + "a ")]
@@ -214,40 +255,6 @@ public class RegexHelperTests
 
         // Act
         bool actual = IsCommentLine(text);
-
-        // Assert
-        actual
-            .Should()
-            .BeTrue();
-    }
-
-    [Theory]
-    [InlineData("Sample text with no format items.")]
-    [InlineData("{0 No format item here")]
-    [InlineData("No format item here 1}")]
-    [InlineData("No format {2 item here")]
-    [InlineData("No format 3} item here")]
-    [InlineData("No format item {4 } here")]
-    [InlineData("No { 5} format item here")]
-    public void MatchOnFormatItems_ShouldReturnFalseIfTextDoesNotContainFormatItems(string text)
-    {
-        // Arrange/Act
-        bool actual = HasFormatItems(text);
-
-        // Assert
-        actual
-            .Should()
-            .BeFalse();
-    }
-
-    [Theory]
-    [InlineData("{0} Test string with format item.")]
-    [InlineData("Test string with format item. {1}")]
-    [InlineData("Test string with {2} format item.")]
-    public void MatchOnFormatItems_ShouldReturnTrueIfTextContainsFormatItems(string text)
-    {
-        // Arrange/Act
-        bool actual = HasFormatItems(text);
 
         // Assert
         actual

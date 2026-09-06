@@ -87,6 +87,8 @@ public class IndentProcessorTests
         bool isOneTime = true;
         int expectedReturnValue = 0;
         int expectedCurrentIndent = DefaultTabSize;
+        string expectedMessage = GetMessage(MsgLeftIndentHasBeenTruncated,
+                                            SegmentName);
 
         Test_GetFirstTimeIndent(firstTimeOffset,
                                 initialIndent,
@@ -95,7 +97,7 @@ public class IndentProcessorTests
                                 isOneTime,
                                 expectedCurrentIndent,
                                 expectedReturnValue,
-                                MsgLeftIndentHasBeenTruncated);
+                                expectedMessage);
     }
 
     // Case 02 / firstTimeOffset = 0 / isRelative = true / indent < 0 / calculated value < 0 /
@@ -110,6 +112,8 @@ public class IndentProcessorTests
         bool isOneTime = false;
         int expectedReturnValue = 0;
         int expectedCurrentIndent = expectedReturnValue;
+        string expectedMessage = GetMessage(MsgLeftIndentHasBeenTruncated,
+                                            SegmentName);
 
         Test_GetFirstTimeIndent(firstTimeOffset,
                                 initialIndent,
@@ -118,7 +122,7 @@ public class IndentProcessorTests
                                 isOneTime,
                                 expectedCurrentIndent,
                                 expectedReturnValue,
-                                MsgLeftIndentHasBeenTruncated);
+                                expectedMessage);
     }
 
     // Case 03 / firstTimeOffset = 0 / isRelative = true / indent < 0 / calculated value = 0 /
@@ -288,6 +292,8 @@ public class IndentProcessorTests
         bool isOneTime = true;
         int expectedReturnValue = 0;
         int expectedCurrentIndent = initialIndent * DefaultTabSize;
+        string expectedMessage = GetMessage(MsgLeftIndentHasBeenTruncated,
+                                            SegmentName);
 
         Test_GetFirstTimeIndent(firstTimeOffset,
                                 initialIndent,
@@ -296,7 +302,7 @@ public class IndentProcessorTests
                                 isOneTime,
                                 expectedCurrentIndent,
                                 expectedReturnValue,
-                                MsgLeftIndentHasBeenTruncated);
+                                expectedMessage);
     }
 
     // Case 11 / firstTimeOffset = 0 / isRelative = false / indent < 0 / calculated value n/a /
@@ -311,6 +317,8 @@ public class IndentProcessorTests
         bool isOneTime = false;
         int expectedReturnValue = 0;
         int expectedCurrentIndent = expectedReturnValue;
+        string expectedMessage = GetMessage(MsgLeftIndentHasBeenTruncated,
+                                            SegmentName);
 
         Test_GetFirstTimeIndent(firstTimeOffset,
                                 initialIndent,
@@ -319,7 +327,7 @@ public class IndentProcessorTests
                                 isOneTime,
                                 expectedCurrentIndent,
                                 expectedReturnValue,
-                                MsgLeftIndentHasBeenTruncated);
+                                expectedMessage);
     }
 
     // Case 12 / firstTimeOffset = 0 / isRelative = false / indent = 0 / calculated value n/a /
@@ -423,6 +431,8 @@ public class IndentProcessorTests
         int initialIndent = 1;
         int expectedReturnValue = 0;
         int expectedCurrentIndent = expectedReturnValue;
+        string expectedMessage = GetMessage(MsgFirstTimeIndentHasBeenTruncated,
+                                            SegmentName);
 
         Test_GetFirstTimeIndent(firstTimeOffset,
                                 initialIndent,
@@ -431,7 +441,7 @@ public class IndentProcessorTests
                                 isOneTime,
                                 expectedCurrentIndent,
                                 expectedReturnValue,
-                                MsgFirstTimeIndentHasBeenTruncated);
+                                expectedMessage);
     }
 
     // Case 17 / firstTimeOffset < 0 / isRelative = n/a / indent n/a / calculated value = 0 /
@@ -513,6 +523,8 @@ public class IndentProcessorTests
         bool isOneTime = true;
         int expectedReturnValue = 0;
         int expectedCurrentValue = DefaultTabSize;
+        string expectedMessage = GetMessage(MsgLeftIndentHasBeenTruncated,
+                                            SegmentName);
 
         Test_GetIndent(initialIndent,
                        textIndent,
@@ -520,7 +532,7 @@ public class IndentProcessorTests
                        isOneTime,
                        expectedCurrentValue,
                        expectedReturnValue,
-                       MsgLeftIndentHasBeenTruncated);
+                       expectedMessage);
     }
 
     // Case02 / indent < 0 / isRelative = true / isOneTime = false / calculated value < 0
@@ -533,6 +545,8 @@ public class IndentProcessorTests
         bool isOneTime = false;
         int expectedReturnValue = 0;
         int expectedCurrentValue = expectedReturnValue;
+        string expectedMessage = GetMessage(MsgLeftIndentHasBeenTruncated,
+                                            SegmentName);
 
         Test_GetIndent(initialIndent,
                        textIndent,
@@ -540,7 +554,7 @@ public class IndentProcessorTests
                        isOneTime,
                        expectedCurrentValue,
                        expectedReturnValue,
-                       MsgLeftIndentHasBeenTruncated);
+                       expectedMessage);
     }
 
     // Case03 / indent < 0 / isRelative = true / isOneTime = true / calculated value = 0
@@ -687,6 +701,8 @@ public class IndentProcessorTests
         bool isOneTime = true;
         int expectedReturnValue = 0;
         int expectedCurrentValue = initialIndent * DefaultTabSize;
+        string expectedMessage = GetMessage(MsgLeftIndentHasBeenTruncated,
+                                            SegmentName);
 
         Test_GetIndent(initialIndent,
                        textIndent,
@@ -694,7 +710,7 @@ public class IndentProcessorTests
                        isOneTime,
                        expectedCurrentValue,
                        expectedReturnValue,
-                       MsgLeftIndentHasBeenTruncated);
+                       expectedMessage);
     }
 
     // Case11 / indent < 0 / isRelative = false / isOneTime = false / calculated value n/a
@@ -707,6 +723,8 @@ public class IndentProcessorTests
         bool isOneTime = false;
         int expectedReturnValue = 0;
         int expectedCurrentValue = expectedReturnValue;
+        string expectedMessage = GetMessage(MsgLeftIndentHasBeenTruncated,
+                                            SegmentName);
 
         Test_GetIndent(initialIndent,
                        textIndent,
@@ -714,7 +732,7 @@ public class IndentProcessorTests
                        isOneTime,
                        expectedCurrentValue,
                        expectedReturnValue,
-                       MsgLeftIndentHasBeenTruncated);
+                       expectedMessage);
     }
 
     // Case12 / indent = 0 / isRelative = false / isOneTime = true / calculated value n/a
@@ -802,8 +820,10 @@ public class IndentProcessorTests
     {
         // Arrange
         InitializeMocks();
+        string expectedMessage = GetMessage(MsgIndentValueMustBeValidNumber,
+                                            numberString);
         LoggerMock
-            .Setup(logger => logger.Log(LogSeverity.Error, MsgIndentValueMustBeValidNumber, numberString))
+            .Setup(logger => logger.Log(LogSeverity.Error, expectedMessage))
             .Verifiable(Times.Once);
         IndentProcessor indentProcessor = GetIndentProcessor();
 
@@ -831,8 +851,10 @@ public class IndentProcessorTests
     {
         // Arrange
         InitializeMocks();
+        string expectedMessage = GetMessage(MsgIndentValueOutOfRange,
+                                            numberString);
         LoggerMock
-            .Setup(logger => logger.Log(LogSeverity.Error, MsgIndentValueOutOfRange, numberString))
+            .Setup(logger => logger.Log(LogSeverity.Error, expectedMessage))
             .Verifiable(Times.Once);
         IndentProcessor indentProcessor = GetIndentProcessor();
 
@@ -885,8 +907,10 @@ public class IndentProcessorTests
     {
         // Arrange
         InitializeMocks();
+        string expectedMessage = GetMessage(MsgTabSizeValueMustBeValidNumber,
+                                            numberString);
         LoggerMock
-            .Setup(logger => logger.Log(LogSeverity.Error, MsgTabSizeValueMustBeValidNumber, numberString))
+            .Setup(logger => logger.Log(LogSeverity.Error, expectedMessage))
             .Verifiable(Times.Once);
         IndentProcessor indentProcessor = GetIndentProcessor();
 
@@ -914,8 +938,10 @@ public class IndentProcessorTests
     {
         // Arrange
         InitializeMocks();
+        string expectedMessage = GetMessage(MsgTabSizeValueOutOfRange,
+                                            numberString);
         LoggerMock
-            .Setup(logger => logger.Log(LogSeverity.Error, MsgTabSizeValueOutOfRange, numberString))
+            .Setup(logger => logger.Log(LogSeverity.Error, expectedMessage))
             .Verifiable(Times.Once);
         IndentProcessor indentProcessor = GetIndentProcessor();
 
@@ -1044,8 +1070,11 @@ public class IndentProcessorTests
         // Arrange
         InitializeMocks();
         int expectedTabSize = MaxTabSize;
+        string expectedMessage = GetMessage(MsgTabSizeTooLarge,
+                                            tabSize.ToString(),
+                                            expectedTabSize.ToString());
         LoggerMock
-            .Setup(logger => logger.Log(LogSeverity.Warning, MsgTabSizeTooLarge, tabSize.ToString(), expectedTabSize.ToString()))
+            .Setup(logger => logger.Log(LogSeverity.Warning, expectedMessage))
             .Verifiable(Times.Once);
         IndentProcessor indentProcessor = GetIndentProcessor();
 
@@ -1068,8 +1097,11 @@ public class IndentProcessorTests
         // Arrange
         InitializeMocks();
         int expectedTabSize = MinTabSize;
+        string expectedMessage = GetMessage(MsgTabSizeTooSmall,
+                                            tabSize.ToString(),
+                                            expectedTabSize.ToString());
         LoggerMock
-            .Setup(logger => logger.Log(LogSeverity.Warning, MsgTabSizeTooSmall, tabSize.ToString(), expectedTabSize.ToString()))
+            .Setup(logger => logger.Log(LogSeverity.Warning, expectedMessage))
             .Verifiable(Times.Once);
         IndentProcessor indentProcessor = GetIndentProcessor();
 
@@ -1148,7 +1180,7 @@ public class IndentProcessorTests
                 .Returns(SegmentName)
                 .Verifiable(Times.Once);
             LoggerMock
-                .Setup(logger => logger.Log(LogSeverity.Warning, message, SegmentName))
+                .Setup(logger => logger.Log(LogSeverity.Warning, message))
                 .Verifiable(Times.Once);
         }
 
@@ -1187,7 +1219,7 @@ public class IndentProcessorTests
                 .Returns(SegmentName)
                 .Verifiable(Times.Once);
             LoggerMock
-                .Setup(logger => logger.Log(LogSeverity.Warning, message, SegmentName))
+                .Setup(logger => logger.Log(LogSeverity.Warning, message))
                 .Verifiable(Times.Once);
         }
 

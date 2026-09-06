@@ -82,8 +82,8 @@ internal class SegmentHeaderParser : DependencyCheckerBase, ISegmentHeaderParser
         if (headerLine.Length < 5 || headerLine[4] == ' ')
         {
             ControlItemBuilder.SegmentName = UnknownSegmentName;
-            Logger.Log(LogSeverity.Error,
-                       MsgSegmentNameIsMissing);
+            string message = GetMessage(MsgSegmentNameIsMissing);
+            Logger.Log(LogSeverity.Error, message);
         }
 
         string[] args = headerLine.Split(OptionSeparatorChars, StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
@@ -99,9 +99,9 @@ internal class SegmentHeaderParser : DependencyCheckerBase, ISegmentHeaderParser
             else
             {
                 ControlItemBuilder.SegmentName = UnknownSegmentName;
-                Logger.Log(LogSeverity.Error,
-                           MsgInvalidSegmentName,
-                           segmentName);
+                string message = GetMessage(MsgInvalidSegmentName,
+                                            segmentName);
+                Logger.Log(LogSeverity.Error, message);
             }
         }
 
@@ -136,18 +136,18 @@ internal class SegmentHeaderParser : DependencyCheckerBase, ISegmentHeaderParser
         }
         else
         {
-            Logger.Log(LogSeverity.Error,
-                       MsgInvalidFormOfOption,
-                       segmentName,
-                       arg);
+            string message = GetMessage(MsgInvalidFormOfOption,
+                                       segmentName,
+                                       arg);
+            Logger.Log(LogSeverity.Error, message);
             return result;
         }
 
         if (optionIndex < 1)
         {
-            Logger.Log(LogSeverity.Error,
-                       MsgOptionNameMustPrecedeEqualsSign,
-                       segmentName);
+            string message = GetMessage(MsgOptionNameMustPrecedeEqualsSign,
+                                       segmentName);
+            Logger.Log(LogSeverity.Error, message);
             return result;
         }
 
@@ -155,10 +155,10 @@ internal class SegmentHeaderParser : DependencyCheckerBase, ISegmentHeaderParser
 
         if (!IsValidSegmentHeaderOption(result.optionName))
         {
-            Logger.Log(LogSeverity.Error,
-                       MsgUnknownSegmentOptionFound,
-                       segmentName,
-                       arg);
+            string message = GetMessage(MsgUnknownSegmentOptionFound,
+                                       segmentName,
+                                       arg);
+            Logger.Log(LogSeverity.Error, message);
             return result;
         }
 
@@ -166,10 +166,10 @@ internal class SegmentHeaderParser : DependencyCheckerBase, ISegmentHeaderParser
 
         if (optionIndex == arg.Length)
         {
-            Logger.Log(LogSeverity.Error,
-                       MsgOptionValueMustFollowEqualsSign,
-                       segmentName,
-                       result.optionName);
+            string message = GetMessage(MsgOptionValueMustFollowEqualsSign,
+                                       segmentName,
+                                       result.optionName);
+            Logger.Log(LogSeverity.Error, message);
             return result;
         }
 
@@ -205,10 +205,10 @@ internal class SegmentHeaderParser : DependencyCheckerBase, ISegmentHeaderParser
                 || (optionName == PadSegmentNameOption && padSegmentOptionFound)
                 || (optionName == TabSizeOption && tabOptionFound))
             {
-                Logger.Log(LogSeverity.Warning,
-                           MsgFoundDuplicateOptionNameOnHeaderLine,
-                           segmentName,
-                           optionName);
+                string message = GetMessage(MsgFoundDuplicateOptionNameOnHeaderLine,
+                                            segmentName,
+                                            optionName);
+                Logger.Log(LogSeverity.Warning, message);
                 continue;
             }
 
@@ -250,9 +250,9 @@ internal class SegmentHeaderParser : DependencyCheckerBase, ISegmentHeaderParser
         {
             if (indentValue == 0)
             {
-                Logger.Log(LogSeverity.Warning,
-                           MsgFirstTimeIndentSetToZero,
-                           ControlItemBuilder.SegmentName);
+                string message = GetMessage(MsgFirstTimeIndentSetToZero,
+                                            ControlItemBuilder.SegmentName);
+                Logger.Log(LogSeverity.Warning, message);
             }
             else
             {
@@ -261,10 +261,10 @@ internal class SegmentHeaderParser : DependencyCheckerBase, ISegmentHeaderParser
         }
         else
         {
-            Logger.Log(LogSeverity.Error,
-                       MsgFirstTimeIndentIsInvalid,
-                       ControlItemBuilder.SegmentName,
-                       optionValue);
+            string message = GetMessage(MsgFirstTimeIndentIsInvalid,
+                                        ControlItemBuilder.SegmentName,
+                                        optionValue);
+            Logger.Log(LogSeverity.Error, message);
         }
     }
 
@@ -283,10 +283,10 @@ internal class SegmentHeaderParser : DependencyCheckerBase, ISegmentHeaderParser
         }
         else
         {
-            Logger.Log(LogSeverity.Error,
-                       MsgInvalidPadSegmentName,
-                       ControlItemBuilder.SegmentName,
-                       optionValue);
+            string message = GetMessage(MsgInvalidPadSegmentName,
+                                        ControlItemBuilder.SegmentName,
+                                        optionValue);
+            Logger.Log(LogSeverity.Error, message);
         }
     }
 
@@ -305,10 +305,10 @@ internal class SegmentHeaderParser : DependencyCheckerBase, ISegmentHeaderParser
         }
         else
         {
-            Logger.Log(LogSeverity.Error,
-                       MsgInvalidTabSizeOption,
-                       ControlItemBuilder.SegmentName,
-                       optionValue);
+            string message = GetMessage(MsgInvalidTabSizeOption,
+                                        ControlItemBuilder.SegmentName,
+                                        optionValue);
+            Logger.Log(LogSeverity.Error, message);
         }
     }
 }
