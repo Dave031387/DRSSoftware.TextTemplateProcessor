@@ -623,7 +623,8 @@ public class FileAndDirectoryServiceTests
         string filePath = NextAbsoluteFilePath;
         string expectedOuterMessage = GetMessage(MsgUnableToWriteToTextFile,
                                                  filePath);
-        string expectedInnerMessage = GetMessage(ArgumentNullMessage, "textLines");
+        string expectedInnerMessage = GetMessage(ArgumentNullMessage,
+                                                 "textLines");
 
         // Act
         void action() => service.WriteTextFile(filePath, null!);

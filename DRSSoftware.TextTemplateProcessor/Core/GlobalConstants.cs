@@ -42,20 +42,6 @@ internal static class GlobalConstants
     public const string DebugSeverity = "DEBUG::::";
 
     /// <summary>
-    /// The default string that is used to indicate the end of a token in a text template file.
-    /// </summary>
-    /// <remarks>
-    /// Used in conjunction with <see cref="DefaultStartDelimiter" /> to define the start and end of
-    /// a token.
-    /// </remarks>
-    public const string DefaultEndDelimiter = "#>";
-
-    /// <summary>
-    /// The default character that is used to escape special characters in a text template file.
-    /// </summary>
-    public const char DefaultEscapeCharacter = '\\';
-
-    /// <summary>
     /// The prefix string that appears at the start of any default file name.
     /// </summary>
     public const string DefaultFileNamePrefix = "File_";
@@ -77,18 +63,36 @@ internal static class GlobalConstants
     public const string DefaultSegmentNamePrefix = "DefaultSegment";
 
     /// <summary>
-    /// The default string that is used to indicate the start of a token in a text template file.
-    /// </summary>
-    /// <remarks>
-    /// Used in conjunction with <see cref="DefaultEndDelimiter" /> to define the start and end of a
-    /// token.
-    /// </remarks>
-    public const string DefaultStartDelimiter = "<#";
-
-    /// <summary>
     /// The number of space characters making up the default tab size.
     /// </summary>
     public const int DefaultTabSize = 4;
+
+    /// <summary>
+    /// The default string that is used to indicate the end of a token in a text template file.
+    /// </summary>
+    /// <remarks>
+    /// Used in conjunction with <see cref="DefaultTokenStartDelimiter" /> to define the start and
+    /// end of a token.
+    /// </remarks>
+    public const string DefaultTokenEndDelimiter = "#>";
+
+    /// <summary>
+    /// The default character used as the token escape character in a text template file.
+    /// </summary>
+    /// <remarks>
+    /// Used to escape the <see cref="DefaultTokenStartDelimiter" /> when it should be treated as
+    /// normal text rather than the start of a token.
+    /// </remarks>
+    public const char DefaultTokenEscapeCharacter = '\\';
+
+    /// <summary>
+    /// The default string that is used to indicate the start of a token in a text template file.
+    /// </summary>
+    /// <remarks>
+    /// Used in conjunction with <see cref="DefaultTokenEndDelimiter" /> to define the start and end
+    /// of a token.
+    /// </remarks>
+    public const string DefaultTokenStartDelimiter = "<#";
 
     /// <summary>
     /// The string that is used for denoting error severity level in a log message.

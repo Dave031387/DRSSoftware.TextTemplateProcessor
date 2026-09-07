@@ -841,16 +841,17 @@ public class IndentProcessorTests
     }
 
     [Theory]
-    [InlineData("-12")]
-    [InlineData("-11")]
-    [InlineData("-10")]
-    [InlineData("10")]
-    [InlineData("11")]
-    [InlineData("12")]
-    public void IsValidIndentValue_ShouldLogMessageAndReturnFalseWhenValueIsOutOfRange(string numberString)
+    [InlineData(MinIndentValue - 3)]
+    [InlineData(MinIndentValue - 2)]
+    [InlineData(MinIndentValue - 1)]
+    [InlineData(MaxIndentValue + 1)]
+    [InlineData(MaxIndentValue + 2)]
+    [InlineData(MaxIndentValue + 3)]
+    public void IsValidIndentValue_ShouldLogMessageAndReturnFalseWhenValueIsOutOfRange(int number)
     {
         // Arrange
         InitializeMocks();
+        string numberString = number.ToString();
         string expectedMessage = GetMessage(MsgIndentValueOutOfRange,
                                             numberString);
         LoggerMock
@@ -872,13 +873,13 @@ public class IndentProcessorTests
     }
 
     [Theory]
-    [InlineData("-9", -9)]
+    [InlineData($"{MinIndentValueString}", MinIndentValue)]
     [InlineData("  -8", -8)]
     [InlineData("-7  ", -7)]
     [InlineData("0", 0)]
     [InlineData("7", 7)]
     [InlineData("  8  ", 8)]
-    [InlineData("9", 9)]
+    [InlineData($"{MaxIndentValueString}", MaxIndentValue)]
     public void IsValidIndentValue_ShouldParseValueAndReturnTrueWhenNumberStringIsValid(string numberString, int expected)
     {
         // Arrange
@@ -928,16 +929,17 @@ public class IndentProcessorTests
     }
 
     [Theory]
-    [InlineData("-2")]
-    [InlineData("-1")]
-    [InlineData("0")]
-    [InlineData("10")]
-    [InlineData("11")]
-    [InlineData("12")]
-    public void IsValidTabSizeValue_ShouldLogMessageAndReturnsFalseWhenValueIsOutOfRange(string numberString)
+    [InlineData(MinTabSize - 3)]
+    [InlineData(MinTabSize - 2)]
+    [InlineData(MinTabSize - 1)]
+    [InlineData(MaxTabSize + 1)]
+    [InlineData(MaxTabSize + 2)]
+    [InlineData(MaxTabSize + 3)]
+    public void IsValidTabSizeValue_ShouldLogMessageAndReturnsFalseWhenValueIsOutOfRange(int number)
     {
         // Arrange
         InitializeMocks();
+        string numberString = number.ToString();
         string expectedMessage = GetMessage(MsgTabSizeValueOutOfRange,
                                             numberString);
         LoggerMock
@@ -959,12 +961,12 @@ public class IndentProcessorTests
     }
 
     [Theory]
-    [InlineData("1", 1)]
+    [InlineData($"{MinTabSizeString}", MinTabSize)]
     [InlineData(" 2", 2)]
     [InlineData("3", 3)]
     [InlineData("7 ", 7)]
     [InlineData("8", 8)]
-    [InlineData(" 9 ", 9)]
+    [InlineData($" {MaxTabSizeString} ", MaxTabSize)]
     public void IsValidTabSizeValue_ShouldParseValueAndReturnTrueWhenNumberStringIsValid(string numberString, int expected)
     {
         // Arrange
@@ -1062,9 +1064,9 @@ public class IndentProcessorTests
     }
 
     [Theory]
-    [InlineData(10)]
-    [InlineData(11)]
-    [InlineData(12)]
+    [InlineData(MaxTabSize + 1)]
+    [InlineData(MaxTabSize + 2)]
+    [InlineData(MaxTabSize + 3)]
     public void SetTabSize_ShouldLogMessageAndSetTabSizeToMaximumWhenValueIsTooLarge(int tabSize)
     {
         // Arrange
@@ -1089,9 +1091,9 @@ public class IndentProcessorTests
     }
 
     [Theory]
-    [InlineData(0)]
-    [InlineData(-1)]
-    [InlineData(-2)]
+    [InlineData(MinTabSize - 1)]
+    [InlineData(MinTabSize - 2)]
+    [InlineData(MinTabSize - 3)]
     public void SetTabSize_ShouldLogMessageAndSetTabSizeToMinimumWhenValueIsTooSmall(int tabSize)
     {
         // Arrange
@@ -1116,11 +1118,11 @@ public class IndentProcessorTests
     }
 
     [Theory]
-    [InlineData(1)]
-    [InlineData(2)]
-    [InlineData(5)]
-    [InlineData(8)]
-    [InlineData(9)]
+    [InlineData(MinTabSize)]
+    [InlineData(MinTabSize + 1)]
+    [InlineData(MinTabSize + ((MaxTabSize - MinTabSize) / 2))]
+    [InlineData(MaxTabSize - 1)]
+    [InlineData(MaxTabSize)]
     public void SetTabSize_ShouldSetTabSizeToValueWhenValueIsWithinValidRange(int expectedTabSize)
     {
         // Arrange

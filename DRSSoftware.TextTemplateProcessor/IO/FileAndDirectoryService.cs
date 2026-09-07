@@ -10,11 +10,6 @@ namespace DRSSoftware.TextTemplateProcessor.IO;
 internal class FileAndDirectoryService : IFileAndDirectoryService
 {
     /// <summary>
-    /// The string constant to be used in messages when a file or directory path is null.
-    /// </summary>
-    private const string NullPath = "null";
-
-    /// <summary>
     /// Clears the contents of the given <paramref name="directoryPath" /> if the directory exists.
     /// </summary>
     /// <param name="directoryPath">
