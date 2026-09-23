@@ -21,7 +21,9 @@ internal static class ServiceLocater
         .AddSingleton<IMessageWriter, MessageWriter>()
         .AddSingleton<IPathValidator, PathValidator>()
         .AddSingleton<ISegmentHeaderParser, SegmentHeaderParser>()
-        .AddSingleton<ITokenProcessor, TokenProcessor>()
+        .AddSingleton<ITokenExtractor, TokenProcessor>()
+        .AddSingleton<ITokenParser, TokenParser>()
+        .AddSingleton<ITokenTranslator, TokenProcessor>()
         .Build();
 
     /// <summary>

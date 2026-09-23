@@ -55,7 +55,7 @@ internal class PathValidator : IPathValidator
     /// </exception>
     private static void CheckDirectoryPath(string directoryPath)
     {
-        if (directoryPath.IndexOfAny(Path.GetInvalidPathChars()) > -1)
+        if (directoryPath.IndexOfAny(Path.GetInvalidPathChars()) > NotFound)
         {
             string message = GetMessage(MsgInvalidDirectoryCharacters);
             throw new PathValidatorException(message);
@@ -81,7 +81,7 @@ internal class PathValidator : IPathValidator
             throw new PathValidatorException(message);
         }
 
-        if (fileName.IndexOfAny(Path.GetInvalidFileNameChars()) > -1)
+        if (fileName.IndexOfAny(Path.GetInvalidFileNameChars()) > NotFound)
         {
             string message = GetMessage(MsgInvalidFileNameCharacters);
             throw new PathValidatorException(message);

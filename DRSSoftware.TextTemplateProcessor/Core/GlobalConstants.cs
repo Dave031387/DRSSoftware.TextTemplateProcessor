@@ -166,6 +166,11 @@ internal static class GlobalConstants
     public const string Normal = "@";
 
     /// <summary>
+    /// Represents the "not found" result of a search operation.
+    /// </summary>
+    public const int NotFound = -1;
+
+    /// <summary>
     /// String value that is used to represent a null value when one is encountered while processing
     /// a text template file.
     /// </summary>

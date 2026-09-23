@@ -3,27 +3,12 @@
 namespace DRSSoftware.TextTemplateProcessor;
 
 /// <summary>
-/// The <see cref="TokenProcessor" /> class is responsible for processing tokens in text templates.
+/// The <see cref="TokenProcessor"/> class is responsible for processing tokens in text templates.
 /// It provides methods to extract tokens from text, load token values, replace tokens with their
 /// corresponding values, and manage token delimiters and escape characters.
 /// </summary>
-internal class TokenProcessor : DependencyCheckerBase, ITokenProcessor
+internal class TokenProcessor : DependencyCheckerBase, ITokenExtractor, ITokenTranslator
 {
-    /// <summary>
-    /// This record is used to store information about a token found in a text string.
-    /// </summary>
-    /// <param name="TokenString">
-    /// The entire token string that was found, including the start and end delimiters.
-    /// </param>
-    /// <param name="TokenName">
-    /// The name of the token.
-    /// </param>
-    /// <param name="Case">
-    /// A character flag indicating how to handle the first character of the value that gets
-    /// assigned to the token.
-    /// </param>
-    private record TokenInfo(string TokenString, string TokenName, char Case);
-
     /// <summary>
     /// This record is used to store information about the results obtained when searching for token
     /// start and end delimiters in a text string.
@@ -37,21 +22,22 @@ internal class TokenProcessor : DependencyCheckerBase, ITokenProcessor
     private record TokenSearchResult(bool IsValid, int IndexValue);
 
     /// <summary>
-    /// A constructor that creates an instance of the <see cref="TokenProcessor" /> class and
+    /// A constructor that creates an instance of the <see cref="TokenProcessor"/> class and
     /// initializes the dependencies.
     /// </summary>
     /// <param name="logger">
     /// A reference to a logger object used for logging messages.
     /// </param>
+    /// <param name="tokenParser">
+    /// A reference to a token parser object used for parsing tokens in a text string.
+    /// </param>
     /// <param name="locater">
-    /// A reference to a locater object for keeping track of the current location in a text template
-    /// file.
+    /// A reference to a locater object for keeping track of the current location in a text template file.
     /// </param>
     /// <exception cref="ArgumentNullException">
-    /// Exception is thrown if any of the dependencies passed into the constructor are
-    /// <see langword="null" />.
+    /// Exception is thrown if any of the dependencies passed into the constructor are <see langword="null"/>.
     /// </exception>
-    internal TokenProcessor(ILocater locater, ILogger logger)
+    internal TokenProcessor(ILocater locater, ILogger logger, ITokenParser tokenParser)
     {
         Locater = NullDependencyCheck(locater,
                                       nameof(TokenProcessor),
@@ -61,6 +47,10 @@ internal class TokenProcessor : DependencyCheckerBase, ITokenProcessor
                                      nameof(TokenProcessor),
                                      nameof(ILogger),
                                      nameof(logger));
+        TokenParser = NullDependencyCheck(tokenParser,
+                                          nameof(TokenProcessor),
+                                          nameof(ITokenParser),
+                                          nameof(tokenParser));
     }
 
     /// <summary>
@@ -80,7 +70,7 @@ internal class TokenProcessor : DependencyCheckerBase, ITokenProcessor
     /// The escape character is used to indicate that a token start delimiter should be treated as
     /// an ordinary string of text rather than the start of a token.
     /// </remarks>
-    internal char TokenEscapeChar { get; private set; } = DefaultTokenEscapeCharacter;
+    internal char TokenEscape { get; private set; } = DefaultTokenEscapeCharacter;
 
     /// <summary>
     /// Gets the string that is currently being used to denote the start of a token.
@@ -104,19 +94,26 @@ internal class TokenProcessor : DependencyCheckerBase, ITokenProcessor
     }
 
     /// <summary>
+    /// Gets a reference to the token parser service.
+    /// </summary>
+    private ITokenParser TokenParser
+    {
+        get; init;
+    }
+
+    /// <summary>
     /// Clears all tokens from the token dictionary.
     /// </summary>
     public void ClearTokens() => TokenDictionary.Clear();
 
     /// <summary>
-    /// Searches for valid tokens in the given line of text and adds any tokens found to the token
-    /// dictionary.
+    /// Searches for valid tokens in the given line of text and adds any tokens found to the token dictionary.
     /// </summary>
     /// <param name="text">
     /// A line of text possibly containing one or more tokens.
     /// </param>
     /// <remarks>
-    /// If the <paramref name="text" /> parameter contains any invalid tokens, the text will be
+    /// If the <paramref name="text"/> parameter contains any invalid tokens, the text will be
     /// modified to insert a token escape character ahead of the token start delimiter of each
     /// invalid token.
     /// </remarks>
@@ -146,7 +143,7 @@ internal class TokenProcessor : DependencyCheckerBase, ITokenProcessor
     /// substitution value to be assigned to that token.
     /// </param>
     /// <remarks>
-    /// The token names in the <paramref name="tokenValues" /> dictionary passed into this method
+    /// The token names in the <paramref name="tokenValues"/> dictionary passed into this method
     /// must already exist in the Token Dictionary. Any token names not found will be ignored.
     /// </remarks>
     public void LoadTokenValues(Dictionary<string, string> tokenValues)
@@ -180,12 +177,11 @@ internal class TokenProcessor : DependencyCheckerBase, ITokenProcessor
     /// A text string that may contain one or more tokens.
     /// </param>
     /// <returns>
-    /// The original <paramref name="text" /> string with all tokens replaced by their substitution
-    /// values.
+    /// The original <paramref name="text"/> string with all tokens replaced by their substitution values.
     /// </returns>
     /// <remarks>
-    /// The token escape character will be removed from all escaped tokens in the
-    /// <paramref name="text" /> string and those tokens will be output without any substitution.
+    /// The token escape character will be removed from all escaped tokens in the <paramref
+    /// name="text"/> string and those tokens will be output without any substitution.
     /// </remarks>
     public string ReplaceTokens(string text)
     {
@@ -206,7 +202,7 @@ internal class TokenProcessor : DependencyCheckerBase, ITokenProcessor
                 string tokenValue = value;
                 string replacementValue = GetReplacementValue(tokenInfo, tokenValue);
 
-                _ = builder.Replace(tokenInfo.TokenString, replacementValue);
+                builder = builder.Replace(tokenInfo.TokenString, replacementValue);
             }
             else
             {
@@ -217,7 +213,8 @@ internal class TokenProcessor : DependencyCheckerBase, ITokenProcessor
             }
         }
 
-        builder = builder.Replace(TokenEscapeChar + TokenStart, TokenStart);
+        builder = builder.Replace(TokenEscape + TokenStart, TokenStart);
+        builder = builder.Replace(TokenEscape + TokenEnd, TokenEnd);
         return builder.ToString();
     }
 
@@ -228,7 +225,7 @@ internal class TokenProcessor : DependencyCheckerBase, ITokenProcessor
     {
         TokenStart = DefaultTokenStartDelimiter;
         TokenEnd = DefaultTokenEndDelimiter;
-        TokenEscapeChar = DefaultTokenEscapeCharacter;
+        TokenEscape = DefaultTokenEscapeCharacter;
     }
 
     /// <summary>
@@ -245,8 +242,8 @@ internal class TokenProcessor : DependencyCheckerBase, ITokenProcessor
     /// The new token escape character.
     /// </param>
     /// <returns>
-    /// <see langword="true" /> if the delimiter values were successfully changed. Otherwise,
-    /// returns <see langword="false" />.
+    /// <see langword="true"/> if the delimiter values were successfully changed. Otherwise, returns
+    /// <see langword="false"/>.
     /// </returns>
     public bool SetTokenDelimiters(string tokenStart, string tokenEnd, char tokenEscapeChar)
     {
@@ -313,7 +310,7 @@ internal class TokenProcessor : DependencyCheckerBase, ITokenProcessor
 
         TokenStart = tokenStart;
         TokenEnd = tokenEnd;
-        TokenEscapeChar = tokenEscapeChar;
+        TokenEscape = tokenEscapeChar;
         return true;
     }
 
@@ -368,8 +365,7 @@ internal class TokenProcessor : DependencyCheckerBase, ITokenProcessor
             startIndex = 0;
         }
 
-        while (startIndex < text.Length
-            && string.IsNullOrEmpty(result.TokenString))
+        while (startIndex < text.Length && string.IsNullOrEmpty(result.TokenString))
         {
             TokenSearchResult tokenStart = LocateTokenStartDelimiter(startIndex, text);
 
@@ -422,18 +418,21 @@ internal class TokenProcessor : DependencyCheckerBase, ITokenProcessor
         return replacementValue;
     }
 
-    private string InsertEscapeCharacter(int tokenStart, string text) => text.Insert(tokenStart, TokenEscapeChar.ToString());
+    private string InsertEscapeCharacter(int tokenStart, string text) => text.Insert(tokenStart, TokenEscape.ToString());
 
     private TokenSearchResult LocateTokenEndDelimiter(int tokenStart, ref string text)
     {
         int tokenEnd = text.IndexOf(TokenEnd, tokenStart, StringComparison.Ordinal);
+        int nextTokenStart = text.IndexOf(TokenStart, tokenStart + TokenStart.Length, StringComparison.Ordinal);
 
-        if (tokenEnd < 0)
+        if (tokenEnd < 0 || (nextTokenStart > 0 && nextTokenStart < tokenEnd))
         {
             string message = GetMessage(MsgTokenMissingEndDelimiter);
             Logger.Log(LogSeverity.Warning, message);
             text = InsertEscapeCharacter(tokenStart, text);
-            return new(false, text.Length);
+            return tokenEnd < 0 || nextTokenStart < 0
+                ? new(false, text.Length)
+                : new(false, nextTokenStart);
         }
 
         return new(true, tokenEnd);
@@ -442,12 +441,17 @@ internal class TokenProcessor : DependencyCheckerBase, ITokenProcessor
     private TokenSearchResult LocateTokenStartDelimiter(int startIndex, string text)
     {
         int tokenStart = text.IndexOf(TokenStart, startIndex, StringComparison.Ordinal);
+        int nextTokenEnd = text.IndexOf(TokenEnd, startIndex, StringComparison.Ordinal);
+
+        if (nextTokenEnd > 0 && (tokenStart < 0 || (tokenStart > 0 && nextTokenEnd < tokenStart)))
+        {
+        }
 
         return tokenStart < 0
             ? new(false, text.Length)
-            : tokenStart > 0 && text[tokenStart - 1] == TokenEscapeChar
-            ? new(false, tokenStart + TokenStart.Length)
-            : new(true, tokenStart);
+            : tokenStart > 0 && text[tokenStart - 1] == TokenEscape
+                ? new(false, tokenStart + TokenStart.Length)
+                : new(true, tokenStart);
     }
 
     private void UpdateTokenDictionary(KeyValuePair<string, string> keyValuePair)
