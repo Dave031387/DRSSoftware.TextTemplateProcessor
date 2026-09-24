@@ -10,18 +10,6 @@ namespace DRSSoftware.TextTemplateProcessor;
 internal class TokenProcessor : DependencyCheckerBase, ITokenExtractor, ITokenTranslator
 {
     /// <summary>
-    /// This record is used to store information about the results obtained when searching for token
-    /// start and end delimiters in a text string.
-    /// </summary>
-    /// <param name="IsValid">
-    /// Indicates whether the search was successful.
-    /// </param>
-    /// <param name="IndexValue">
-    /// The index of the found delimiter.
-    /// </param>
-    private record TokenSearchResult(bool IsValid, int IndexValue);
-
-    /// <summary>
     /// A constructor that creates an instance of the <see cref="TokenProcessor"/> class and
     /// initializes the dependencies.
     /// </summary>
@@ -51,6 +39,7 @@ internal class TokenProcessor : DependencyCheckerBase, ITokenExtractor, ITokenTr
                                           nameof(TokenProcessor),
                                           nameof(ITokenParser),
                                           nameof(tokenParser));
+        ModifiedText = new(200, 1000);
     }
 
     /// <summary>
@@ -94,6 +83,16 @@ internal class TokenProcessor : DependencyCheckerBase, ITokenExtractor, ITokenTr
     }
 
     /// <summary>
+    /// Gets the <see cref="StringBuilder"/> object used for editing the template text with the
+    /// substituted token values.
+    /// </summary>
+    private StringBuilder ModifiedText
+    {
+        get;
+        init;
+    }
+
+    /// <summary>
     /// Gets a reference to the token parser service.
     /// </summary>
     private ITokenParser TokenParser
@@ -107,7 +106,7 @@ internal class TokenProcessor : DependencyCheckerBase, ITokenExtractor, ITokenTr
     public void ClearTokens() => TokenDictionary.Clear();
 
     /// <summary>
-    /// Searches for valid tokens in the given line of text and adds any tokens found to the token dictionary.
+    /// Extracts all valid tokens from the given line of text and adds any tokens found to the token dictionary.
     /// </summary>
     /// <param name="text">
     /// A line of text possibly containing one or more tokens.
@@ -117,21 +116,29 @@ internal class TokenProcessor : DependencyCheckerBase, ITokenExtractor, ITokenTr
     /// modified to insert a token escape character ahead of the token start delimiter of each
     /// invalid token.
     /// </remarks>
-    public void ExtractTokens(ref string text)
+    /// <returns>
+    /// The given <paramref name="text"/> after being modified to escape any invalid token delimiters.
+    /// </returns>
+    public string ExtractTokens(string text)
     {
-        int startIndex = 0;
+        TokenParser.InitializeParser(text, true);
 
-        while (startIndex < text.Length - 1)
+        while (!TokenParser.EndOfText)
         {
-            TokenInfo tokenInfo = FindToken(ref startIndex, ref text);
+            TokenInfo tokenInfo = TokenParser.GetNextToken();
 
-            if (string.IsNullOrEmpty(tokenInfo.TokenString))
+            if (TokenParser.ValidTokenFound && !TokenDictionary.ContainsKey(tokenInfo.TokenName))
             {
-                continue;
-            }
+                bool tokenWasAdded = TokenDictionary.TryAdd(tokenInfo.TokenName, string.Empty);
 
-            _ = TokenDictionary.TryAdd(tokenInfo.TokenName, string.Empty);
+                if (!tokenWasAdded)
+                {
+                    // TODO throw an exception here
+                }
+            }
         }
+
+        return TokenParser.IsTextModified ? TokenParser.GetModifiedText() : text;
     }
 
     /// <summary>
@@ -185,37 +192,36 @@ internal class TokenProcessor : DependencyCheckerBase, ITokenExtractor, ITokenTr
     /// </remarks>
     public string ReplaceTokens(string text)
     {
-        StringBuilder builder = new(text);
-        int startIndex = 0;
+        _ = ModifiedText.Clear();
+        _ = ModifiedText.Append(text);
+        TokenParser.InitializeParser(text);
 
-        while (startIndex < text.Length)
+        while (!TokenParser.EndOfText)
         {
-            TokenInfo tokenInfo = FindToken(ref startIndex, ref text);
+            TokenInfo tokenInfo = TokenParser.GetNextToken();
 
-            if (string.IsNullOrEmpty(tokenInfo.TokenName))
+            if (TokenParser.ValidTokenFound)
             {
-                break;
-            }
+                if (TokenDictionary.TryGetValue(tokenInfo.TokenName, out string? value))
+                {
+                    string tokenValue = value;
+                    string replacementValue = GetReplacementValue(tokenInfo, tokenValue);
 
-            if (TokenDictionary.TryGetValue(tokenInfo.TokenName, out string? value))
-            {
-                string tokenValue = value;
-                string replacementValue = GetReplacementValue(tokenInfo, tokenValue);
-
-                builder = builder.Replace(tokenInfo.TokenString, replacementValue);
-            }
-            else
-            {
-                string message = GetMessage(MsgTokenNameNotFound,
-                                            Locater.CurrentLocationName,
-                                            tokenInfo.TokenName);
-                Logger.Log(LogSeverity.Error, message);
+                    _ = ModifiedText.Replace(tokenInfo.TokenString, replacementValue);
+                }
+                else
+                {
+                    string message = GetMessage(MsgTokenNameNotFound,
+                                                Locater.CurrentLocationName,
+                                                tokenInfo.TokenName);
+                    Logger.Log(LogSeverity.Error, message);
+                }
             }
         }
 
-        builder = builder.Replace(TokenEscape + TokenStart, TokenStart);
-        builder = builder.Replace(TokenEscape + TokenEnd, TokenEnd);
-        return builder.ToString();
+        _ = ModifiedText.Replace(TokenEscape + TokenStart, TokenStart);
+        _ = ModifiedText.Replace(TokenEscape + TokenEnd, TokenEnd);
+        return ModifiedText.ToString();
     }
 
     /// <summary>
@@ -226,6 +232,7 @@ internal class TokenProcessor : DependencyCheckerBase, ITokenExtractor, ITokenTr
         TokenStart = DefaultTokenStartDelimiter;
         TokenEnd = DefaultTokenEndDelimiter;
         TokenEscape = DefaultTokenEscapeCharacter;
+        TokenParser.InitializeDelimiters(TokenStart, TokenEnd, TokenEscape);
     }
 
     /// <summary>
@@ -311,83 +318,8 @@ internal class TokenProcessor : DependencyCheckerBase, ITokenExtractor, ITokenTr
         TokenStart = tokenStart;
         TokenEnd = tokenEnd;
         TokenEscape = tokenEscapeChar;
+        TokenParser.InitializeDelimiters(TokenStart, TokenEnd, TokenEscape);
         return true;
-    }
-
-    private TokenInfo ExtractToken(int tokenStart, int tokenEnd, ref string text)
-    {
-        int tokenNameStart = tokenStart + TokenStart.Length;
-        int tokenNameEnd = tokenEnd;
-        tokenEnd += TokenEnd.Length;
-        string tokenString = text[tokenStart..tokenEnd];
-        string tokenName;
-        bool isValidToken = true;
-        char initCase = SameCaseFlag;
-
-        if (text[tokenNameStart] is LowercaseFlag or UppercaseFlag or SameCaseFlag)
-        {
-            initCase = text[tokenNameStart];
-            tokenNameStart++;
-        }
-
-        tokenName = text[tokenNameStart..tokenNameEnd].Trim();
-
-        if (string.IsNullOrWhiteSpace(tokenName))
-        {
-            string message = GetMessage(MsgMissingTokenName);
-            Logger.Log(LogSeverity.Error, message);
-            isValidToken = false;
-        }
-        else if (!IsValidName(tokenName))
-        {
-            string message = GetMessage(MsgTokenHasInvalidName,
-                                        tokenName);
-            Logger.Log(LogSeverity.Error, message);
-            isValidToken = false;
-        }
-
-        if (!isValidToken)
-        {
-            text = InsertEscapeCharacter(tokenStart, text);
-            tokenString = string.Empty;
-            tokenName = string.Empty;
-        }
-
-        return new(tokenString, tokenName, initCase);
-    }
-
-    private TokenInfo FindToken(ref int startIndex, ref string text)
-    {
-        TokenInfo result = new(string.Empty, string.Empty, SameCaseFlag);
-
-        if (startIndex < 0)
-        {
-            startIndex = 0;
-        }
-
-        while (startIndex < text.Length && string.IsNullOrEmpty(result.TokenString))
-        {
-            TokenSearchResult tokenStart = LocateTokenStartDelimiter(startIndex, text);
-
-            if (!tokenStart.IsValid)
-            {
-                startIndex = tokenStart.IndexValue;
-                continue;
-            }
-
-            TokenSearchResult tokenEnd = LocateTokenEndDelimiter(tokenStart.IndexValue, ref text);
-
-            if (!tokenEnd.IsValid)
-            {
-                startIndex = tokenEnd.IndexValue;
-                break;
-            }
-
-            result = ExtractToken(tokenStart.IndexValue, tokenEnd.IndexValue, ref text);
-            startIndex = tokenEnd.IndexValue;
-        }
-
-        return result;
     }
 
     private string GetReplacementValue(TokenInfo tokenInfo, string tokenValue)
@@ -408,50 +340,14 @@ internal class TokenProcessor : DependencyCheckerBase, ITokenExtractor, ITokenTr
                 ? tokenValue[1..]
                 : string.Empty;
 
-            replacementValue = tokenInfo.Case == LowercaseFlag
+            replacementValue = tokenInfo.Case is LowercaseFlag
                 ? firstChar.ToLowerInvariant() + remaining
-                : tokenInfo.Case == UppercaseFlag
+                : tokenInfo.Case is UppercaseFlag
                     ? firstChar.ToUpperInvariant() + remaining
                     : tokenValue;
         }
 
         return replacementValue;
-    }
-
-    private string InsertEscapeCharacter(int tokenStart, string text) => text.Insert(tokenStart, TokenEscape.ToString());
-
-    private TokenSearchResult LocateTokenEndDelimiter(int tokenStart, ref string text)
-    {
-        int tokenEnd = text.IndexOf(TokenEnd, tokenStart, StringComparison.Ordinal);
-        int nextTokenStart = text.IndexOf(TokenStart, tokenStart + TokenStart.Length, StringComparison.Ordinal);
-
-        if (tokenEnd < 0 || (nextTokenStart > 0 && nextTokenStart < tokenEnd))
-        {
-            string message = GetMessage(MsgTokenMissingEndDelimiter);
-            Logger.Log(LogSeverity.Warning, message);
-            text = InsertEscapeCharacter(tokenStart, text);
-            return tokenEnd < 0 || nextTokenStart < 0
-                ? new(false, text.Length)
-                : new(false, nextTokenStart);
-        }
-
-        return new(true, tokenEnd);
-    }
-
-    private TokenSearchResult LocateTokenStartDelimiter(int startIndex, string text)
-    {
-        int tokenStart = text.IndexOf(TokenStart, startIndex, StringComparison.Ordinal);
-        int nextTokenEnd = text.IndexOf(TokenEnd, startIndex, StringComparison.Ordinal);
-
-        if (nextTokenEnd > 0 && (tokenStart < 0 || (tokenStart > 0 && nextTokenEnd < tokenStart)))
-        {
-        }
-
-        return tokenStart < 0
-            ? new(false, text.Length)
-            : tokenStart > 0 && text[tokenStart - 1] == TokenEscape
-                ? new(false, tokenStart + TokenStart.Length)
-                : new(true, tokenStart);
     }
 
     private void UpdateTokenDictionary(KeyValuePair<string, string> keyValuePair)

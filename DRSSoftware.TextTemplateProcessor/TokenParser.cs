@@ -46,6 +46,31 @@ internal class TokenParser : DependencyCheckerBase, ITokenParser
         FoundTokenString = string.Empty;
         TemplateText = string.Empty;
         ModifiedText = new(200, 1000);
+        IsTextModified = false;
+    }
+
+    /// <summary>
+    /// Gets a value indicating whether the parser has reached the end of the current text template line.
+    /// </summary>
+    public bool EndOfText => StartSearchIndex >= TemplateText.Length;
+
+    /// <summary>
+    /// Gets a value indicating whether the current template text line has been modified to escape
+    /// any invalid token delimiters.
+    /// </summary>
+    public bool IsTextModified
+    {
+        get;
+        private set;
+    }
+
+    /// <summary>
+    /// Gets a value indicating whether a valid token string has been found.
+    /// </summary>
+    public bool ValidTokenFound
+    {
+        get;
+        private set;
     }
 
     /// <summary>
@@ -150,6 +175,11 @@ internal class TokenParser : DependencyCheckerBase, ITokenParser
     }
 
     /// <summary>
+    /// Gets a value indicating whether an invalid token string has been found.
+    /// </summary>
+    private bool FoundInvalidTokenString => TokenIsFound && !ValidTokenFound;
+
+    /// <summary>
     /// Gets or sets the name of the token that was found in the current template text line.
     /// </summary>
     private string FoundTokenName
@@ -162,6 +192,20 @@ internal class TokenParser : DependencyCheckerBase, ITokenParser
     /// Gets or sets the complete token string that was found in the current template text line.
     /// </summary>
     private string FoundTokenString
+    {
+        get;
+        set;
+    }
+
+    /// <summary>
+    /// Gets or sets a value indicating whether this is the initial pass for parsing the current
+    /// template text line.
+    /// </summary>
+    /// <remarks>
+    /// The template text line can be modified only on the initial pass. After that it is assumed
+    /// that all invalid token delimiters have been escaped.
+    /// </remarks>
+    private bool IsInitialPass
     {
         get;
         set;
@@ -183,15 +227,6 @@ internal class TokenParser : DependencyCheckerBase, ITokenParser
     {
         get;
         init;
-    }
-
-    /// <summary>
-    /// Gets or sets the next start position for the token search within the current template text line.
-    /// </summary>
-    private int NextSearchIndex
-    {
-        get;
-        set;
     }
 
     /// <summary>
@@ -274,13 +309,12 @@ internal class TokenParser : DependencyCheckerBase, ITokenParser
     }
 
     /// <summary>
-    /// Gets or sets a value indicating that the found token string is valid.
+    /// Gets the modified template text line.
     /// </summary>
-    private bool ValidTokenFound
-    {
-        get;
-        set;
-    }
+    /// <returns>
+    /// The modified template text line with all invalid token delimiters escaped.
+    /// </returns>
+    public string GetModifiedText() => ModifiedText.ToString();
 
     /// <summary>
     /// Extracts and returns the next valid token from the current template text line.
@@ -296,7 +330,7 @@ internal class TokenParser : DependencyCheckerBase, ITokenParser
         FoundCaseFlag = SameCaseFlag;
         ValidTokenFound = false;
 
-        while (StartSearchIndex < TemplateText.Length && !ValidTokenFound)
+        while (!(EndOfText || ValidTokenFound))
         {
             FindNextToken();
         }
@@ -326,17 +360,21 @@ internal class TokenParser : DependencyCheckerBase, ITokenParser
     }
 
     /// <summary>
-    /// Initializes the token parser and prepare it for parsing the next line from the text template.
+    /// Initializes the token parser and prepares it for parsing the next line from the text template.
     /// </summary>
     /// <param name="templateText">
-    /// The next line of text from the text template.
+    /// The next line of text to be parsed from the text template.
     /// </param>
-    public void InitializeParser(string templateText)
+    /// <param name="isInitialPass">
+    /// A value indicating whether this is the first time the given template text line is being parsed.
+    /// </param>
+    public void InitializeParser(string templateText, bool isInitialPass = false)
     {
         TemplateText = templateText;
         _ = ModifiedText.Clear();
+        IsTextModified = false;
         StartSearchIndex = 0;
-        NextSearchIndex = 0;
+        IsInitialPass = isInitialPass;
     }
 
     /// <summary>
@@ -360,11 +398,12 @@ internal class TokenParser : DependencyCheckerBase, ITokenParser
     /// </param>
     private void AppendEndDelimiter(int segmentStart)
     {
-        bool shouldEscapeEndDelimiter = EndDelimiterIsNotEscaped && ((TokenIsFound && !ValidTokenFound)
+        bool shouldEscapeEndDelimiter = EndDelimiterIsNotEscaped && (FoundInvalidTokenString
             || (FirstStartDelimiterIsNotEscaped && SecondStartDelimiterIsNotFound && EndDelimiterPrecedesFirstStartDelimiter)
             || (FirstStartDelimiterIsEscaped && SecondStartDelimiterIsFound && EndDelimiterFollowsFirstStartDelimiter)
             || (FirstStartDelimiterIsFound && SecondStartDelimiterIsFound && EndDelimiterPrecedesFirstStartDelimiter));
 
+        // TODO log an error message if the delimiter should be escaped
         AppendTokenDelimiter(segmentStart, EndDelimiterIndex, TokenEndDelimiter, shouldEscapeEndDelimiter);
     }
 
@@ -384,13 +423,14 @@ internal class TokenParser : DependencyCheckerBase, ITokenParser
     /// </param>
     private void AppendFirstStartDelimiter(int segmentStart)
     {
-        bool shouldEscapeFirstStartDelimiter = FirstStartDelimiterIsNotEscaped && ((TokenIsFound && !ValidTokenFound)
+        bool shouldEscapeFirstStartDelimiter = FirstStartDelimiterIsNotEscaped && (FoundInvalidTokenString
             || (SecondStartDelimiterIsNotFound && EndDelimiterIsNotFound)
             || (SecondStartDelimiterIsNotFound && EndDelimiterIsEscaped && EndDelimiterFollowsFirstStartDelimiter)
             || (SecondStartDelimiterIsNotEscaped && EndDelimiterIsEscaped && EndDelimiterFollowsSecondStartDelimiter)
             || (SecondStartDelimiterIsEscaped && EndDelimiterFollowsSecondStartDelimiter)
             || (SecondStartDelimiterIsFound && EndDelimiterIsEscaped && EndDelimiterPrecedesSecondStartDelimiter));
 
+        // TODO log an error message if the delimiter should be escaped
         AppendTokenDelimiter(segmentStart, FirstStartDelimiterIndex, TokenStartDelimiter, shouldEscapeFirstStartDelimiter);
     }
 
@@ -412,6 +452,7 @@ internal class TokenParser : DependencyCheckerBase, ITokenParser
     {
         bool shouldEscapeSecondStartDelimiter = SecondStartDelimiterIsNotEscaped && EndDelimiterIsEscaped && EndDelimiterFollowsSecondStartDelimiter;
 
+        // TODO log an error message if the delimiter should be escaped
         AppendTokenDelimiter(segmentStart, SecondStartDelimiterIndex, TokenStartDelimiter, shouldEscapeSecondStartDelimiter);
     }
 
@@ -474,6 +515,7 @@ internal class TokenParser : DependencyCheckerBase, ITokenParser
         if (shouldInsertEscapeCharacter)
         {
             AppendDelimiterEscapeCharacter();
+            IsTextModified = true;
         }
 
         AppendTextSegment(delimiter);
@@ -615,15 +657,21 @@ internal class TokenParser : DependencyCheckerBase, ITokenParser
         // The following method calls must happen in the order given because each method depends on
         // the results of the previous methods.
         DetermineOrderOfDelimiters();
-        NextSearchIndex = GetNextSearchIndex();
 
         if (TokenIsFound)
         {
             VerifyFoundToken();
         }
 
-        UpdateModifiedText();
-        StartSearchIndex = NextSearchIndex;
+        if (IsInitialPass)
+        {
+            UpdateModifiedText();
+        }
+
+        if (!EndOfText)
+        {
+            StartSearchIndex = GetNextSearchIndex();
+        }
     }
 
     /// <summary>
@@ -653,7 +701,7 @@ internal class TokenParser : DependencyCheckerBase, ITokenParser
             || (FirstStartDelimiterIsNotEscaped && SecondStartDelimiterIsFound && EndDelimiterIsNotFound)
             || (FirstStartDelimiterIsNotEscaped && SecondStartDelimiterIsNotFound && EndDelimiterIsEscaped && EndDelimiterFollowsFirstStartDelimiter)
             || (FirstStartDelimiterIsEscaped && SecondStartDelimiterIsFound && EndDelimiterIsNotFound)
-            || (FirstStartDelimiterIsFound && SecondStartDelimiterIsNotFound && EndDelimiterIsNotEscaped))
+            || (FirstStartDelimiterIsEscaped && SecondStartDelimiterIsNotFound && EndDelimiterIsNotEscaped))
         {
             nextSearchIndex = TemplateText.Length;
         }
@@ -693,25 +741,30 @@ internal class TokenParser : DependencyCheckerBase, ITokenParser
     /// </summary>
     private void UpdateModifiedText()
     {
-        int segmentStart = StartSearchIndex;
-
         if (NoMoreDelimitersFound)
         {
-            AppendTextSegment(segmentStart, TemplateText.Length);
+            AppendTextSegment(StartSearchIndex, TemplateText.Length);
+            StartSearchIndex = TemplateText.Length;
             return;
         }
 
         if (FirstStartDelimiterIsFound && EndDelimiterIsNotFound)
         {
-            EscapeAllDelimiters(segmentStart, TokenStartDelimiter);
+            // TODO log an error message
+            EscapeAllDelimiters(StartSearchIndex, TokenStartDelimiter);
+            StartSearchIndex = TemplateText.Length;
             return;
         }
 
         if ((FirstStartDelimiterIsNotFound || FirstStartDelimiterIsEscaped) && SecondStartDelimiterIsNotFound && EndDelimiterIsNotEscaped)
         {
-            EscapeAllDelimiters(segmentStart, TokenEndDelimiter);
+            // TODO log an error message
+            EscapeAllDelimiters(StartSearchIndex, TokenEndDelimiter);
+            StartSearchIndex = TemplateText.Length;
             return;
         }
+
+        int segmentStart = StartSearchIndex;
 
         for (int i = 0; i < _foundDelimiters.Length; i++)
         {

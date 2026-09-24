@@ -12,8 +12,14 @@ namespace DRSSoftware.TextTemplateProcessor.Core;
 /// The name of the token.
 /// </param>
 /// <param name="Case">
-/// A character flag indicating how to handle the first character of the value that gets
-/// assigned to the token.
+/// A character flag indicating how to handle the first character of the value that gets assigned to
+/// the token.
 /// </param>
 [ExcludeFromCodeCoverage]
-internal record TokenInfo(string TokenString, string TokenName, char Case);
+internal record TokenInfo(string TokenString, string TokenName, char Case)
+{
+    /// <summary>
+    /// Gets a value indicating whether or not this <see cref="TokenInfo"/> instance is empty.
+    /// </summary>
+    public bool IsEmpty => TokenString.Length == 0;
+}

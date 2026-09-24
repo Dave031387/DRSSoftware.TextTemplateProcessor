@@ -6,6 +6,39 @@
 internal interface ITokenParser
 {
     /// <summary>
+    /// Gets a value indicating whether the parser has reached the end of the current text template line.
+    /// </summary>
+    bool EndOfText
+    {
+        get;
+    }
+
+    /// <summary>
+    /// Gets a value indicating whether the current template text line has been modified to escape
+    /// any invalid token delimiters.
+    /// </summary>
+    bool IsTextModified
+    {
+        get;
+    }
+
+    /// <summary>
+    /// Gets a value indicating whether a valid token string has been found.
+    /// </summary>
+    bool ValidTokenFound
+    {
+        get;
+    }
+
+    /// <summary>
+    /// Gets the modified template text line.
+    /// </summary>
+    /// <returns>
+    /// The modified template text line with all invalid token delimiters escaped.
+    /// </returns>
+    string GetModifiedText();
+
+    /// <summary>
     /// Extract and return the next valid token from the current template text line.
     /// </summary>
     /// <returns>
@@ -30,10 +63,13 @@ internal interface ITokenParser
     void InitializeDelimiters(string tokenStartDelimiter, string tokenEndDelimiter, char delimiterEscapeCharacter);
 
     /// <summary>
-    /// Initialize the token parser and prepare it for parsing the next line from the text template.
+    /// Initializes the token parser and prepares it for parsing the next line from the text template.
     /// </summary>
     /// <param name="templateText">
-    /// The next line of text from the text template.
+    /// The next line of text to be parsed from the text template.
     /// </param>
-    void InitializeParser(string templateText);
+    /// <param name="isInitialPass">
+    /// A value indicating whether this is the first time the given template text line is being parsed.
+    /// </param>
+    void InitializeParser(string templateText, bool isInitialPass = false);
 }
