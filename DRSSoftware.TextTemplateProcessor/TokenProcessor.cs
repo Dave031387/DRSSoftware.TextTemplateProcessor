@@ -125,15 +125,18 @@ internal class TokenProcessor : DependencyCheckerBase, ITokenExtractor, ITokenTr
 
         while (!TokenParser.EndOfText)
         {
-            TokenInfo tokenInfo = TokenParser.GetNextToken();
+            string tokenName = TokenParser.GetNextToken().TokenName;
 
-            if (TokenParser.ValidTokenFound && !TokenDictionary.ContainsKey(tokenInfo.TokenName))
+            if (TokenParser.ValidTokenFound && !TokenDictionary.ContainsKey(tokenName))
             {
-                bool tokenWasAdded = TokenDictionary.TryAdd(tokenInfo.TokenName, string.Empty);
-
-                if (!tokenWasAdded)
+                if (!TokenDictionary.TryAdd(tokenName, string.Empty))
                 {
-                    // TODO throw an exception here
+                    if (!TokenDictionary.ContainsKey(tokenName))
+                    {
+                        TokenParser.EscapeLastFoundToken();
+                        string message = GetMessage(MsgUnableToAddTokenToDictionary, tokenName);
+                        Logger.Log(LogSeverity.Error, message);
+                    }
                 }
             }
         }

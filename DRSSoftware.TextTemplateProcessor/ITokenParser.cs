@@ -31,6 +31,16 @@ internal interface ITokenParser
     }
 
     /// <summary>
+    /// In the unlikely event the last found token isn't able to be added to the token dictionary,
+    /// this method provides a means of escaping the last found token.
+    /// </summary>
+    /// <remarks>
+    /// Note that this method must be called before the <see cref="GetNextToken"/> method is called
+    /// since it relies on the delimiter indexes still being set to the position of the last found token.
+    /// </remarks>
+    void EscapeLastFoundToken();
+
+    /// <summary>
     /// Gets the modified template text line.
     /// </summary>
     /// <returns>
@@ -65,6 +75,12 @@ internal interface ITokenParser
     /// <summary>
     /// Initializes the token parser and prepares it for parsing the next line from the text template.
     /// </summary>
+    /// <remarks>
+    /// When <paramref name="isInitialPass"/> is set to <see langword="true"/> it implies that we
+    /// are preparing to extract all tokens from the template text. <br/> Otherwise, it is assumed
+    /// that we will be replacing token strings in the template text with their corresponding
+    /// substitution values.
+    /// </remarks>
     /// <param name="templateText">
     /// The next line of text to be parsed from the text template.
     /// </param>

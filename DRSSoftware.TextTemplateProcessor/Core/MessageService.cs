@@ -51,7 +51,9 @@ internal static class MessageService
     // internal const string MsgMinimumLineLengthInTemplateFileIs3 = "All lines in the template file must be at least 3 characters long.";
     // internal const string MsgMissingDirectoryPath = "The specified file path doesn't contain a valid directory path.";
     internal const string MsgMissingFileName = "The file name is missing from the file path.";
+    internal const string MsgMissingTokenEndDelimiter = "A token start delimiter has been found but there are no more end delimiters. All remaining start delimiters will be escaped.";
     internal const string MsgMissingTokenName = "Found token start and end delimiters with no token name between them. The token will be ignored.";
+    internal const string MsgMissingTokenStartDelimiter = "A token end delimiter has been found but there are no more start delimiters. All remaining end delimiters will be escaped.";
     // internal const string MsgMultipleLevelsOfPadSegments = "Pad segment {1} specified for segment {0} also contains a pad segment. Multiple levels of pad segments are not allowed.";
     // internal const string MsgNextLoadRequestBeforeFirstIsWritten = "Template file \"{0}\" is being loaded before any output was written for template file \"{1}\"";
     // internal const string MsgNoTextLinesFollowingSegmentHeader = "The header line for segment {0} must be followed by one or more valid text lines. The segment will be ignored.";
@@ -85,6 +87,7 @@ internal static class MessageService
     internal const string MsgTokenEndAndTokenEscapeAreSame = "The token end delimiter \"{0}\" must not be the same as the same as the token escape character '{1}'.";
     internal const string MsgTokenEndDelimiterIsEmpty = "The token end delimiter must not be empty or whitespace.";
     internal const string MsgTokenEndDelimiterIsNull = "The token end delimiter must not be null.";
+    internal const string MsgTokenEndDelimiterWillBeEscaped = "An issue has been detected with a token end delimiter. The delimiter will be escaped.";
     internal const string MsgTokenHasInvalidName = "Found a token with an invalid name: \"{0}\". It will be ignored.";
     internal const string MsgTokenMissingEndDelimiter = "Found a token start delimiter with no matching end delimiter. The token will be ignored.";
     internal const string MsgTokenNameNotFound = "The token name \"{1}\" in segment {0} wasn't found in the token dictionary. The token placeholder will be output as is.";
@@ -93,9 +96,11 @@ internal static class MessageService
     internal const string MsgTokenStartDelimiterIsEmpty = "The token start delimiter must not be empty or whitespace.";
     internal const string MsgTokenStartDelimiterIsNull = "The token start delimiter must not be null.";
     internal const string MsgTokenStartDelimiterWarning = "Ending the token start delimiter with '-', '+' or '=' may cause confusion and lead to unexpected errors.";
+    internal const string MsgTokenStartDelimiterWillBeEscaped = "An issue has been detected with a token start delimiter. The delimiter will be escaped.";
     internal const string MsgTokenValueIsEmpty = "Found token \"{1}\" with no assigned value while generating segment {0}.";
     internal const string MsgTokenWithEmptyValue = "Token \"{1}\" was passed in with an empty value for segment {0}.";
     internal const string MsgTokenWithNullValue = "Token \"{1}\" was passed in with a null value for segment {0}. The token will be replaced with an empty string.";
+    internal const string MsgUnableToAddTokenToDictionary = "Failed to add token \"{0}\" to the token dictionary. The token will be ignored.";
     internal const string MsgUnableToClearDirectory = "An unexpected exception occurred while clearing directory: \"{0}\"";
     internal const string MsgUnableToCombineFilePaths = "An unexpected exception occurred while attempting to combine file paths \"{0}\" and \"{1}\"";
     internal const string MsgUnableToCreateDirectory = "An unexpected exception occurred while attempting to create directory: \"{0}\"";

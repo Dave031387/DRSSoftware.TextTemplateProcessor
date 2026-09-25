@@ -309,6 +309,23 @@ internal class TokenParser : DependencyCheckerBase, ITokenParser
     }
 
     /// <summary>
+    /// In the unlikely event the last found token isn't able to be added to the token dictionary,
+    /// this method provides a means of escaping the last found token.
+    /// </summary>
+    /// <remarks>
+    /// Note that this method must be called before the <see cref="GetNextToken"/> method is called
+    /// since it relies on the delimiter indexes still being set to the position of the last found token.
+    /// </remarks>
+    public void EscapeLastFoundToken()
+    {
+        string firstString = TemplateText[FirstStartDelimiterIndex..EndDelimiterIndex];
+        string tokenString = firstString + TokenEndDelimiter;
+        string replacementString = DelimiterEscapeCharacter + firstString + DelimiterEscapeCharacter + TokenEndDelimiter;
+        _ = ModifiedText.Replace(tokenString, replacementString);
+        IsTextModified = true;
+    }
+
+    /// <summary>
     /// Gets the modified template text line.
     /// </summary>
     /// <returns>
@@ -362,6 +379,12 @@ internal class TokenParser : DependencyCheckerBase, ITokenParser
     /// <summary>
     /// Initializes the token parser and prepares it for parsing the next line from the text template.
     /// </summary>
+    /// <remarks>
+    /// When <paramref name="isInitialPass"/> is set to <see langword="true"/> it implies that we
+    /// are preparing to extract all tokens from the template text. <br/> Otherwise, it is assumed
+    /// that we will be replacing token strings in the template text with their corresponding
+    /// substitution values.
+    /// </remarks>
     /// <param name="templateText">
     /// The next line of text to be parsed from the text template.
     /// </param>
@@ -403,7 +426,12 @@ internal class TokenParser : DependencyCheckerBase, ITokenParser
             || (FirstStartDelimiterIsEscaped && SecondStartDelimiterIsFound && EndDelimiterFollowsFirstStartDelimiter)
             || (FirstStartDelimiterIsFound && SecondStartDelimiterIsFound && EndDelimiterPrecedesFirstStartDelimiter));
 
-        // TODO log an error message if the delimiter should be escaped
+        if (shouldEscapeEndDelimiter && !TokenIsFound)
+        {
+            string message = GetMessage(MsgTokenEndDelimiterWillBeEscaped);
+            Logger.Log(LogSeverity.Error, message);
+        }
+
         AppendTokenDelimiter(segmentStart, EndDelimiterIndex, TokenEndDelimiter, shouldEscapeEndDelimiter);
     }
 
@@ -430,7 +458,12 @@ internal class TokenParser : DependencyCheckerBase, ITokenParser
             || (SecondStartDelimiterIsEscaped && EndDelimiterFollowsSecondStartDelimiter)
             || (SecondStartDelimiterIsFound && EndDelimiterIsEscaped && EndDelimiterPrecedesSecondStartDelimiter));
 
-        // TODO log an error message if the delimiter should be escaped
+        if (shouldEscapeFirstStartDelimiter & !TokenIsFound)
+        {
+            string message = GetMessage(MsgTokenStartDelimiterWillBeEscaped);
+            Logger.Log(LogSeverity.Error, message);
+        }
+
         AppendTokenDelimiter(segmentStart, FirstStartDelimiterIndex, TokenStartDelimiter, shouldEscapeFirstStartDelimiter);
     }
 
@@ -452,7 +485,12 @@ internal class TokenParser : DependencyCheckerBase, ITokenParser
     {
         bool shouldEscapeSecondStartDelimiter = SecondStartDelimiterIsNotEscaped && EndDelimiterIsEscaped && EndDelimiterFollowsSecondStartDelimiter;
 
-        // TODO log an error message if the delimiter should be escaped
+        if (shouldEscapeSecondStartDelimiter)
+        {
+            string message = GetMessage(MsgTokenStartDelimiterWillBeEscaped);
+            Logger.Log(LogSeverity.Error, message);
+        }
+
         AppendTokenDelimiter(segmentStart, SecondStartDelimiterIndex, TokenStartDelimiter, shouldEscapeSecondStartDelimiter);
     }
 
@@ -750,7 +788,8 @@ internal class TokenParser : DependencyCheckerBase, ITokenParser
 
         if (FirstStartDelimiterIsFound && EndDelimiterIsNotFound)
         {
-            // TODO log an error message
+            string message = GetMessage(MsgMissingTokenEndDelimiter);
+            Logger.Log(LogSeverity.Error, message);
             EscapeAllDelimiters(StartSearchIndex, TokenStartDelimiter);
             StartSearchIndex = TemplateText.Length;
             return;
@@ -758,7 +797,8 @@ internal class TokenParser : DependencyCheckerBase, ITokenParser
 
         if ((FirstStartDelimiterIsNotFound || FirstStartDelimiterIsEscaped) && SecondStartDelimiterIsNotFound && EndDelimiterIsNotEscaped)
         {
-            // TODO log an error message
+            string message = GetMessage(MsgMissingTokenStartDelimiter);
+            Logger.Log(LogSeverity.Error, message);
             EscapeAllDelimiters(StartSearchIndex, TokenEndDelimiter);
             StartSearchIndex = TemplateText.Length;
             return;
