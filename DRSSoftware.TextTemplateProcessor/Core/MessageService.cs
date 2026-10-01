@@ -81,7 +81,7 @@ internal static class MessageService
     // internal const string MsgTemplateFileIsEmpty = "This template file is empty: {0}";
     // internal const string MsgTemplateFilePathNotSet = "Unable to load the template file because a valid file path has not been set.";
     // internal const string MsgTemplateHasBeenReset = "The environment for template file \"{0}\" has been reset.";
-    internal const string MsgTokenDictionaryContainsInvalidTokenName = "The token dictionary contained an invalid token name \"{1}\" for segment {0}.";
+    internal const string MsgTokenDictionaryContainsInvalidTokenName = "Attempted to assign a replacement value to a token having an invalid name \"{1}\" for segment {0}. The token will be ignored.";
     internal const string MsgTokenDictionaryIsEmpty = "An empty token dictionary was supplied for segment {0}.";
     internal const string MsgTokenDictionaryIsNull = "A null token dictionary was supplied for segment {0}.";
     internal const string MsgTokenEndAndTokenEscapeAreSame = "The token end delimiter \"{0}\" must not be the same as the same as the token escape character '{1}'.";
@@ -98,8 +98,8 @@ internal static class MessageService
     internal const string MsgTokenStartDelimiterWarning = "Ending the token start delimiter with '-', '+' or '=' may cause confusion and lead to unexpected errors.";
     internal const string MsgTokenStartDelimiterWillBeEscaped = "An issue has been detected with a token start delimiter. The delimiter will be escaped.";
     internal const string MsgTokenValueIsEmpty = "Found token \"{1}\" with no assigned value while generating segment {0}.";
-    internal const string MsgTokenWithEmptyValue = "Token \"{1}\" was passed in with an empty value for segment {0}.";
-    internal const string MsgTokenWithNullValue = "Token \"{1}\" was passed in with a null value for segment {0}. The token will be replaced with an empty string.";
+    internal const string MsgTokenWithEmptyValue = "Possibly unintended attempt to assign an empty string to token \"{1}\" in segment {0}.";
+    internal const string MsgTokenWithNullValue = "Invalid attempt to assign a null replacement value to token \"{1}\" in segment {0}. The replacement value will be set to an empty string.";
     internal const string MsgUnableToAddTokenToDictionary = "Failed to add token \"{0}\" to the token dictionary. The token will be ignored.";
     internal const string MsgUnableToClearDirectory = "An unexpected exception occurred while clearing directory: \"{0}\"";
     internal const string MsgUnableToCombineFilePaths = "An unexpected exception occurred while attempting to combine file paths \"{0}\" and \"{1}\"";
@@ -122,7 +122,7 @@ internal static class MessageService
     internal const string MsgUncPathIsNotSupported = "UNC paths are not supported in this version of the Text Template Processor. The specified path was \"{0}\"";
     // internal const string MsgUnknownSegmentName = "A request was made to generate segment {0} but that segment wasn't found in the template file.";
     internal const string MsgUnknownSegmentOptionFound = "An unknown segment option \"{1}\" was found on segment {0}. It will be ignored.";
-    internal const string MsgUnknownTokenName = "An unknown token name \"{1}\" was supplied for segment {0}. It will be ignored.";
+    internal const string MsgUnknownTokenName = "Invalid attempt to assign a replacement value to unknown token name \"{1}\" in segment {0}. The token will be ignored.";
     internal const string MsgWarningCount = "  Warnings: {0}";
     // internal const string MsgWritingTextFile = "Writing generated text to file: \"{0}\"";
     // internal const string MsgYesNoPrompt = "Enter Y (yes) or N (no)...";

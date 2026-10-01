@@ -56,8 +56,8 @@ internal class TokenProcessor : DependencyCheckerBase, ITokenExtractor, ITokenTr
     /// Gets the character currently being used as the token escape character.
     /// </summary>
     /// <remarks>
-    /// The escape character is used to indicate that a token start delimiter should be treated as
-    /// an ordinary string of text rather than the start of a token.
+    /// The escape character is used to indicate that a token start delimiter or token end delimiter
+    /// should be treated as an ordinary string of text rather than the start or end of a token.
     /// </remarks>
     internal char TokenEscape { get; private set; } = DefaultTokenEscapeCharacter;
 
@@ -113,8 +113,8 @@ internal class TokenProcessor : DependencyCheckerBase, ITokenExtractor, ITokenTr
     /// </param>
     /// <remarks>
     /// If the <paramref name="text"/> parameter contains any invalid tokens, the text will be
-    /// modified to insert a token escape character ahead of the token start delimiter of each
-    /// invalid token.
+    /// modified to insert token escape characters ahead of the token start and end delimiters of
+    /// each invalid token.
     /// </remarks>
     /// <returns>
     /// The given <paramref name="text"/> after being modified to escape any invalid token delimiters.
@@ -145,8 +145,7 @@ internal class TokenProcessor : DependencyCheckerBase, ITokenExtractor, ITokenTr
     }
 
     /// <summary>
-    /// This method is used to load token substitution values into the Token Dictionary for the
-    /// given token names.
+    /// Loads token substitution values into the Token Dictionary for the given token names.
     /// </summary>
     /// <param name="tokenValues">
     /// A dictionary of key/value pairs where the key is the token name and the value is the
@@ -181,18 +180,20 @@ internal class TokenProcessor : DependencyCheckerBase, ITokenExtractor, ITokenTr
     }
 
     /// <summary>
-    /// Replace tokens in the given text line with their corresponding substitution values.
+    /// Replaces tokens in the given text line with their corresponding substitution values.
     /// </summary>
+    /// <remarks>
+    /// The token escape character will be removed from all escaped token delimiters in the
+    /// <paramref name="text"/> string. Invalid tokens that were escaped will be output as is
+    /// without any substitution.
+    /// </remarks>
     /// <param name="text">
-    /// A text string that may contain one or more tokens.
+    /// A text string that contains zero or more tokens.
     /// </param>
     /// <returns>
-    /// The original <paramref name="text"/> string with all tokens replaced by their substitution values.
+    /// The original <paramref name="text"/> string with all valid tokens replaced by their
+    /// corresponding substitution values.
     /// </returns>
-    /// <remarks>
-    /// The token escape character will be removed from all escaped tokens in the <paramref
-    /// name="text"/> string and those tokens will be output without any substitution.
-    /// </remarks>
     public string ReplaceTokens(string text)
     {
         _ = ModifiedText.Clear();
@@ -207,8 +208,7 @@ internal class TokenProcessor : DependencyCheckerBase, ITokenExtractor, ITokenTr
             {
                 if (TokenDictionary.TryGetValue(tokenInfo.TokenName, out string? value))
                 {
-                    string tokenValue = value;
-                    string replacementValue = GetReplacementValue(tokenInfo, tokenValue);
+                    string replacementValue = GetReplacementValue(tokenInfo, value);
 
                     _ = ModifiedText.Replace(tokenInfo.TokenString, replacementValue);
                 }
@@ -325,6 +325,19 @@ internal class TokenProcessor : DependencyCheckerBase, ITokenExtractor, ITokenTr
         return true;
     }
 
+    /// <summary>
+    /// Gets the replacement value for the given token.
+    /// </summary>
+    /// <param name="tokenInfo">
+    /// The <see cref="TokenInfo"/> object that describes the token being replaced.
+    /// </param>
+    /// <param name="tokenValue">
+    /// The unadjusted token replacement value that was retrieved from the Token Dictionary.
+    /// </param>
+    /// <returns>
+    /// The <paramref name="tokenValue"/> with the first character converted to upper- or lowercase
+    /// if so indicated by the <paramref name="tokenInfo"/> details.
+    /// </returns>
     private string GetReplacementValue(TokenInfo tokenInfo, string tokenValue)
     {
         string replacementValue = string.Empty;
@@ -353,6 +366,13 @@ internal class TokenProcessor : DependencyCheckerBase, ITokenExtractor, ITokenTr
         return replacementValue;
     }
 
+    /// <summary>
+    /// Searches the Token Dictionary for the specified token name and updates its replacement value
+    /// with the specified value.
+    /// </summary>
+    /// <param name="keyValuePair">
+    /// A key/value pair comprised of a token name and its replacement value.
+    /// </param>
     private void UpdateTokenDictionary(KeyValuePair<string, string> keyValuePair)
     {
         string tokenName = keyValuePair.Key;

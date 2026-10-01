@@ -3,16 +3,15 @@
 [ExcludeFromCodeCoverage]
 internal static class TestHelper
 {
-    public const string ArgumentNullMessage = "Value cannot be null. (Parameter '{0}')";
+    internal const string ArgumentNullMessage = "Value cannot be null. (Parameter '{0}')";
 
-    public const string EmptyString = "";
+    internal const string EmptyString = "";
 
-    public const string Whitespace = "\t\n\v\f\r \u0085\u00a0\u2002\u2003\u2028\u2029";
+    internal const char Space = ' ';
 
-    public static string[] SampleText => ["Line 1", "Line 2", "Line 3"];
+    internal const string Whitespace = "\t\n\v\f\r \u0085\u00a0\u2002\u2003\u2028\u2029";
 
-    public static string GetNullDependencyMessage(string className, string serviceName, string parameterName)
-        => GetMessage(MsgDependencyIsNull, className, serviceName) + $" (Parameter '{parameterName}')";
+    internal static string[] SampleText => ["Line 1", "Line 2", "Line 3"];
 
     internal static void AssertException<T>(Action action, string message)
              where T : Exception
@@ -45,4 +44,18 @@ internal static class TestHelper
             .WithInnerExceptionExactly<TInner>()
             .WithMessage(inner);
     }
+
+    internal static string CreateToken(string tokenName, char initialCaseFlag = Space, bool isEscaped = false)
+    {
+        return isEscaped
+            ? initialCaseFlag == Space
+                ? $"{DefaultTokenEscapeCharacter}{DefaultTokenStartDelimiter} {tokenName} {DefaultTokenEndDelimiter}"
+                : $"{DefaultTokenEscapeCharacter}{DefaultTokenStartDelimiter}{initialCaseFlag} {tokenName} {DefaultTokenEndDelimiter}"
+            : initialCaseFlag == Space
+                ? $"{DefaultTokenStartDelimiter} {tokenName} {DefaultTokenEndDelimiter}"
+                : $"{DefaultTokenStartDelimiter}{initialCaseFlag} {tokenName} {DefaultTokenEndDelimiter}";
+    }
+
+    internal static string GetNullDependencyMessage(string className, string serviceName, string parameterName)
+                        => GetMessage(MsgDependencyIsNull, className, serviceName) + $" (Parameter '{parameterName}')";
 }

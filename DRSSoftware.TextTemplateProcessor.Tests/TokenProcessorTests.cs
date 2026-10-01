@@ -3,8 +3,6 @@
 [ExcludeFromCodeCoverage]
 public class TokenProcessorTests
 {
-    private const char Space = ' ';
-
     private Mock<ILocater> LocaterMock
     {
         get;
@@ -107,114 +105,6 @@ public class TokenProcessorTests
         MocksVerifyNoOtherCalls();
     }
 
-    [Theory]
-    [InlineData("text", "text", "text")]
-    [InlineData("text", "text", EmptyString)]
-    [InlineData("text", EmptyString, "text")]
-    [InlineData("text", EmptyString, EmptyString)]
-    [InlineData(EmptyString, "text", "text")]
-    [InlineData(EmptyString, "text", EmptyString)]
-    [InlineData(EmptyString, EmptyString, "text")]
-    [InlineData(EmptyString, EmptyString, EmptyString)]
-    public void ExtractTokensWhenTextContainsEscapedTokens_ShouldIgnoreEscapedTokens(string text1, string text2, string text3)
-    {
-        // Arrange
-        InitializeMocks();
-        TokenProcessor tokenProcessor = GetTokenProcessor();
-        string name1 = "Token1";
-        string name2 = "Token2";
-        string token1 = CreateToken(name1, Space, true);
-        string token2 = CreateToken(name2, Space, true);
-        string expectedText = $"{text1}{token1}{text2}{token2}{text3}";
-        string actual = expectedText;
-
-        // Act
-        tokenProcessor.ExtractTokens(ref actual);
-
-        // Assert
-        actual
-            .Should()
-            .Be(expectedText);
-        tokenProcessor.TokenDictionary
-            .Should()
-            .BeEmpty();
-        MocksVerifyNoOtherCalls();
-    }
-
-    [Fact]
-    public void ExtractTokensWhenTextContainsNoTokens_ShouldDoNothing()
-    {
-        // Arrange
-        InitializeMocks();
-        TokenProcessor tokenProcessor = GetTokenProcessor();
-        string expected = "This is a sample text without any tokens.";
-        string actual = expected;
-
-        // Act
-        tokenProcessor.ExtractTokens(ref actual);
-
-        // Assert
-        actual
-            .Should()
-            .Be(expected);
-        tokenProcessor.TokenDictionary
-            .Should()
-            .BeEmpty();
-        MocksVerifyNoOtherCalls();
-    }
-
-    [Theory]
-    [InlineData("text", "text", "text")]
-    [InlineData("text", "text", EmptyString)]
-    [InlineData("text", EmptyString, "text")]
-    [InlineData("text", EmptyString, EmptyString)]
-    [InlineData(EmptyString, "text", "text")]
-    [InlineData(EmptyString, "text", EmptyString)]
-    [InlineData(EmptyString, EmptyString, "text")]
-    [InlineData(EmptyString, EmptyString, EmptyString)]
-    public void ExtractTokensWhenTextContainsTokens_ShouldExtractTokensAndAddThemToDictionary(string text1, string text2, string text3)
-    {
-        // Arrange
-        InitializeMocks();
-        TokenProcessor tokenProcessor = GetTokenProcessor();
-        string name1 = "Token1";
-        string name2 = "Token2";
-        string token1 = CreateToken(name1);
-        string token2 = CreateToken(name2);
-        string expectedText = $"{text1}{token1}{text2}{token2}{text3}";
-        Dictionary<string, string> expectedTokens = new()
-        {
-            { name1, string.Empty },
-            { name2, string.Empty }
-        };
-        string actual = expectedText;
-
-        // Act
-        tokenProcessor.ExtractTokens(ref actual);
-
-        // Assert
-        actual
-            .Should()
-            .Be(expectedText);
-        tokenProcessor.TokenDictionary
-            .Should()
-            .HaveCount(expectedTokens.Count)
-            .And
-            .Contain(expectedTokens);
-        MocksVerifyNoOtherCalls();
-    }
-
-    private static string CreateToken(string tokenName, char initialCaseFlag = Space, bool isEscaped = false)
-    {
-        return isEscaped
-            ? initialCaseFlag == Space
-                ? $"{DefaultTokenEscapeCharacter}{DefaultTokenStartDelimiter} {tokenName} {DefaultTokenEndDelimiter}"
-                : $"{DefaultTokenEscapeCharacter}{DefaultTokenStartDelimiter}{initialCaseFlag} {tokenName} {DefaultTokenEndDelimiter}"
-            : initialCaseFlag == Space
-                ? $"{DefaultTokenStartDelimiter} {tokenName} {DefaultTokenEndDelimiter}"
-                : $"{DefaultTokenStartDelimiter}{initialCaseFlag} {tokenName} {DefaultTokenEndDelimiter}";
-    }
-
     private TokenProcessor GetTokenProcessor()
         => new(LocaterMock.Object, LoggerMock.Object, TokenParserMock.Object);
 
@@ -222,6 +112,7 @@ public class TokenProcessorTests
     {
         LocaterMock.Reset();
         LoggerMock.Reset();
+        TokenParserMock.Reset();
     }
 
     private void MocksVerifyNoOtherCalls()
