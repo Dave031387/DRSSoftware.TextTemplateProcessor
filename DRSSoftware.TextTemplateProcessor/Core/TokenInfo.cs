@@ -21,5 +21,10 @@ internal record TokenInfo(string TokenString, string TokenName, char Case)
     /// <summary>
     /// Gets a value indicating whether or not this <see cref="TokenInfo"/> instance is empty.
     /// </summary>
-    public bool IsEmpty => TokenString.Length == 0;
+    public bool IsEmpty => string.IsNullOrEmpty(TokenString);
+
+    /// <summary>
+    /// Gets an empty instance of the TokenInfo record.
+    /// </summary>
+    public static TokenInfo Empty => new(string.Empty, string.Empty, SameCaseFlag);
 }

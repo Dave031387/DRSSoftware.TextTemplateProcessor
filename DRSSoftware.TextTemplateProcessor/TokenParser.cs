@@ -10,12 +10,6 @@ namespace DRSSoftware.TextTemplateProcessor;
 internal class TokenParser : DependencyCheckerBase, ITokenParser
 {
     /// <summary>
-    /// An array used to determine the order of the found end token and start tokens.
-    /// </summary>
-    private readonly DelimiterType[] _foundDelimiters
-        = [DelimiterType.NotFound, DelimiterType.NotFound, DelimiterType.NotFound];
-
-    /// <summary>
     /// Creates a new instance of the <see cref="TokenParser"/> class.
     /// </summary>
     /// <param name="logger">
@@ -110,12 +104,26 @@ internal class TokenParser : DependencyCheckerBase, ITokenParser
     /// <summary>
     /// Gets a value indicating whether the found end delimiter follows the first found start delimiter.
     /// </summary>
-    private bool EndDelimiterFollowsFirstStartDelimiter => _foundDelimiters[1] is DelimiterType.EndDelimiter;
+    private static bool EndDelimiterFollowsFirstStartDelimiter => FoundDelimiters[1] is DelimiterType.EndDelimiter;
 
     /// <summary>
     /// Gets a value indicating whether the found end delimiter follows the second found start delimiter.
     /// </summary>
-    private bool EndDelimiterFollowsSecondStartDelimiter => _foundDelimiters[2] is DelimiterType.EndDelimiter;
+    private static bool EndDelimiterFollowsSecondStartDelimiter => FoundDelimiters[2] is DelimiterType.EndDelimiter;
+
+    /// <summary>
+    /// Gets a value indicating whether the found end delimiter appears before the first found start
+    /// delimiter in the current template text line.
+    /// </summary>
+    private static bool EndDelimiterPrecedesFirstStartDelimiter => FoundDelimiters[0] is DelimiterType.EndDelimiter;
+
+    /// <summary>
+    /// An array used to determine the order of the found end token and start tokens.
+    /// </summary>
+    private static DelimiterType[] FoundDelimiters
+    {
+        get;
+    } = [DelimiterType.NotFound, DelimiterType.NotFound, DelimiterType.NotFound];
 
     /// <summary>
     /// Gets or sets the index position of the found end delimiter within the current template text
@@ -146,12 +154,6 @@ internal class TokenParser : DependencyCheckerBase, ITokenParser
     /// Gets a value indicating whether an end delimiter was not found.
     /// </summary>
     private bool EndDelimiterIsNotFound => EndDelimiterIndex <= NotFound;
-
-    /// <summary>
-    /// Gets a value indicating whether the found end delimiter appears before the first found start
-    /// delimiter in the current template text line.
-    /// </summary>
-    private bool EndDelimiterPrecedesFirstStartDelimiter => _foundDelimiters[0] is DelimiterType.EndDelimiter;
 
     /// <summary>
     /// Gets or sets the index position of the first found start delimiter in the current template
@@ -356,7 +358,9 @@ internal class TokenParser : DependencyCheckerBase, ITokenParser
             FindNextToken();
         }
 
-        return new(FoundTokenString, FoundTokenName, FoundCaseFlag);
+        return string.IsNullOrEmpty(FoundTokenString)
+            ? TokenInfo.Empty
+            : new(FoundTokenString, FoundTokenName, FoundCaseFlag);
     }
 
     /// <summary>
@@ -402,6 +406,27 @@ internal class TokenParser : DependencyCheckerBase, ITokenParser
         IsTextModified = false;
         StartSearchIndex = 0;
         IsInitialPass = isInitialPass;
+    }
+
+    /// <summary>
+    /// Sets the found delimiter order based on the passed in parameter values.
+    /// </summary>
+    /// <param name="firstDelimiter">
+    /// The delimiter type of the first found delimiter.
+    /// </param>
+    /// <param name="secondDelimiter">
+    /// The delimiter type of the second found delimiter.
+    /// </param>
+    /// <param name="thirdDelimiter">
+    /// The delimiter type of the third found delimiter.
+    /// </param>
+    private static void SetDelimiterOrder(DelimiterType firstDelimiter,
+                                          DelimiterType secondDelimiter,
+                                          DelimiterType thirdDelimiter)
+    {
+        FoundDelimiters[0] = firstDelimiter;
+        FoundDelimiters[1] = secondDelimiter;
+        FoundDelimiters[2] = thirdDelimiter;
     }
 
     /// <summary>
@@ -474,7 +499,8 @@ internal class TokenParser : DependencyCheckerBase, ITokenParser
     {
         bool shouldEscapeFirstStartDelimiter = FirstStartDelimiterIsNotEscaped
             && ((SecondStartDelimiterIsNotFound && (EndDelimiterIsNotFound || (EndDelimiterIsEscaped && EndDelimiterFollowsFirstStartDelimiter)))
-            || (SecondStartDelimiterIsFound && EndDelimiterIsFound && EndDelimiterFollowsSecondStartDelimiter)
+            || (SecondStartDelimiterIsFound && ((EndDelimiterIsFound && EndDelimiterFollowsSecondStartDelimiter)
+            || (EndDelimiterIsEscaped && EndDelimiterFollowsFirstStartDelimiter)))
             || FoundInvalidTokenString);
 
         if (shouldEscapeFirstStartDelimiter & !TokenIsFound)
@@ -491,22 +517,21 @@ internal class TokenParser : DependencyCheckerBase, ITokenParser
     /// </summary>
     private void AppendRemainingText()
     {
-        if (FirstStartDelimiterIsFound && SecondStartDelimiterIsFound && EndDelimiterIsNotFound)
+        if (EndDelimiterIsNotFound && ((FirstStartDelimiterIsNotEscaped && SecondStartDelimiterIsFound)
+            || (FirstStartDelimiterIsEscaped && SecondStartDelimiterIsNotEscaped)))
         {
             string message = GetMessage(MsgMissingTokenEndDelimiter);
             Logger.Log(LogSeverity.Error, message);
             EscapeAllDelimiters(TokenStartDelimiter);
         }
-        else if (SecondStartDelimiterIsNotFound
-            && ((FirstStartDelimiterIsNotFound && EndDelimiterIsFound)
-            || (EndDelimiterFollowsFirstStartDelimiter && (FirstStartDelimiterIsEscaped || EndDelimiterIsEscaped))
-            || (FirstStartDelimiterIsEscaped && EndDelimiterIsNotEscaped && EndDelimiterPrecedesFirstStartDelimiter)))
+        else if (SecondStartDelimiterIsNotFound && EndDelimiterIsNotEscaped
+            && (FirstStartDelimiterIsNotFound || FirstStartDelimiterIsEscaped))
         {
             string message = GetMessage(MsgMissingTokenStartDelimiter);
             Logger.Log(LogSeverity.Error, message);
             EscapeAllDelimiters(TokenEndDelimiter);
         }
-        else if (SecondStartDelimiterIsNotFound || EndDelimiterIsNotFound)
+        else if (SecondStartDelimiterIsNotFound && EndDelimiterIsNotFound)
         {
             _ = ModifiedText.Append(TemplateText[StartSearchIndex..TemplateText.Length]);
             StartSearchIndex = TemplateText.Length;
@@ -544,7 +569,8 @@ internal class TokenParser : DependencyCheckerBase, ITokenParser
     /// </remarks>
     private void AppendSecondStartDelimiter()
     {
-        bool shouldEscapeSecondStartDelimiter = SecondStartDelimiterIsNotEscaped && EndDelimiterIsEscaped && EndDelimiterFollowsSecondStartDelimiter;
+        bool shouldEscapeSecondStartDelimiter = FirstStartDelimiterIsFound && SecondStartDelimiterIsNotEscaped
+            && EndDelimiterIsEscaped && EndDelimiterFollowsSecondStartDelimiter;
 
         if (shouldEscapeSecondStartDelimiter)
         {
@@ -756,16 +782,16 @@ internal class TokenParser : DependencyCheckerBase, ITokenParser
         {
             nextSearchIndex = SecondStartDelimiterIndex;
         }
-        else if (EndDelimiterFollowsSecondStartDelimiter
-            && ((SecondStartDelimiterIsEscaped && EndDelimiterIsFound)
-                || (FirstStartDelimiterIsFound && SecondStartDelimiterIsNotEscaped && EndDelimiterIsEscaped)))
+        else if ((FirstStartDelimiterIsEscaped && SecondStartDelimiterIsEscaped && EndDelimiterIsNotFound)
+            || (FirstStartDelimiterIsFound && EndDelimiterFollowsSecondStartDelimiter
+            && (SecondStartDelimiterIsEscaped || EndDelimiterIsEscaped)))
         {
             nextSearchIndex = SecondStartDelimiterIndex + TokenStartDelimiter.Length;
         }
-        else if ((SecondStartDelimiterIsNotFound
-            && (FirstStartDelimiterIsNotFound || EndDelimiterIsNotFound
-            || (EndDelimiterFollowsFirstStartDelimiter && (FirstStartDelimiterIsEscaped || EndDelimiterIsEscaped))))
-            || (FirstStartDelimiterIsFound && SecondStartDelimiterIsFound && EndDelimiterIsNotFound))
+        else if ((EndDelimiterIsNotFound && (FirstStartDelimiterIsNotFound || SecondStartDelimiterIsNotFound
+            || FirstStartDelimiterIsNotEscaped || SecondStartDelimiterIsNotEscaped))
+            || (EndDelimiterIsNotEscaped && (FirstStartDelimiterIsNotFound || (FirstStartDelimiterIsEscaped
+            && SecondStartDelimiterIsNotFound))))
         {
             nextSearchIndex = TemplateText.Length;
         }
@@ -798,27 +824,6 @@ internal class TokenParser : DependencyCheckerBase, ITokenParser
     /// </returns>
     private bool IsDelimiterNotEscaped(int delimiterIndex)
         => delimiterIndex == 0 || (delimiterIndex > 0 && TemplateText[delimiterIndex - 1] != DefaultTokenEscapeCharacter);
-
-    /// <summary>
-    /// Sets the found delimiter order based on the passed in parameter values.
-    /// </summary>
-    /// <param name="firstDelimiter">
-    /// The delimiter type of the first found delimiter.
-    /// </param>
-    /// <param name="secondDelimiter">
-    /// The delimiter type of the second found delimiter.
-    /// </param>
-    /// <param name="thirdDelimiter">
-    /// The delimiter type of the third found delimiter.
-    /// </param>
-    private void SetDelimiterOrder(DelimiterType firstDelimiter,
-                                   DelimiterType secondDelimiter,
-                                   DelimiterType thirdDelimiter)
-    {
-        _foundDelimiters[0] = firstDelimiter;
-        _foundDelimiters[1] = secondDelimiter;
-        _foundDelimiters[2] = thirdDelimiter;
-    }
 
     /// <summary>
     /// Updates the modified template text line by appending the portion of the current template
