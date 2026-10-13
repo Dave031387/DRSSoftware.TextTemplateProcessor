@@ -26,8 +26,7 @@ internal static class GlobalConstants
     /// Pattern string for matching any letter in a Regex expression.
     /// </summary>
     /// <remarks>
-    /// Assumes that the option <c> RegexOptions.IgnoreCase </c> is used when compiling the Regex
-    /// expression.
+    /// Assumes that the option <c>RegexOptions.IgnoreCase</c> is used when compiling the Regex expression.
     /// </remarks>
     public const string AnyLetter = "[a-z]";
 
@@ -52,8 +51,8 @@ internal static class GlobalConstants
     public const string DefaultFileNameSuffix = ".txt";
 
     /// <summary>
-    /// The default <see cref="OperationType" /> that is used when creating a new instance of the
-    /// <see cref="ConsoleLogger" /> class.
+    /// The default <see cref="OperationType"/> that is used when creating a new instance of the
+    /// <see cref="ConsoleLogger"/> class.
     /// </summary>
     public const OperationType DefaultOperationType = OperationType.Setup;
 
@@ -71,7 +70,7 @@ internal static class GlobalConstants
     /// The default string that is used to indicate the end of a token in a text template file.
     /// </summary>
     /// <remarks>
-    /// Used in conjunction with <see cref="DefaultTokenStartDelimiter" /> to define the start and
+    /// Used in conjunction with <see cref="DefaultTokenStartDelimiter"/> to define the start and
     /// end of a token.
     /// </remarks>
     public const string DefaultTokenEndDelimiter = "#>";
@@ -80,16 +79,22 @@ internal static class GlobalConstants
     /// The default character used as the token escape character in a text template file.
     /// </summary>
     /// <remarks>
-    /// Used to escape the <see cref="DefaultTokenStartDelimiter" /> when it should be treated as
+    /// Used to escape the <see cref="DefaultTokenStartDelimiter"/> when it should be treated as
     /// normal text rather than the start of a token.
     /// </remarks>
     public const char DefaultTokenEscapeCharacter = '\\';
 
     /// <summary>
+    /// A constant string representation of <see cref="DefaultTokenEscapeCharacter"/>. Used mainly
+    /// to simplify some unit test setups.
+    /// </summary>
+    public const string DefaultTokenEscapeString = "\\";
+
+    /// <summary>
     /// The default string that is used to indicate the start of a token in a text template file.
     /// </summary>
     /// <remarks>
-    /// Used in conjunction with <see cref="DefaultTokenEndDelimiter" /> to define the start and end
+    /// Used in conjunction with <see cref="DefaultTokenEndDelimiter"/> to define the start and end
     /// of a token.
     /// </remarks>
     public const string DefaultTokenStartDelimiter = "<#";
@@ -219,20 +224,17 @@ internal static class GlobalConstants
     public const char SameCaseFlag = '=';
 
     /// <summary>
-    /// The string that is used to indicate the start of a segment header line in a text template
-    /// file.
+    /// The string that is used to indicate the start of a segment header line in a text template file.
     /// </summary>
     public const string SegmentHeaderCode = "###";
 
     /// <summary>
-    /// The search pattern that is used in locating the solution file with the ".sln" file
-    /// extension.
+    /// The search pattern that is used in locating the solution file with the ".sln" file extension.
     /// </summary>
     public const string SolutionFileSearchPattern1 = "*.sln";
 
     /// <summary>
-    /// The search pattern that is used in locating the solution file with the ".slnx" file
-    /// extension.
+    /// The search pattern that is used in locating the solution file with the ".slnx" file extension.
     /// </summary>
     public const string SolutionFileSearchPattern2 = "*.slnx";
 
@@ -258,8 +260,7 @@ internal static class GlobalConstants
     public const string WarningSeverity = "WARNING::";
 
     /// <summary>
-    /// Gets an array of characters that can be used for separating options on a segment header
-    /// line.
+    /// Gets an array of characters that can be used for separating options on a segment header line.
     /// </summary>
     public static char[] OptionSeparatorChars { get; } = [' ', ','];
 }

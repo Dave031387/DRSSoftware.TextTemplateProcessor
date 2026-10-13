@@ -356,9 +356,9 @@ internal class TokenProcessor : DependencyCheckerBase, ITokenExtractor, ITokenTr
                 ? tokenValue[1..]
                 : string.Empty;
 
-            replacementValue = tokenInfo.Case is LowercaseFlag
+            replacementValue = tokenInfo.CaseFlag is LowercaseFlag
                 ? firstChar.ToLowerInvariant() + remaining
-                : tokenInfo.Case is UppercaseFlag
+                : tokenInfo.CaseFlag is UppercaseFlag
                     ? firstChar.ToUpperInvariant() + remaining
                     : tokenValue;
         }
