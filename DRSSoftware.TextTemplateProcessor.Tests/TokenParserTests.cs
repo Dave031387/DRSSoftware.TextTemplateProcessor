@@ -1660,7 +1660,7 @@ public class TokenParserTests
         string startDelimiter = "<{{";
         string endDelimiter = "}>";
         char escapeCharacter = '!';
-        tokenParser.InitializeDelimiters(startDelimiter, endDelimiter, escapeCharacter);
+        tokenParser.SetTokenDelimiterValues(startDelimiter, endDelimiter, escapeCharacter);
         string tokenName = "Token1";
         string tokenString = $"{startDelimiter}{tokenName}{endDelimiter}";
         string originalText = $"text {startDelimiter} text {tokenString} text {endDelimiter} {escapeCharacter}{startDelimiter} text {startDelimiter} text {startDelimiter} text";

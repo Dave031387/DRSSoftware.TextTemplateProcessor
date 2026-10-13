@@ -231,12 +231,7 @@ internal class TokenProcessor : DependencyCheckerBase, ITokenExtractor, ITokenTr
     /// Resets the token delimiters and token escape character to their default values.
     /// </summary>
     public void ResetTokenDelimiters()
-    {
-        TokenStart = DefaultTokenStartDelimiter;
-        TokenEnd = DefaultTokenEndDelimiter;
-        TokenEscape = DefaultTokenEscapeCharacter;
-        TokenParser.InitializeDelimiters(TokenStart, TokenEnd, TokenEscape);
-    }
+        => SetTokenDelimiterValues(DefaultTokenStartDelimiter, DefaultTokenEndDelimiter, DefaultTokenEscapeCharacter);
 
     /// <summary>
     /// Sets the token start and token end delimiters and the token escape character to the
@@ -256,6 +251,147 @@ internal class TokenProcessor : DependencyCheckerBase, ITokenExtractor, ITokenTr
     /// <see langword="false"/>.
     /// </returns>
     public bool SetTokenDelimiters(string tokenStart, string tokenEnd, char tokenEscapeChar)
+    {
+        if (ValidateTokenDelimiterValues(tokenStart, tokenEnd, tokenEscapeChar))
+        {
+            SetTokenDelimiterValues(TokenStart, TokenEnd, TokenEscape);
+            return true;
+        }
+
+        return false;
+    }
+
+    /// <summary>
+    /// Gets the replacement value for the given token.
+    /// </summary>
+    /// <param name="tokenInfo">
+    /// The <see cref="TokenInfo"/> object that describes the token being replaced.
+    /// </param>
+    /// <param name="tokenValue">
+    /// The unadjusted token replacement value that was retrieved from the Token Dictionary.
+    /// </param>
+    /// <returns>
+    /// The <paramref name="tokenValue"/> with the first character converted to upper- or lowercase
+    /// if so indicated by the <paramref name="tokenInfo"/> details.
+    /// </returns>
+    private string GetReplacementValue(TokenInfo tokenInfo, string tokenValue)
+    {
+        string replacementValue = string.Empty;
+
+        if (string.IsNullOrEmpty(tokenValue))
+        {
+            string message = GetMessage(MsgTokenValueIsEmpty,
+                                        Locater.CurrentLocationName,
+                                        tokenInfo.TokenName);
+            Logger.Log(LogSeverity.Warning, message);
+        }
+        else
+        {
+            string firstChar = tokenValue[0..1];
+            string remaining = tokenValue.Length > 1
+                ? tokenValue[1..]
+                : string.Empty;
+
+            replacementValue = tokenInfo.CaseFlag is LowercaseFlag
+                ? firstChar.ToLowerInvariant() + remaining
+                : tokenInfo.CaseFlag is UppercaseFlag
+                    ? firstChar.ToUpperInvariant() + remaining
+                    : tokenValue;
+        }
+
+        return replacementValue;
+    }
+
+    /// <summary>
+    /// Sets the token start and token end delimiters and the delimiter escape character to the
+    /// specified values.
+    /// </summary>
+    /// <param name="tokenStart">
+    /// The value to be assigned to the token start delimiter.
+    /// </param>
+    /// <param name="tokenEnd">
+    /// The value to be assigned to the token end delimiter.
+    /// </param>
+    /// <param name="tokenEscapeChar">
+    /// The value to be assigned to the token delimiter escape character.
+    /// </param>
+    private void SetTokenDelimiterValues(string tokenStart, string tokenEnd, char tokenEscapeChar)
+    {
+        TokenStart = tokenStart;
+        TokenEnd = tokenEnd;
+        TokenEscape = tokenEscapeChar;
+        TokenParser.SetTokenDelimiterValues(TokenStart, TokenEnd, TokenEscape);
+    }
+
+    /// <summary>
+    /// Searches the Token Dictionary for the specified token name and updates its replacement value
+    /// with the specified value.
+    /// </summary>
+    /// <param name="keyValuePair">
+    /// A key/value pair comprised of a token name and its replacement value.
+    /// </param>
+    private void UpdateTokenDictionary(KeyValuePair<string, string> keyValuePair)
+    {
+        string tokenName = keyValuePair.Key;
+        string tokenValue = keyValuePair.Value;
+
+        if (IsValidName(tokenName))
+        {
+            if (TokenDictionary.ContainsKey(tokenName))
+            {
+                if (tokenValue is null)
+                {
+                    string message = GetMessage(MsgTokenWithNullValue,
+                                                Locater.CurrentLocationName,
+                                                tokenName);
+                    Logger.Log(LogSeverity.Error, message);
+                    tokenValue = string.Empty;
+                }
+                else if (string.IsNullOrEmpty(tokenValue))
+                {
+                    string message = GetMessage(MsgTokenWithEmptyValue,
+                                                Locater.CurrentLocationName,
+                                                tokenName);
+                    Logger.Log(LogSeverity.Warning, message);
+                }
+
+                TokenDictionary[tokenName] = tokenValue;
+            }
+            else
+            {
+                string message = GetMessage(MsgUnknownTokenName,
+                                            Locater.CurrentLocationName,
+                                            tokenName);
+                Logger.Log(LogSeverity.Warning, message);
+            }
+        }
+        else
+        {
+            string message = GetMessage(MsgTokenDictionaryContainsInvalidTokenName,
+                                        Locater.CurrentLocationName,
+                                        tokenName);
+            Logger.Log(LogSeverity.Error, message);
+        }
+    }
+
+    /// <summary>
+    /// Validate the given token start and token end delimiters and delimiter escape character
+    /// values to ensure they are valid and consistent.
+    /// </summary>
+    /// <param name="tokenStart">
+    /// The value that will be assigned to the token start delimiter.
+    /// </param>
+    /// <param name="tokenEnd">
+    /// The value that will be assigned to the token end delimiter.
+    /// </param>
+    /// <param name="tokenEscapeChar">
+    /// The value that will be assigned to the delimiter escape character.
+    /// </param>
+    /// <returns>
+    /// <see langword="true"/> if all given delimiter values are valid and consistent; otherwise
+    /// <see langword="false"/>
+    /// </returns>
+    private bool ValidateTokenDelimiterValues(string tokenStart, string tokenEnd, char tokenEscapeChar)
     {
         if (tokenStart is null)
         {
@@ -318,102 +454,6 @@ internal class TokenProcessor : DependencyCheckerBase, ITokenExtractor, ITokenTr
             Logger.Log(LogSeverity.Warning, message);
         }
 
-        TokenStart = tokenStart;
-        TokenEnd = tokenEnd;
-        TokenEscape = tokenEscapeChar;
-        TokenParser.InitializeDelimiters(TokenStart, TokenEnd, TokenEscape);
         return true;
-    }
-
-    /// <summary>
-    /// Gets the replacement value for the given token.
-    /// </summary>
-    /// <param name="tokenInfo">
-    /// The <see cref="TokenInfo"/> object that describes the token being replaced.
-    /// </param>
-    /// <param name="tokenValue">
-    /// The unadjusted token replacement value that was retrieved from the Token Dictionary.
-    /// </param>
-    /// <returns>
-    /// The <paramref name="tokenValue"/> with the first character converted to upper- or lowercase
-    /// if so indicated by the <paramref name="tokenInfo"/> details.
-    /// </returns>
-    private string GetReplacementValue(TokenInfo tokenInfo, string tokenValue)
-    {
-        string replacementValue = string.Empty;
-
-        if (string.IsNullOrEmpty(tokenValue))
-        {
-            string message = GetMessage(MsgTokenValueIsEmpty,
-                                        Locater.CurrentLocationName,
-                                        tokenInfo.TokenName);
-            Logger.Log(LogSeverity.Warning, message);
-        }
-        else
-        {
-            string firstChar = tokenValue[0..1];
-            string remaining = tokenValue.Length > 1
-                ? tokenValue[1..]
-                : string.Empty;
-
-            replacementValue = tokenInfo.CaseFlag is LowercaseFlag
-                ? firstChar.ToLowerInvariant() + remaining
-                : tokenInfo.CaseFlag is UppercaseFlag
-                    ? firstChar.ToUpperInvariant() + remaining
-                    : tokenValue;
-        }
-
-        return replacementValue;
-    }
-
-    /// <summary>
-    /// Searches the Token Dictionary for the specified token name and updates its replacement value
-    /// with the specified value.
-    /// </summary>
-    /// <param name="keyValuePair">
-    /// A key/value pair comprised of a token name and its replacement value.
-    /// </param>
-    private void UpdateTokenDictionary(KeyValuePair<string, string> keyValuePair)
-    {
-        string tokenName = keyValuePair.Key;
-        string tokenValue = keyValuePair.Value;
-
-        if (IsValidName(tokenName))
-        {
-            if (TokenDictionary.ContainsKey(tokenName))
-            {
-                if (tokenValue is null)
-                {
-                    string message = GetMessage(MsgTokenWithNullValue,
-                                                Locater.CurrentLocationName,
-                                                tokenName);
-                    Logger.Log(LogSeverity.Error, message);
-                    tokenValue = string.Empty;
-                }
-                else if (string.IsNullOrEmpty(tokenValue))
-                {
-                    string message = GetMessage(MsgTokenWithEmptyValue,
-                                                Locater.CurrentLocationName,
-                                                tokenName);
-                    Logger.Log(LogSeverity.Warning, message);
-                }
-
-                TokenDictionary[tokenName] = tokenValue;
-            }
-            else
-            {
-                string message = GetMessage(MsgUnknownTokenName,
-                                            Locater.CurrentLocationName,
-                                            tokenName);
-                Logger.Log(LogSeverity.Warning, message);
-            }
-        }
-        else
-        {
-            string message = GetMessage(MsgTokenDictionaryContainsInvalidTokenName,
-                                        Locater.CurrentLocationName,
-                                        tokenName);
-            Logger.Log(LogSeverity.Error, message);
-        }
     }
 }

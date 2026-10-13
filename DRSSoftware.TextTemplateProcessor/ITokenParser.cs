@@ -58,8 +58,24 @@ internal interface ITokenParser
     TokenInfo GetNextToken();
 
     /// <summary>
-    /// Loads the current values of the token start delimiter, token end delimiter, and the
-    /// delimiter escape character.
+    /// Initializes the token parser and prepares it for parsing the next line from the text template.
+    /// </summary>
+    /// <remarks>
+    /// When <paramref name="shouldValidateTokenDelimiters"/> is set to <see langword="true"/> all
+    /// token delimiters on the current text template line will be validated and invalid delimiters
+    /// will be escaped.
+    /// </remarks>
+    /// <param name="templateText">
+    /// The next line of text to be parsed from the text template.
+    /// </param>
+    /// <param name="shouldValidateTokenDelimiters">
+    /// A value indicating whether token delimiters on the current template text line should be validated.
+    /// </param>
+    void InitializeParser(string templateText, bool shouldValidateTokenDelimiters = false);
+
+    /// <summary>
+    /// Sets the token start and token end delimiters and the delimiter escape character to the
+    /// specified values.
     /// </summary>
     /// <param name="tokenStartDelimiter">
     /// The value of the token start delimiter.
@@ -70,22 +86,5 @@ internal interface ITokenParser
     /// <param name="delimiterEscapeCharacter">
     /// The value of the delimiter escape character.
     /// </param>
-    void InitializeDelimiters(string tokenStartDelimiter, string tokenEndDelimiter, char delimiterEscapeCharacter);
-
-    /// <summary>
-    /// Initializes the token parser and prepares it for parsing the next line from the text template.
-    /// </summary>
-    /// <remarks>
-    /// When <paramref name="isInitialPass"/> is set to <see langword="true"/> it implies that we
-    /// are preparing to extract all tokens from the template text. <br/> Otherwise, it is assumed
-    /// that we will be replacing token strings in the template text with their corresponding
-    /// substitution values.
-    /// </remarks>
-    /// <param name="templateText">
-    /// The next line of text to be parsed from the text template.
-    /// </param>
-    /// <param name="isInitialPass">
-    /// A value indicating whether this is the first time the given template text line is being parsed.
-    /// </param>
-    void InitializeParser(string templateText, bool isInitialPass = false);
+    void SetTokenDelimiterValues(string tokenStartDelimiter, string tokenEndDelimiter, char delimiterEscapeCharacter);
 }
