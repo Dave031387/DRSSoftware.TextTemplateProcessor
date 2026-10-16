@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Text;
 
 namespace DRSSoftware.TextTemplateProcessor;
 
@@ -40,17 +41,27 @@ internal class TokenProcessor : DependencyCheckerBase, ITokenExtractor, ITokenTr
                                           nameof(ITokenParser),
                                           nameof(tokenParser));
         ModifiedText = new(200, 1000);
+        TokenDictionary = [];
+        SetTokenDelimiterValues(DefaultTokenStartDelimiter, DefaultTokenEndDelimiter, DefaultTokenEscapeCharacter);
     }
 
     /// <summary>
     /// Gets a dictionary of token names and their corresponding substitution values.
     /// </summary>
-    internal Dictionary<string, string> TokenDictionary { get; } = [];
+    internal Dictionary<string, string> TokenDictionary
+    {
+        get;
+        init;
+    }
 
     /// <summary>
     /// Gets the string that is currently being used to denote the end of a token.
     /// </summary>
-    internal string TokenEnd { get; private set; } = DefaultTokenEndDelimiter;
+    internal string TokenEnd
+    {
+        get;
+        private set;
+    }
 
     /// <summary>
     /// Gets the character currently being used as the token escape character.
@@ -59,19 +70,28 @@ internal class TokenProcessor : DependencyCheckerBase, ITokenExtractor, ITokenTr
     /// The escape character is used to indicate that a token start delimiter or token end delimiter
     /// should be treated as an ordinary string of text rather than the start or end of a token.
     /// </remarks>
-    internal char TokenEscape { get; private set; } = DefaultTokenEscapeCharacter;
+    internal char TokenEscape
+    {
+        get;
+        private set;
+    }
 
     /// <summary>
     /// Gets the string that is currently being used to denote the start of a token.
     /// </summary>
-    internal string TokenStart { get; private set; } = DefaultTokenStartDelimiter;
+    internal string TokenStart
+    {
+        get;
+        private set;
+    }
 
     /// <summary>
     /// Gets a reference to the locater service.
     /// </summary>
     private ILocater Locater
     {
-        get; init;
+        get;
+        init;
     }
 
     /// <summary>
@@ -79,7 +99,8 @@ internal class TokenProcessor : DependencyCheckerBase, ITokenExtractor, ITokenTr
     /// </summary>
     private ILogger Logger
     {
-        get; init;
+        get;
+        init;
     }
 
     /// <summary>
@@ -97,7 +118,8 @@ internal class TokenProcessor : DependencyCheckerBase, ITokenExtractor, ITokenTr
     /// </summary>
     private ITokenParser TokenParser
     {
-        get; init;
+        get;
+        init;
     }
 
     /// <summary>
@@ -133,6 +155,8 @@ internal class TokenProcessor : DependencyCheckerBase, ITokenExtractor, ITokenTr
                 {
                     if (!TokenDictionary.ContainsKey(tokenName))
                     {
+                        // Technically this condition should never occur, but is included here just
+                        // in case.
                         TokenParser.EscapeLastFoundToken();
                         string message = GetMessage(MsgUnableToAddTokenToDictionary, tokenName);
                         Logger.Log(LogSeverity.Error, message);
@@ -234,9 +258,13 @@ internal class TokenProcessor : DependencyCheckerBase, ITokenExtractor, ITokenTr
         => SetTokenDelimiterValues(DefaultTokenStartDelimiter, DefaultTokenEndDelimiter, DefaultTokenEscapeCharacter);
 
     /// <summary>
-    /// Sets the token start and token end delimiters and the token escape character to the
+    /// Sets the token start and token end delimiters and the delimiter escape character to the
     /// specified values.
     /// </summary>
+    /// <remarks>
+    /// The token start and token end delimiters and delimiter escape character values will remain
+    /// unchanged if any issues are identified with the proposed new values.
+    /// </remarks>
     /// <param name="tokenStart">
     /// The new token start delimiter string.
     /// </param>
@@ -254,7 +282,7 @@ internal class TokenProcessor : DependencyCheckerBase, ITokenExtractor, ITokenTr
     {
         if (ValidateTokenDelimiterValues(tokenStart, tokenEnd, tokenEscapeChar))
         {
-            SetTokenDelimiterValues(TokenStart, TokenEnd, TokenEscape);
+            SetTokenDelimiterValues(tokenStart, tokenEnd, tokenEscapeChar);
             return true;
         }
 
@@ -276,7 +304,7 @@ internal class TokenProcessor : DependencyCheckerBase, ITokenExtractor, ITokenTr
     /// </returns>
     private string GetReplacementValue(TokenInfo tokenInfo, string tokenValue)
     {
-        string replacementValue = string.Empty;
+        string replacementValue;
 
         if (string.IsNullOrEmpty(tokenValue))
         {
@@ -284,6 +312,7 @@ internal class TokenProcessor : DependencyCheckerBase, ITokenExtractor, ITokenTr
                                         Locater.CurrentLocationName,
                                         tokenInfo.TokenName);
             Logger.Log(LogSeverity.Warning, message);
+            replacementValue = string.Empty;
         }
         else
         {
@@ -315,6 +344,7 @@ internal class TokenProcessor : DependencyCheckerBase, ITokenExtractor, ITokenTr
     /// <param name="tokenEscapeChar">
     /// The value to be assigned to the token delimiter escape character.
     /// </param>
+    [MemberNotNull(nameof(TokenStart), nameof(TokenEnd))]
     private void SetTokenDelimiterValues(string tokenStart, string tokenEnd, char tokenEscapeChar)
     {
         TokenStart = tokenStart;
