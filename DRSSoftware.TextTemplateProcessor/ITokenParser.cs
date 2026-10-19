@@ -72,19 +72,4 @@ internal interface ITokenParser
     /// A value indicating whether token delimiters on the current template text line should be validated.
     /// </param>
     void InitializeParser(string templateText, bool shouldValidateTokenDelimiters = false);
-
-    /// <summary>
-    /// Sets the token start and token end delimiters and the delimiter escape character to the
-    /// specified values.
-    /// </summary>
-    /// <param name="tokenStartDelimiter">
-    /// The value of the token start delimiter.
-    /// </param>
-    /// <param name="tokenEndDelimiter">
-    /// The value of the token end delimiter.
-    /// </param>
-    /// <param name="delimiterEscapeCharacter">
-    /// The value of the delimiter escape character.
-    /// </param>
-    void SetTokenDelimiterValues(string tokenStartDelimiter, string tokenEndDelimiter, char delimiterEscapeCharacter);
 }

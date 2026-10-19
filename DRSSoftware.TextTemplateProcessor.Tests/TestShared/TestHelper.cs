@@ -49,8 +49,8 @@ internal static class TestHelper
     {
         return isEscaped
             ? initialCaseFlag == Space
-                ? $"{DefaultTokenEscapeCharacter}{DefaultTokenStartDelimiter} {tokenName} {DefaultTokenEndDelimiter}"
-                : $"{DefaultTokenEscapeCharacter}{DefaultTokenStartDelimiter}{initialCaseFlag} {tokenName} {DefaultTokenEndDelimiter}"
+                ? $"{DefaultDelimiterEscapeCharacter}{DefaultTokenStartDelimiter} {tokenName} {DefaultTokenEndDelimiter}"
+                : $"{DefaultDelimiterEscapeCharacter}{DefaultTokenStartDelimiter}{initialCaseFlag} {tokenName} {DefaultTokenEndDelimiter}"
             : initialCaseFlag == Space
                 ? $"{DefaultTokenStartDelimiter} {tokenName} {DefaultTokenEndDelimiter}"
                 : $"{DefaultTokenStartDelimiter}{initialCaseFlag} {tokenName} {DefaultTokenEndDelimiter}";

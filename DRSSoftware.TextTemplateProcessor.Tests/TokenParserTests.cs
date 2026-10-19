@@ -10,11 +10,16 @@ public class TokenParserTests
     // indicates the order that the delimiters are found in the template text string.
     private const string EndDelimiter = DefaultTokenEndDelimiter;
 
-    private const string EscapedEndDelimiter = DefaultTokenEscapeString + DefaultTokenEndDelimiter;
+    private const string EscapedEndDelimiter = DefaultDelimiterEscapeString + DefaultTokenEndDelimiter;
 
-    private const string EscapedStartDelimiter = DefaultTokenEscapeString + DefaultTokenStartDelimiter;
+    private const string EscapedStartDelimiter = DefaultDelimiterEscapeString + DefaultTokenStartDelimiter;
 
     private const string StartDelimiter = DefaultTokenStartDelimiter;
+
+    private Mock<IDelimiterService> DelimiterServiceMock
+    {
+        get;
+    } = new(MockBehavior.Strict);
 
     private Mock<ILogger> LoggerMock
     {
@@ -22,24 +27,45 @@ public class TokenParserTests
     } = new(MockBehavior.Strict);
 
     [Fact]
-    public void CreateTokenParserWithNullLogger_ShouldThrowException()
+    public void CreateTokenParserWithNullDelimiterService_ShouldThrowException()
     {
         // Arrange
-        ILogger? logger = null;
-        string expected = GetNullDependencyMessage(nameof(TokenParser), nameof(ILogger), nameof(logger));
+        InitializeMocks();
+        IDelimiterService? delimiterService = null;
+        string expected = GetNullDependencyMessage(nameof(TokenParser), nameof(IDelimiterService), nameof(delimiterService));
 
         // Act
-        Action action = () => _ = new TokenParser(logger!);
+        Action action = () => _ = new TokenParser(LoggerMock.Object, delimiterService!);
 
         // Assert
         action
             .Should()
             .Throw<ArgumentNullException>()
             .WithMessage(expected);
+        MocksVerifyNoOtherCalls();
     }
 
     [Fact]
-    public void CreateTokenParserWithValidDependency_ShouldInitializeStateCorrectly()
+    public void CreateTokenParserWithNullLogger_ShouldThrowException()
+    {
+        // Arrange
+        InitializeMocks();
+        ILogger? logger = null;
+        string expected = GetNullDependencyMessage(nameof(TokenParser), nameof(ILogger), nameof(logger));
+
+        // Act
+        Action action = () => _ = new TokenParser(logger!, DelimiterServiceMock.Object);
+
+        // Assert
+        action
+            .Should()
+            .Throw<ArgumentNullException>()
+            .WithMessage(expected);
+        MocksVerifyNoOtherCalls();
+    }
+
+    [Fact]
+    public void CreateTokenParserWithValidDependencies_ShouldInitializeStateCorrectly()
     {
         // Arrange
         InitializeMocks();
@@ -51,19 +77,6 @@ public class TokenParserTests
         actual
             .Should()
             .NotBeNull();
-        actual.DelimiterEscapeCharacter
-            .Should()
-            .Be(DefaultTokenEscapeCharacter);
-        actual.TokenEndDelimiter
-            .Should()
-            .NotBeNull()
-            .And
-            .Be(DefaultTokenEndDelimiter);
-        actual.TokenStartDelimiter
-            .Should()
-            .NotBeNull()
-            .And
-            .Be(DefaultTokenStartDelimiter);
         actual.GetModifiedText()
             .Should()
             .NotBeNull()
@@ -77,6 +90,7 @@ public class TokenParserTests
     {
         // Arrange
         InitializeMocks();
+        SetupDelimiterServiceMock(DefaultTokenStartDelimiter, DefaultTokenEndDelimiter, Space);
         TokenParser tokenParser = GetTokenParser();
         string expected = "text with no token strings";
         tokenParser.InitializeParser(expected, true);
@@ -89,7 +103,7 @@ public class TokenParserTests
         tokenParser.GetModifiedText()
             .Should()
             .Be(expected);
-        MocksVerifyNoOtherCalls();
+        VerifyMocks();
     }
 
     [Fact]
@@ -97,6 +111,7 @@ public class TokenParserTests
     {
         // Arrange
         InitializeMocks();
+        SetupDelimiterServiceMock();
         TokenParser tokenParser = GetTokenParser();
         string prefixText = $"text before the token {StartDelimiter} FirstToken {EndDelimiter} ";
         string suffixText = " text after the token";
@@ -117,7 +132,7 @@ public class TokenParserTests
         actual
             .Should()
             .Be(expected);
-        MocksVerifyNoOtherCalls();
+        VerifyMocks();
     }
 
     [Fact]
@@ -125,6 +140,7 @@ public class TokenParserTests
     {
         // Arrange
         InitializeMocks();
+        SetupDelimiterServiceMock(DefaultTokenStartDelimiter, DefaultTokenEndDelimiter, Space);
         TokenParser tokenParser = GetTokenParser();
         string expected = "string with no delimiters";
         tokenParser.InitializeParser(expected, true);
@@ -141,7 +157,7 @@ public class TokenParserTests
             .Should()
             .Be(expected);
         VerifyState(tokenParser, true, false, false);
-        MocksVerifyNoOtherCalls();
+        VerifyMocks();
     }
 
     [Theory]
@@ -150,6 +166,7 @@ public class TokenParserTests
     {
         // Arrange
         InitializeMocks();
+        SetupDelimiterServiceMock();
         TokenParser tokenParser = GetTokenParser();
         string originalText = $"{text1}{StartDelimiter}{text2}";
         string expected = $"{text1}{EscapedStartDelimiter}{text2}";
@@ -180,6 +197,7 @@ public class TokenParserTests
     {
         // Arrange
         InitializeMocks();
+        SetupDelimiterServiceMock();
         TokenParser tokenParser = GetTokenParser();
         string originalText = $"{text1}{StartDelimiter}{text2}{StartDelimiter}{text3}{StartDelimiter}{text4}";
         string expected = $"{text1}{EscapedStartDelimiter}{text2}{EscapedStartDelimiter}{text3}{EscapedStartDelimiter}{text4}";
@@ -210,6 +228,7 @@ public class TokenParserTests
     {
         // Arrange
         InitializeMocks();
+        SetupDelimiterServiceMock();
         TokenParser tokenParser = GetTokenParser();
         string originalText = $"{text1}{StartDelimiter}{text2}{StartDelimiter}{EscapedStartDelimiter}{EndDelimiter}{text3}";
         string expected = $"{text1}{EscapedStartDelimiter}{text2}{EscapedStartDelimiter}{EscapedStartDelimiter}{EscapedEndDelimiter}{text3}";
@@ -244,6 +263,7 @@ public class TokenParserTests
     {
         // Arrange
         InitializeMocks();
+        SetupDelimiterServiceMock();
         TokenParser tokenParser = GetTokenParser();
         string originalText = $"{text1}{StartDelimiter}{text2}{StartDelimiter}{text3}{EscapedEndDelimiter}{text4}";
         string expected = $"{text1}{EscapedStartDelimiter}{text2}{EscapedStartDelimiter}{text3}{EscapedEndDelimiter}{text4}";
@@ -274,6 +294,7 @@ public class TokenParserTests
     {
         // Arrange
         InitializeMocks();
+        SetupDelimiterServiceMock();
         TokenParser tokenParser = GetTokenParser();
         string originalText = $"{text1}{StartDelimiter}{text2}{EscapedStartDelimiter}{text3}{StartDelimiter}{text4}";
         string expected = $"{text1}{EscapedStartDelimiter}{text2}{EscapedStartDelimiter}{text3}{EscapedStartDelimiter}{text4}";
@@ -304,6 +325,7 @@ public class TokenParserTests
     {
         // Arrange
         InitializeMocks();
+        SetupDelimiterServiceMock();
         TokenParser tokenParser = GetTokenParser();
         string originalText = $"{text1}{StartDelimiter}{text2}{EscapedStartDelimiter}{text3}{EndDelimiter}{text4}";
         string expected = $"{text1}{EscapedStartDelimiter}{text2}{EscapedStartDelimiter}{text3}{EscapedEndDelimiter}{text4}";
@@ -338,6 +360,7 @@ public class TokenParserTests
     {
         // Arrange
         InitializeMocks();
+        SetupDelimiterServiceMock();
         TokenParser tokenParser = GetTokenParser();
         string originalText = $"{text1}{StartDelimiter}{text2}{EscapedStartDelimiter}{text3}{EscapedEndDelimiter}{text4}";
         string expected = $"{text1}{EscapedStartDelimiter}{text2}{EscapedStartDelimiter}{text3}{EscapedEndDelimiter}{text4}";
@@ -368,6 +391,7 @@ public class TokenParserTests
     {
         // Arrange
         InitializeMocks();
+        SetupDelimiterServiceMock();
         TokenParser tokenParser = GetTokenParser();
         string caseString = caseFlag == Space ? string.Empty : $"{caseFlag}";
         string tokenName = "1,Invalid Name";
@@ -406,6 +430,7 @@ public class TokenParserTests
     {
         // Arrange
         InitializeMocks();
+        SetupDelimiterServiceMock();
         TokenParser tokenParser = GetTokenParser();
         string caseString = caseFlag == Space ? string.Empty : $"{caseFlag}";
         string tokenString = $"{StartDelimiter}{caseString}{text2}{text3}{EndDelimiter}";
@@ -443,6 +468,7 @@ public class TokenParserTests
     {
         // Arrange
         InitializeMocks();
+        SetupDelimiterServiceMock();
         TokenParser tokenParser = GetTokenParser();
         string caseString = caseFlag == Space ? string.Empty : $"{caseFlag}";
         char expectedCase = caseFlag == Space ? SameCaseFlag : caseFlag;
@@ -462,7 +488,7 @@ public class TokenParserTests
             .Be(expected);
         AssertTokenInfo(tokenInfo, tokenString, tokenName, expectedCase);
         VerifyState(tokenParser, false, false, true);
-        MocksVerifyNoOtherCalls();
+        VerifyMocks();
     }
 
     [Theory]
@@ -471,6 +497,7 @@ public class TokenParserTests
     {
         // Arrange
         InitializeMocks();
+        SetupDelimiterServiceMock();
         TokenParser tokenParser = GetTokenParser();
         string caseString = caseFlag == Space ? string.Empty : $"{caseFlag}";
         string tokenName = "1,Invalid Name";
@@ -505,6 +532,7 @@ public class TokenParserTests
     {
         // Arrange
         InitializeMocks();
+        SetupDelimiterServiceMock();
         TokenParser tokenParser = GetTokenParser();
         string caseString = caseFlag == Space ? string.Empty : $"{caseFlag}";
         string tokenString = $"{StartDelimiter}{caseString}{text2}{text3}{EndDelimiter}";
@@ -538,6 +566,7 @@ public class TokenParserTests
     {
         // Arrange
         InitializeMocks();
+        SetupDelimiterServiceMock();
         TokenParser tokenParser = GetTokenParser();
         string caseString = caseFlag == Space ? string.Empty : $"{caseFlag}";
         char expectedCase = caseFlag == Space ? SameCaseFlag : caseFlag;
@@ -557,7 +586,7 @@ public class TokenParserTests
             .Be(expected);
         AssertTokenInfo(tokenInfo, tokenString, tokenName, expectedCase);
         VerifyState(tokenParser, false, false, true);
-        MocksVerifyNoOtherCalls();
+        VerifyMocks();
     }
 
     [Theory]
@@ -566,6 +595,7 @@ public class TokenParserTests
     {
         // Arrange
         InitializeMocks();
+        SetupDelimiterServiceMock();
         TokenParser tokenParser = GetTokenParser();
         string caseString = caseFlag == Space ? string.Empty : $"{caseFlag}";
         string tokenName = "1,Invalid Name";
@@ -600,6 +630,7 @@ public class TokenParserTests
     {
         // Arrange
         InitializeMocks();
+        SetupDelimiterServiceMock();
         TokenParser tokenParser = GetTokenParser();
         string caseString = caseFlag == Space ? string.Empty : $"{caseFlag}";
         string tokenString = $"{StartDelimiter}{caseString}{text2}{text3}{EndDelimiter}";
@@ -633,6 +664,7 @@ public class TokenParserTests
     {
         // Arrange
         InitializeMocks();
+        SetupDelimiterServiceMock();
         TokenParser tokenParser = GetTokenParser();
         string caseString = caseFlag == Space ? string.Empty : $"{caseFlag}";
         char expectedCase = caseFlag == Space ? SameCaseFlag : caseFlag;
@@ -653,7 +685,7 @@ public class TokenParserTests
             .Be(expected);
         AssertTokenInfo(tokenInfo, tokenString, tokenName, expectedCase);
         VerifyState(tokenParser, endOfText, false, true);
-        MocksVerifyNoOtherCalls();
+        VerifyMocks();
     }
 
     [Theory]
@@ -662,6 +694,7 @@ public class TokenParserTests
     {
         // Arrange
         InitializeMocks();
+        SetupDelimiterServiceMock();
         TokenParser tokenParser = GetTokenParser();
         string originalText = $"{text1}{StartDelimiter}{text2}{EscapedEndDelimiter}{text3}";
         string expected = $"{text1}{EscapedStartDelimiter}{text2}{EscapedEndDelimiter}{text3}";
@@ -692,6 +725,7 @@ public class TokenParserTests
     {
         // Arrange
         InitializeMocks();
+        SetupDelimiterServiceMock();
         TokenParser tokenParser = GetTokenParser();
         string originalText = $"{text1}{StartDelimiter}{text2}{EscapedEndDelimiter}{text3}{StartDelimiter}{text4}";
         string expected = $"{text1}{EscapedStartDelimiter}{text2}{EscapedEndDelimiter}{text3}{EscapedStartDelimiter}{text4}";
@@ -722,6 +756,7 @@ public class TokenParserTests
     {
         // Arrange
         InitializeMocks();
+        SetupDelimiterServiceMock();
         TokenParser tokenParser = GetTokenParser();
         string originalText = $"{text1}{StartDelimiter}{text2}{EscapedEndDelimiter}{text3}{EscapedStartDelimiter}{text4}";
         string expected = $"{text1}{EscapedStartDelimiter}{text2}{EscapedEndDelimiter}{text3}{EscapedStartDelimiter}{text4}";
@@ -752,6 +787,7 @@ public class TokenParserTests
     {
         // Arrange
         InitializeMocks();
+        SetupDelimiterServiceMock();
         TokenParser tokenParser = GetTokenParser();
         string expected = $"{text1}{EscapedStartDelimiter}{text2}";
         tokenParser.InitializeParser(expected, true);
@@ -768,7 +804,7 @@ public class TokenParserTests
             .Should()
             .Be(expected);
         VerifyState(tokenParser, true, false, false);
-        MocksVerifyNoOtherCalls();
+        VerifyMocks();
     }
 
     [Theory]
@@ -777,6 +813,7 @@ public class TokenParserTests
     {
         // Arrange
         InitializeMocks();
+        SetupDelimiterServiceMock();
         TokenParser tokenParser = GetTokenParser();
         string originalText = $"{text1}{EscapedStartDelimiter}{text2}{StartDelimiter}{text3}{StartDelimiter}{text4}";
         string expected = $"{text1}{EscapedStartDelimiter}{text2}{EscapedStartDelimiter}{text3}{EscapedStartDelimiter}{text4}";
@@ -807,6 +844,7 @@ public class TokenParserTests
     {
         // Arrange
         InitializeMocks();
+        SetupDelimiterServiceMock();
         TokenParser tokenParser = GetTokenParser();
         string originalText = $"{text1}{EscapedStartDelimiter}{text2}{StartDelimiter}{EscapedStartDelimiter}{EndDelimiter}{text3}";
         string expected = $"{text1}{EscapedStartDelimiter}{text2}{EscapedStartDelimiter}{EscapedStartDelimiter}{EscapedEndDelimiter}{text3}";
@@ -841,6 +879,7 @@ public class TokenParserTests
     {
         // Arrange
         InitializeMocks();
+        SetupDelimiterServiceMock();
         TokenParser tokenParser = GetTokenParser();
         string originalText = $"{text1}{EscapedStartDelimiter}{text2}{StartDelimiter}{text3}{EscapedEndDelimiter}";
         string expected = $"{text1}{EscapedStartDelimiter}{text2}{EscapedStartDelimiter}{text3}{EscapedEndDelimiter}";
@@ -871,6 +910,7 @@ public class TokenParserTests
     {
         // Arrange
         InitializeMocks();
+        SetupDelimiterServiceMock();
         TokenParser tokenParser = GetTokenParser();
         string expected = $"{text1}{EscapedStartDelimiter}{text2}{EscapedStartDelimiter}{text3}";
         tokenParser.InitializeParser(expected, true);
@@ -887,7 +927,7 @@ public class TokenParserTests
             .Should()
             .Be(expected);
         VerifyState(tokenParser, true, false, false);
-        MocksVerifyNoOtherCalls();
+        VerifyMocks();
     }
 
     [Theory]
@@ -896,6 +936,7 @@ public class TokenParserTests
     {
         // Arrange
         InitializeMocks();
+        SetupDelimiterServiceMock();
         TokenParser tokenParser = GetTokenParser();
         string originalText = $"{text1}{EscapedStartDelimiter}{text2}{EscapedStartDelimiter}{text3}{EndDelimiter}{text4}";
         string expected = $"{text1}{EscapedStartDelimiter}{text2}{EscapedStartDelimiter}{text3}{EscapedEndDelimiter}{text4}";
@@ -926,6 +967,7 @@ public class TokenParserTests
     {
         // Arrange
         InitializeMocks();
+        SetupDelimiterServiceMock();
         TokenParser tokenParser = GetTokenParser();
         string expected = $"{text1}{EscapedStartDelimiter}{text2}{EscapedStartDelimiter}{text3}{EscapedEndDelimiter}{text4}";
         tokenParser.InitializeParser(expected, true);
@@ -942,7 +984,7 @@ public class TokenParserTests
             .Should()
             .Be(expected);
         VerifyState(tokenParser, true, false, false);
-        MocksVerifyNoOtherCalls();
+        VerifyMocks();
     }
 
     [Theory]
@@ -951,6 +993,7 @@ public class TokenParserTests
     {
         // Arrange
         InitializeMocks();
+        SetupDelimiterServiceMock();
         TokenParser tokenParser = GetTokenParser();
         string originalText = $"{text1}{EscapedStartDelimiter}{text2}{EndDelimiter}{text3}{EndDelimiter}{text4}";
         string expected = $"{text1}{EscapedStartDelimiter}{text2}{EscapedEndDelimiter}{text3}{EscapedEndDelimiter}{text4}";
@@ -981,6 +1024,7 @@ public class TokenParserTests
     {
         // Arrange
         InitializeMocks();
+        SetupDelimiterServiceMock();
         TokenParser tokenParser = GetTokenParser();
         string originalText = $"{text1}{EscapedStartDelimiter}{text2}{EndDelimiter}{text3}{StartDelimiter}{text4}";
         string expected = $"{text1}{EscapedStartDelimiter}{text2}{EscapedEndDelimiter}{text3}{EscapedStartDelimiter}{text4}";
@@ -1015,6 +1059,7 @@ public class TokenParserTests
     {
         // Arrange
         InitializeMocks();
+        SetupDelimiterServiceMock();
         TokenParser tokenParser = GetTokenParser();
         string originalText = $"{text1}{EscapedStartDelimiter}{text2}{EndDelimiter}{text3}{EscapedStartDelimiter}{text4}";
         string expected = $"{text1}{EscapedStartDelimiter}{text2}{EscapedEndDelimiter}{text3}{EscapedStartDelimiter}{text4}";
@@ -1045,6 +1090,7 @@ public class TokenParserTests
     {
         // Arrange
         InitializeMocks();
+        SetupDelimiterServiceMock();
         TokenParser tokenParser = GetTokenParser();
         string expected = $"{text1}{EscapedStartDelimiter}{text2}{EscapedEndDelimiter}{text3}";
         tokenParser.InitializeParser(expected, true);
@@ -1061,7 +1107,7 @@ public class TokenParserTests
             .Should()
             .Be(expected);
         VerifyState(tokenParser, true, false, false);
-        MocksVerifyNoOtherCalls();
+        VerifyMocks();
     }
 
     [Theory]
@@ -1070,6 +1116,7 @@ public class TokenParserTests
     {
         // Arrange
         InitializeMocks();
+        SetupDelimiterServiceMock();
         TokenParser tokenParser = GetTokenParser();
         string originalText = $"{text1}{EscapedStartDelimiter}{text2}{EscapedEndDelimiter}{text3}{StartDelimiter}{text4}";
         string expected = $"{text1}{EscapedStartDelimiter}{text2}{EscapedEndDelimiter}{text3}{EscapedStartDelimiter}{text4}";
@@ -1100,6 +1147,7 @@ public class TokenParserTests
     {
         // Arrange
         InitializeMocks();
+        SetupDelimiterServiceMock();
         TokenParser tokenParser = GetTokenParser();
         string expected = $"{text1}{EscapedStartDelimiter}{text2}{EscapedEndDelimiter}{text3}{EscapedStartDelimiter}{text4}";
         tokenParser.InitializeParser(expected, true);
@@ -1116,7 +1164,7 @@ public class TokenParserTests
             .Should()
             .Be(expected);
         VerifyState(tokenParser, true, false, false);
-        MocksVerifyNoOtherCalls();
+        VerifyMocks();
     }
 
     [Theory]
@@ -1125,6 +1173,7 @@ public class TokenParserTests
     {
         // Arrange
         InitializeMocks();
+        SetupDelimiterServiceMock();
         TokenParser tokenParser = GetTokenParser();
         string originalText = $"{text1}{EndDelimiter}{text2}{EndDelimiter}{text3}";
         string expected = $"{text1}{EscapedEndDelimiter}{text2}{EscapedEndDelimiter}{text3}";
@@ -1155,6 +1204,7 @@ public class TokenParserTests
     {
         // Arrange
         InitializeMocks();
+        SetupDelimiterServiceMock();
         TokenParser tokenParser = GetTokenParser();
         string originalText = $"{text1}{EndDelimiter}{text2}{StartDelimiter}{text3}";
         string expected = $"{text1}{EscapedEndDelimiter}{text2}{EscapedStartDelimiter}{text3}";
@@ -1189,6 +1239,7 @@ public class TokenParserTests
     {
         // Arrange
         InitializeMocks();
+        SetupDelimiterServiceMock();
         TokenParser tokenParser = GetTokenParser();
         string originalText = $"{text1}{EndDelimiter}{text2}{StartDelimiter}{text3}{StartDelimiter}{text4}";
         string expected = $"{text1}{EscapedEndDelimiter}{text2}{EscapedStartDelimiter}{text3}{EscapedStartDelimiter}{text4}";
@@ -1223,6 +1274,7 @@ public class TokenParserTests
     {
         // Arrange
         InitializeMocks();
+        SetupDelimiterServiceMock();
         TokenParser tokenParser = GetTokenParser();
         string originalText = $"{text1}{EndDelimiter}{text2}{StartDelimiter}{text3}{EscapedStartDelimiter}{text4}";
         string expected = $"{text1}{EscapedEndDelimiter}{text2}{EscapedStartDelimiter}{text3}{EscapedStartDelimiter}{text4}";
@@ -1257,6 +1309,7 @@ public class TokenParserTests
     {
         // Arrange
         InitializeMocks();
+        SetupDelimiterServiceMock();
         TokenParser tokenParser = GetTokenParser();
         string originalText = $"{text1}{EndDelimiter}{text2}{EscapedStartDelimiter}{text3}{EndDelimiter}{text4}";
         string expected = $"{text1}{EscapedEndDelimiter}{text2}{EscapedStartDelimiter}{text3}{EscapedEndDelimiter}{text4}";
@@ -1287,6 +1340,7 @@ public class TokenParserTests
     {
         // Arrange
         InitializeMocks();
+        SetupDelimiterServiceMock();
         TokenParser tokenParser = GetTokenParser();
         string originalText = $"{text1}{EndDelimiter}{text2}{EscapedStartDelimiter}{text3}{StartDelimiter}{text4}";
         string expected = $"{text1}{EscapedEndDelimiter}{text2}{EscapedStartDelimiter}{text3}{EscapedStartDelimiter}{text4}";
@@ -1321,6 +1375,7 @@ public class TokenParserTests
     {
         // Arrange
         InitializeMocks();
+        SetupDelimiterServiceMock();
         TokenParser tokenParser = GetTokenParser();
         string originalText = $"{text1}{EndDelimiter}{text2}{EscapedStartDelimiter}{text3}{EscapedStartDelimiter}{text4}";
         string expected = $"{text1}{EscapedEndDelimiter}{text2}{EscapedStartDelimiter}{text3}{EscapedStartDelimiter}{text4}";
@@ -1351,6 +1406,7 @@ public class TokenParserTests
     {
         // Arrange
         InitializeMocks();
+        SetupDelimiterServiceMock();
         TokenParser tokenParser = GetTokenParser();
         string expected = $"{text1}{EscapedEndDelimiter}{text2}";
         tokenParser.InitializeParser(expected, true);
@@ -1367,7 +1423,7 @@ public class TokenParserTests
             .Should()
             .Be(expected);
         VerifyState(tokenParser, true, false, false);
-        MocksVerifyNoOtherCalls();
+        VerifyMocks();
     }
 
     [Theory]
@@ -1376,6 +1432,7 @@ public class TokenParserTests
     {
         // Arrange
         InitializeMocks();
+        SetupDelimiterServiceMock();
         TokenParser tokenParser = GetTokenParser();
         string originalText = $"{text1}{EscapedEndDelimiter}{text2}{StartDelimiter}{text3}";
         string expected = $"{text1}{EscapedEndDelimiter}{text2}{EscapedStartDelimiter}{text3}";
@@ -1406,6 +1463,7 @@ public class TokenParserTests
     {
         // Arrange
         InitializeMocks();
+        SetupDelimiterServiceMock();
         TokenParser tokenParser = GetTokenParser();
         string originalText = $"{text1}{EscapedEndDelimiter}{text2}{StartDelimiter}{text3}{StartDelimiter}{text4}";
         string expected = $"{text1}{EscapedEndDelimiter}{text2}{EscapedStartDelimiter}{text3}{EscapedStartDelimiter}{text4}";
@@ -1436,6 +1494,7 @@ public class TokenParserTests
     {
         // Arrange
         InitializeMocks();
+        SetupDelimiterServiceMock();
         TokenParser tokenParser = GetTokenParser();
         string originalText = $"{text1}{EscapedEndDelimiter}{text2}{StartDelimiter}{text3}{EscapedStartDelimiter}{text4}";
         string expected = $"{text1}{EscapedEndDelimiter}{text2}{EscapedStartDelimiter}{text3}{EscapedStartDelimiter}{text4}";
@@ -1466,6 +1525,7 @@ public class TokenParserTests
     {
         // Arrange
         InitializeMocks();
+        SetupDelimiterServiceMock();
         TokenParser tokenParser = GetTokenParser();
         string expected = $"{text1}{EscapedEndDelimiter}{text2}{EscapedStartDelimiter}{text3}";
         tokenParser.InitializeParser(expected, true);
@@ -1482,7 +1542,7 @@ public class TokenParserTests
             .Should()
             .Be(expected);
         VerifyState(tokenParser, true, false, false);
-        MocksVerifyNoOtherCalls();
+        VerifyMocks();
     }
 
     [Theory]
@@ -1491,6 +1551,7 @@ public class TokenParserTests
     {
         // Arrange
         InitializeMocks();
+        SetupDelimiterServiceMock();
         TokenParser tokenParser = GetTokenParser();
         string originalText = $"{text1}{EscapedEndDelimiter}{text2}{EscapedStartDelimiter}{text3}{StartDelimiter}{text4}";
         string expected = $"{text1}{EscapedEndDelimiter}{text2}{EscapedStartDelimiter}{text3}{EscapedStartDelimiter}{text4}";
@@ -1521,6 +1582,7 @@ public class TokenParserTests
     {
         // Arrange
         InitializeMocks();
+        SetupDelimiterServiceMock();
         TokenParser tokenParser = GetTokenParser();
         string expected = $"{text1}{EscapedEndDelimiter}{text2}{EscapedStartDelimiter}{text3}{EscapedStartDelimiter}{text4}";
         tokenParser.InitializeParser(expected, true);
@@ -1537,7 +1599,7 @@ public class TokenParserTests
             .Should()
             .Be(expected);
         VerifyState(tokenParser, true, false, false);
-        MocksVerifyNoOtherCalls();
+        VerifyMocks();
     }
 
     [Fact]
@@ -1545,6 +1607,7 @@ public class TokenParserTests
     {
         // Arrange
         InitializeMocks();
+        SetupDelimiterServiceMock();
         TokenParser tokenParser = GetTokenParser();
         char caseFlag1 = LowercaseFlag;
         char caseFlag2 = UppercaseFlag;
@@ -1566,7 +1629,7 @@ public class TokenParserTests
         AssertTokenInfo(tokenInfo1, tokenString1, tokenName1, caseFlag1);
         AssertTokenInfo(tokenInfo2, tokenString2, tokenName2, caseFlag2);
         VerifyState(tokenParser, true, false, true);
-        MocksVerifyNoOtherCalls();
+        VerifyMocks();
     }
 
     [Theory]
@@ -1578,6 +1641,7 @@ public class TokenParserTests
     {
         // Arrange
         InitializeMocks();
+        SetupDelimiterServiceMock();
         TokenParser tokenParser = GetTokenParser();
         string tokenName = "Token1";
         string tokenString = $"{StartDelimiter}  {tokenName}  {EndDelimiter}";
@@ -1593,7 +1657,7 @@ public class TokenParserTests
             .BeEmpty();
         AssertTokenInfo(tokenInfo, tokenString, tokenName, SameCaseFlag);
         VerifyState(tokenParser, false, false, true);
-        MocksVerifyNoOtherCalls();
+        VerifyMocks();
     }
 
     [Fact]
@@ -1601,6 +1665,7 @@ public class TokenParserTests
     {
         // Arrange
         InitializeMocks();
+        SetupDelimiterServiceMock();
         TokenParser tokenParser = GetTokenParser();
         string templateText = $"text {EscapedStartDelimiter} text {EscapedStartDelimiter} text {StartDelimiter} text";
         tokenParser.InitializeParser(templateText);
@@ -1616,11 +1681,10 @@ public class TokenParserTests
             .Should()
             .BeEmpty();
         VerifyState(tokenParser, true, false, false);
-        MocksVerifyNoOtherCalls();
+        VerifyMocks();
     }
 
     [Theory]
-    [InlineData(EmptyString, EmptyString, EmptyString)]
     [InlineData(EscapedStartDelimiter, EmptyString, EmptyString)]
     [InlineData(StartDelimiter, EmptyString, EmptyString)]
     [InlineData(EscapedStartDelimiter, StartDelimiter, EmptyString)]
@@ -1633,6 +1697,7 @@ public class TokenParserTests
     {
         // Arrange
         InitializeMocks();
+        SetupDelimiterServiceMock();
         TokenParser tokenParser = GetTokenParser();
         string templateText = $"text {firstStartDelimiter} text {secondDelimiter} text {thirdDelimiter} text";
         tokenParser.InitializeParser(templateText);
@@ -1648,7 +1713,7 @@ public class TokenParserTests
             .Should()
             .BeEmpty();
         VerifyState(tokenParser, true, false, false);
-        MocksVerifyNoOtherCalls();
+        VerifyMocks();
     }
 
     [Fact]
@@ -1660,7 +1725,6 @@ public class TokenParserTests
         string startDelimiter = "<{{";
         string endDelimiter = "}>";
         char escapeCharacter = '!';
-        tokenParser.SetTokenDelimiterValues(startDelimiter, endDelimiter, escapeCharacter);
         string tokenName = "Token1";
         string tokenString = $"{startDelimiter}{tokenName}{endDelimiter}";
         string originalText = $"text {startDelimiter} text {tokenString} text {endDelimiter} {escapeCharacter}{startDelimiter} text {startDelimiter} text {startDelimiter} text";
@@ -1668,6 +1732,7 @@ public class TokenParserTests
         string message1 = GetMessage(MsgTokenStartDelimiterWillBeEscaped);
         string message2 = GetMessage(MsgTokenEndDelimiterWillBeEscaped);
         string message3 = GetMessage(MsgMissingTokenEndDelimiter);
+        SetupDelimiterServiceMock(startDelimiter, endDelimiter, escapeCharacter);
         LoggerMock
             .Setup(x => x.Log(LogSeverity.Error, message1))
             .Verifiable(Times.Once);
@@ -1722,14 +1787,49 @@ public class TokenParserTests
             .Be(validTokenFound);
     }
 
-    private TokenParser GetTokenParser() => new(LoggerMock.Object);
+    private TokenParser GetTokenParser() => new(LoggerMock.Object, DelimiterServiceMock.Object);
 
-    private void InitializeMocks() => LoggerMock.Reset();
+    private void InitializeMocks()
+    {
+        DelimiterServiceMock.Reset();
+        LoggerMock.Reset();
+    }
 
-    private void MocksVerifyNoOtherCalls() => LoggerMock.VerifyNoOtherCalls();
+    private void MocksVerifyNoOtherCalls()
+    {
+        DelimiterServiceMock.VerifyNoOtherCalls();
+        LoggerMock.VerifyNoOtherCalls();
+    }
+
+    private void SetupDelimiterServiceMock(string startDelimiter = DefaultTokenStartDelimiter,
+                                           string endDelimiter = DefaultTokenEndDelimiter,
+                                           char escapeCharacter = DefaultDelimiterEscapeCharacter)
+    {
+        DelimiterServiceMock
+            .SetupGet(x => x.StartDelimiter)
+            .Returns(startDelimiter)
+            .Verifiable();
+        DelimiterServiceMock
+            .SetupGet(x => x.EndDelimiter)
+            .Returns(endDelimiter)
+            .Verifiable();
+
+        if (escapeCharacter is not Space)
+        {
+            DelimiterServiceMock
+                .SetupGet(x => x.DelimiterEscapeCharacter)
+                .Returns(escapeCharacter)
+                .Verifiable();
+        }
+    }
 
     private void VerifyMocks()
     {
+        if (DelimiterServiceMock.Setups.Any())
+        {
+            DelimiterServiceMock.VerifyAll();
+        }
+
         if (LoggerMock.Setups.Any())
         {
             LoggerMock.VerifyAll();

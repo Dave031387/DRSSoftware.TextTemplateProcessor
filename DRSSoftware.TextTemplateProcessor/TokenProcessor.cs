@@ -1,5 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using System.Text;
+﻿using System.Text;
 
 namespace DRSSoftware.TextTemplateProcessor;
 
@@ -17,6 +16,9 @@ internal class TokenProcessor : DependencyCheckerBase, ITokenExtractor, ITokenTr
     /// <param name="logger">
     /// A reference to a logger object used for logging messages.
     /// </param>
+    /// <param name="delimiterService">
+    /// A reference to the delimiter service object used to manage token delimiter values.
+    /// </param>
     /// <param name="tokenParser">
     /// A reference to a token parser object used for parsing tokens in a text string.
     /// </param>
@@ -26,7 +28,7 @@ internal class TokenProcessor : DependencyCheckerBase, ITokenExtractor, ITokenTr
     /// <exception cref="ArgumentNullException">
     /// Exception is thrown if any of the dependencies passed into the constructor are <see langword="null"/>.
     /// </exception>
-    internal TokenProcessor(ILocater locater, ILogger logger, ITokenParser tokenParser)
+    internal TokenProcessor(ILocater locater, ILogger logger, IDelimiterService delimiterService, ITokenParser tokenParser)
     {
         Locater = NullDependencyCheck(locater,
                                       nameof(TokenProcessor),
@@ -36,13 +38,16 @@ internal class TokenProcessor : DependencyCheckerBase, ITokenExtractor, ITokenTr
                                      nameof(TokenProcessor),
                                      nameof(ILogger),
                                      nameof(logger));
+        DelimiterService = NullDependencyCheck(delimiterService,
+                                               nameof(TokenProcessor),
+                                               nameof(IDelimiterService),
+                                               nameof(delimiterService));
         TokenParser = NullDependencyCheck(tokenParser,
                                           nameof(TokenProcessor),
                                           nameof(ITokenParser),
                                           nameof(tokenParser));
         ModifiedText = new(200, 1000);
         TokenDictionary = [];
-        SetTokenDelimiterValues(DefaultTokenStartDelimiter, DefaultTokenEndDelimiter, DefaultTokenEscapeCharacter);
     }
 
     /// <summary>
@@ -55,34 +60,12 @@ internal class TokenProcessor : DependencyCheckerBase, ITokenExtractor, ITokenTr
     }
 
     /// <summary>
-    /// Gets the string that is currently being used to denote the end of a token.
+    /// Gets a reference to the token delimiter service.
     /// </summary>
-    internal string TokenEnd
+    private IDelimiterService DelimiterService
     {
         get;
-        private set;
-    }
-
-    /// <summary>
-    /// Gets the character currently being used as the token escape character.
-    /// </summary>
-    /// <remarks>
-    /// The escape character is used to indicate that a token start delimiter or token end delimiter
-    /// should be treated as an ordinary string of text rather than the start or end of a token.
-    /// </remarks>
-    internal char TokenEscape
-    {
-        get;
-        private set;
-    }
-
-    /// <summary>
-    /// Gets the string that is currently being used to denote the start of a token.
-    /// </summary>
-    internal string TokenStart
-    {
-        get;
-        private set;
+        init;
     }
 
     /// <summary>
@@ -246,8 +229,8 @@ internal class TokenProcessor : DependencyCheckerBase, ITokenExtractor, ITokenTr
             }
         }
 
-        _ = ModifiedText.Replace(TokenEscape + TokenStart, TokenStart);
-        _ = ModifiedText.Replace(TokenEscape + TokenEnd, TokenEnd);
+        _ = ModifiedText.Replace(DelimiterService.DelimiterEscapeCharacter + DelimiterService.StartDelimiter, DelimiterService.StartDelimiter);
+        _ = ModifiedText.Replace(DelimiterService.DelimiterEscapeCharacter + DelimiterService.EndDelimiter, DelimiterService.EndDelimiter);
         return ModifiedText.ToString();
     }
 
@@ -255,7 +238,7 @@ internal class TokenProcessor : DependencyCheckerBase, ITokenExtractor, ITokenTr
     /// Resets the token delimiters and token escape character to their default values.
     /// </summary>
     public void ResetTokenDelimiters()
-        => SetTokenDelimiterValues(DefaultTokenStartDelimiter, DefaultTokenEndDelimiter, DefaultTokenEscapeCharacter);
+        => DelimiterService.ResetTokenDelimiters();
 
     /// <summary>
     /// Sets the token start and token end delimiters and the delimiter escape character to the
@@ -265,29 +248,21 @@ internal class TokenProcessor : DependencyCheckerBase, ITokenExtractor, ITokenTr
     /// The token start and token end delimiters and delimiter escape character values will remain
     /// unchanged if any issues are identified with the proposed new values.
     /// </remarks>
-    /// <param name="tokenStart">
+    /// <param name="startDelimiter">
     /// The new token start delimiter string.
     /// </param>
-    /// <param name="tokenEnd">
+    /// <param name="endDelimiter">
     /// The new token end delimiter string.
     /// </param>
-    /// <param name="tokenEscapeChar">
+    /// <param name="delimiterEscapeCharacter">
     /// The new token escape character.
     /// </param>
     /// <returns>
     /// <see langword="true"/> if the delimiter values were successfully changed. Otherwise, returns
     /// <see langword="false"/>.
     /// </returns>
-    public bool SetTokenDelimiters(string tokenStart, string tokenEnd, char tokenEscapeChar)
-    {
-        if (ValidateTokenDelimiterValues(tokenStart, tokenEnd, tokenEscapeChar))
-        {
-            SetTokenDelimiterValues(tokenStart, tokenEnd, tokenEscapeChar);
-            return true;
-        }
-
-        return false;
-    }
+    public bool SetTokenDelimiters(string startDelimiter, string endDelimiter, char delimiterEscapeCharacter)
+        => DelimiterService.SetTokenDelimiters(startDelimiter, endDelimiter, delimiterEscapeCharacter);
 
     /// <summary>
     /// Gets the replacement value for the given token.
@@ -329,28 +304,6 @@ internal class TokenProcessor : DependencyCheckerBase, ITokenExtractor, ITokenTr
         }
 
         return replacementValue;
-    }
-
-    /// <summary>
-    /// Sets the token start and token end delimiters and the delimiter escape character to the
-    /// specified values.
-    /// </summary>
-    /// <param name="tokenStart">
-    /// The value to be assigned to the token start delimiter.
-    /// </param>
-    /// <param name="tokenEnd">
-    /// The value to be assigned to the token end delimiter.
-    /// </param>
-    /// <param name="tokenEscapeChar">
-    /// The value to be assigned to the token delimiter escape character.
-    /// </param>
-    [MemberNotNull(nameof(TokenStart), nameof(TokenEnd))]
-    private void SetTokenDelimiterValues(string tokenStart, string tokenEnd, char tokenEscapeChar)
-    {
-        TokenStart = tokenStart;
-        TokenEnd = tokenEnd;
-        TokenEscape = tokenEscapeChar;
-        TokenParser.SetTokenDelimiterValues(TokenStart, TokenEnd, TokenEscape);
     }
 
     /// <summary>
@@ -402,88 +355,5 @@ internal class TokenProcessor : DependencyCheckerBase, ITokenExtractor, ITokenTr
                                         tokenName);
             Logger.Log(LogSeverity.Error, message);
         }
-    }
-
-    /// <summary>
-    /// Validate the given token start and token end delimiters and delimiter escape character
-    /// values to ensure they are valid and consistent.
-    /// </summary>
-    /// <param name="tokenStart">
-    /// The value that will be assigned to the token start delimiter.
-    /// </param>
-    /// <param name="tokenEnd">
-    /// The value that will be assigned to the token end delimiter.
-    /// </param>
-    /// <param name="tokenEscapeChar">
-    /// The value that will be assigned to the delimiter escape character.
-    /// </param>
-    /// <returns>
-    /// <see langword="true"/> if all given delimiter values are valid and consistent; otherwise
-    /// <see langword="false"/>
-    /// </returns>
-    private bool ValidateTokenDelimiterValues(string tokenStart, string tokenEnd, char tokenEscapeChar)
-    {
-        if (tokenStart is null)
-        {
-            string message = GetMessage(MsgTokenStartDelimiterIsNull);
-            Logger.Log(LogSeverity.Error, message);
-            return false;
-        }
-
-        if (tokenEnd is null)
-        {
-            string message = GetMessage(MsgTokenEndDelimiterIsNull);
-            Logger.Log(LogSeverity.Error, message);
-            return false;
-        }
-
-        if (string.IsNullOrWhiteSpace(tokenStart))
-        {
-            string message = GetMessage(MsgTokenStartDelimiterIsEmpty);
-            Logger.Log(LogSeverity.Error, message);
-            return false;
-        }
-
-        if (string.IsNullOrWhiteSpace(tokenEnd))
-        {
-            string message = GetMessage(MsgTokenEndDelimiterIsEmpty);
-            Logger.Log(LogSeverity.Error, message);
-            return false;
-        }
-
-        if (tokenStart == tokenEnd)
-        {
-            string message = GetMessage(MsgTokenStartAndTokenEndAreSame,
-                                        tokenStart,
-                                        tokenEnd);
-            Logger.Log(LogSeverity.Error, message);
-            return false;
-        }
-
-        if (tokenStart == tokenEscapeChar.ToString())
-        {
-            string message = GetMessage(MsgTokenStartAndTokenEscapeAreSame,
-                                        tokenStart,
-                                        tokenEscapeChar.ToString());
-            Logger.Log(LogSeverity.Error, message);
-            return false;
-        }
-
-        if (tokenEnd == tokenEscapeChar.ToString())
-        {
-            string message = GetMessage(MsgTokenEndAndTokenEscapeAreSame,
-                                        tokenEnd,
-                                        tokenEscapeChar.ToString());
-            Logger.Log(LogSeverity.Error, message);
-            return false;
-        }
-
-        if (tokenStart[^1] is LowercaseFlag or UppercaseFlag or SameCaseFlag)
-        {
-            string message = GetMessage(MsgTokenStartDelimiterWarning);
-            Logger.Log(LogSeverity.Warning, message);
-        }
-
-        return true;
     }
 }

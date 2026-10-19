@@ -41,6 +41,22 @@ internal static class GlobalConstants
     public const string DebugSeverity = "DEBUG::::";
 
     /// <summary>
+    /// The default character used as the delimiter escape character in a text template file.
+    /// </summary>
+    /// <remarks>
+    /// Used to escape the <see cref="DefaultTokenStartDelimiter"/> and <see
+    /// cref="DefaultTokenEndDelimiter"/> when they should be treated as normal text rather than the
+    /// start and end delimiters of a token.
+    /// </remarks>
+    public const char DefaultDelimiterEscapeCharacter = '\\';
+
+    /// <summary>
+    /// A constant string representation of <see cref="DefaultDelimiterEscapeCharacter"/>. Used
+    /// mainly to simplify some unit test setups.
+    /// </summary>
+    public const string DefaultDelimiterEscapeString = "\\";
+
+    /// <summary>
     /// The prefix string that appears at the start of any default file name.
     /// </summary>
     public const string DefaultFileNamePrefix = "File_";
@@ -74,21 +90,6 @@ internal static class GlobalConstants
     /// end of a token.
     /// </remarks>
     public const string DefaultTokenEndDelimiter = "#>";
-
-    /// <summary>
-    /// The default character used as the token escape character in a text template file.
-    /// </summary>
-    /// <remarks>
-    /// Used to escape the <see cref="DefaultTokenStartDelimiter"/> when it should be treated as
-    /// normal text rather than the start of a token.
-    /// </remarks>
-    public const char DefaultTokenEscapeCharacter = '\\';
-
-    /// <summary>
-    /// A constant string representation of <see cref="DefaultTokenEscapeCharacter"/>. Used mainly
-    /// to simplify some unit test setups.
-    /// </summary>
-    public const string DefaultTokenEscapeString = "\\";
 
     /// <summary>
     /// The default string that is used to indicate the start of a token in a text template file.

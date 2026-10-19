@@ -28,26 +28,30 @@ internal interface ITokenExtractor
     string ExtractTokens(string text);
 
     /// <summary>
-    /// Resets the token delimiters and token escape character to their default values.
+    /// Resets the token delimiters and delimiter escape character to their default values.
     /// </summary>
     void ResetTokenDelimiters();
 
     /// <summary>
-    /// Sets the token start and token end delimiters and the token escape character to the
+    /// Sets the token start and token end delimiters and the delimiter escape character to the
     /// specified values.
     /// </summary>
-    /// <param name="tokenStart">
+    /// <remarks>
+    /// The token start and token end delimiters and delimiter escape character values will remain
+    /// unchanged if any issues are identified with the proposed new values.
+    /// </remarks>
+    /// <param name="startDelimiter">
     /// The new token start delimiter string.
     /// </param>
-    /// <param name="tokenEnd">
+    /// <param name="endDelimiter">
     /// The new token end delimiter string.
     /// </param>
-    /// <param name="tokenEscapeChar">
+    /// <param name="delimiterEscapeCharacter">
     /// The new token escape character.
     /// </param>
     /// <returns>
-    /// <see langword="true" /> if the delimiter values were successfully changed. Otherwise,
-    /// returns <see langword="false" />.
+    /// <see langword="true"/> if the delimiter values were successfully changed. Otherwise, returns
+    /// <see langword="false"/>.
     /// </returns>
-    bool SetTokenDelimiters(string tokenStart, string tokenEnd, char tokenEscapeChar);
+    bool SetTokenDelimiters(string startDelimiter, string endDelimiter, char delimiterEscapeCharacter);
 }

@@ -3,6 +3,7 @@
     <File Path=".editorconfig" />
     <File Path="exclusion.dic" />
     <File Path="LICENSE.txt" />
+    <File Path="Token Parser Test Cases.xlsx" />
   </Folder>
   <Project Path="DRSSoftware.TextTemplateProcessor.Tests/DRSSoftware.TextTemplateProcessor.Tests.csproj" />
   <Project Path="DRSSoftware.TextTemplateProcessor/DRSSoftware.TextTemplateProcessor.csproj" />

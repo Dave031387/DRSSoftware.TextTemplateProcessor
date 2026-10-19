@@ -1,5 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using System.Text;
+﻿using System.Text;
 
 namespace DRSSoftware.TextTemplateProcessor;
 
@@ -15,13 +14,19 @@ internal class TokenParser : DependencyCheckerBase, ITokenParser
     /// <param name="logger">
     /// A reference to a logger object.
     /// </param>
-    public TokenParser(ILogger logger)
+    /// <param name="delimiterService">
+    /// A reference to the delimiter service object used to manage token delimiter values.
+    /// </param>
+    public TokenParser(ILogger logger, IDelimiterService delimiterService)
     {
         Logger = NullDependencyCheck(logger,
                                      nameof(TokenParser),
                                      nameof(ILogger),
                                      nameof(logger));
-        SetTokenDelimiterValues(DefaultTokenStartDelimiter, DefaultTokenEndDelimiter, DefaultTokenEscapeCharacter);
+        DelimiterService = NullDependencyCheck(delimiterService,
+                                               nameof(TokenParser),
+                                               nameof(IDelimiterService),
+                                               nameof(delimiterService));
         FoundDelimiters = [DelimiterType.NotFound, DelimiterType.NotFound, DelimiterType.NotFound];
         FoundTokenInfo = TokenInfo.Empty;
         ModifiedText = new(200, 1000);
@@ -79,30 +84,12 @@ internal class TokenParser : DependencyCheckerBase, ITokenParser
     }
 
     /// <summary>
-    /// Gets or sets the value of the delimiter escape character.
+    /// Gets a reference to the token delimiter service.
     /// </summary>
-    internal char DelimiterEscapeCharacter
+    private IDelimiterService DelimiterService
     {
         get;
-        set;
-    }
-
-    /// <summary>
-    /// Gets or sets the value of the token end delimiter.
-    /// </summary>
-    internal string TokenEndDelimiter
-    {
-        get;
-        set;
-    }
-
-    /// <summary>
-    /// Gets or sets the value of the token start delimiter.
-    /// </summary>
-    internal string TokenStartDelimiter
-    {
-        get;
-        set;
+        init;
     }
 
     /// <summary>
@@ -310,8 +297,8 @@ internal class TokenParser : DependencyCheckerBase, ITokenParser
         if (ValidTokenFound && ShouldValidateTokenDelimiters)
         {
             string tokenStartString = TemplateText[FirstStartDelimiterIndex..EndDelimiterIndex];
-            string tokenString = $"{tokenStartString}{TokenEndDelimiter}";
-            string replacementString = $"{DelimiterEscapeCharacter}{tokenStartString}{DelimiterEscapeCharacter}{TokenEndDelimiter}";
+            string tokenString = $"{tokenStartString}{DelimiterService.EndDelimiter}";
+            string replacementString = $"{DelimiterService.DelimiterEscapeCharacter}{tokenStartString}{DelimiterService.DelimiterEscapeCharacter}{DelimiterService.EndDelimiter}";
             _ = ModifiedText.Replace(tokenString, replacementString);
             IsTextModified = true;
         }
@@ -369,27 +356,6 @@ internal class TokenParser : DependencyCheckerBase, ITokenParser
     }
 
     /// <summary>
-    /// Sets the token start and token end delimiters and the delimiter escape character to the
-    /// specified values.
-    /// </summary>
-    /// <param name="tokenStartDelimiter">
-    /// The value of the token start delimiter.
-    /// </param>
-    /// <param name="tokenEndDelimiter">
-    /// The value of the token end delimiter.
-    /// </param>
-    /// <param name="delimiterEscapeCharacter">
-    /// The value of the delimiter escape character.
-    /// </param>
-    [MemberNotNull(nameof(TokenStartDelimiter), nameof(TokenEndDelimiter))]
-    public void SetTokenDelimiterValues(string tokenStartDelimiter, string tokenEndDelimiter, char delimiterEscapeCharacter)
-    {
-        TokenStartDelimiter = tokenStartDelimiter;
-        TokenEndDelimiter = tokenEndDelimiter;
-        DelimiterEscapeCharacter = delimiterEscapeCharacter;
-    }
-
-    /// <summary>
     /// Appends the next token end delimiter to the end of the modified text template line.
     /// </summary>
     /// <remarks>
@@ -411,7 +377,7 @@ internal class TokenParser : DependencyCheckerBase, ITokenParser
             Logger.Log(LogSeverity.Error, message);
         }
 
-        AppendTokenDelimiter(EndDelimiterIndex, TokenEndDelimiter, shouldEscapeEndDelimiter);
+        AppendTokenDelimiter(EndDelimiterIndex, DelimiterService.EndDelimiter, shouldEscapeEndDelimiter);
     }
 
     /// <summary>
@@ -469,7 +435,7 @@ internal class TokenParser : DependencyCheckerBase, ITokenParser
             Logger.Log(LogSeverity.Error, message);
         }
 
-        AppendTokenDelimiter(FirstStartDelimiterIndex, TokenStartDelimiter, shouldEscapeFirstStartDelimiter);
+        AppendTokenDelimiter(FirstStartDelimiterIndex, DelimiterService.StartDelimiter, shouldEscapeFirstStartDelimiter);
     }
 
     /// <summary>
@@ -482,14 +448,14 @@ internal class TokenParser : DependencyCheckerBase, ITokenParser
         {
             string message = GetMessage(MsgMissingTokenEndDelimiter);
             Logger.Log(LogSeverity.Error, message);
-            EscapeAllDelimiters(TokenStartDelimiter);
+            EscapeAllDelimiters(DelimiterService.StartDelimiter);
         }
         else if (SecondStartDelimiterIsNotFound && EndDelimiterIsNotEscaped
             && (FirstStartDelimiterIsNotFound || FirstStartDelimiterIsEscaped))
         {
             string message = GetMessage(MsgMissingTokenStartDelimiter);
             Logger.Log(LogSeverity.Error, message);
-            EscapeAllDelimiters(TokenEndDelimiter);
+            EscapeAllDelimiters(DelimiterService.EndDelimiter);
         }
         else if (SecondStartDelimiterIsNotFound && EndDelimiterIsNotFound)
         {
@@ -538,7 +504,7 @@ internal class TokenParser : DependencyCheckerBase, ITokenParser
             Logger.Log(LogSeverity.Error, message);
         }
 
-        AppendTokenDelimiter(SecondStartDelimiterIndex, TokenStartDelimiter, shouldEscapeSecondStartDelimiter);
+        AppendTokenDelimiter(SecondStartDelimiterIndex, DelimiterService.StartDelimiter, shouldEscapeSecondStartDelimiter);
     }
 
     /// <summary>
@@ -571,7 +537,7 @@ internal class TokenParser : DependencyCheckerBase, ITokenParser
 
         if (shouldInsertEscapeCharacter && IsDelimiterNotEscaped(delimiterIndex))
         {
-            _ = ModifiedText.Append(DelimiterEscapeCharacter);
+            _ = ModifiedText.Append(DelimiterService.DelimiterEscapeCharacter);
             IsTextModified = true;
         }
 
@@ -701,13 +667,13 @@ internal class TokenParser : DependencyCheckerBase, ITokenParser
     /// </summary>
     private void FindNextToken()
     {
-        FirstStartDelimiterIndex = FindNextDelimiter(StartSearchIndex, TokenStartDelimiter);
+        FirstStartDelimiterIndex = FindNextDelimiter(StartSearchIndex, DelimiterService.StartDelimiter);
 
-        SecondStartDelimiterIndex = FirstStartDelimiterIndex > NotFound && FirstStartDelimiterIndex < TemplateText.Length - TokenStartDelimiter.Length
-            ? FindNextDelimiter(FirstStartDelimiterIndex + TokenStartDelimiter.Length, TokenStartDelimiter)
+        SecondStartDelimiterIndex = FirstStartDelimiterIndex > NotFound && FirstStartDelimiterIndex < TemplateText.Length - DelimiterService.StartDelimiter.Length
+            ? FindNextDelimiter(FirstStartDelimiterIndex + DelimiterService.StartDelimiter.Length, DelimiterService.StartDelimiter)
             : NotFound;
 
-        EndDelimiterIndex = FindNextDelimiter(StartSearchIndex, TokenEndDelimiter);
+        EndDelimiterIndex = FindNextDelimiter(StartSearchIndex, DelimiterService.EndDelimiter);
 
         DetermineOrderOfDelimiters();
 
@@ -751,12 +717,12 @@ internal class TokenParser : DependencyCheckerBase, ITokenParser
             || (SecondStartDelimiterIsNotFound && EndDelimiterIsNotEscaped && (FirstStartDelimiterIsNotFound || FirstStartDelimiterIsEscaped));
 
         return shouldAdvancePastFirstTokenStartDelimiter
-            ? FirstStartDelimiterIndex + TokenStartDelimiter.Length
+            ? FirstStartDelimiterIndex + DelimiterService.StartDelimiter.Length
             : shouldAdvancePastSecondTokenStartDelimiter
-                ? SecondStartDelimiterIndex + TokenStartDelimiter.Length
+                ? SecondStartDelimiterIndex + DelimiterService.StartDelimiter.Length
                 : shouldAdvanceToEndOfTextLine
                     ? TemplateText.Length
-                    : EndDelimiterIndex + TokenEndDelimiter.Length;
+                    : EndDelimiterIndex + DelimiterService.EndDelimiter.Length;
     }
 
     /// <summary>
@@ -770,7 +736,7 @@ internal class TokenParser : DependencyCheckerBase, ITokenParser
     /// <see langword="true"/> if the delimiter is escaped, otherwise <see langword="false"/>
     /// </returns>
     private bool IsDelimiterEscaped(int delimiterIndex)
-        => delimiterIndex > 0 && TemplateText[delimiterIndex - 1] == DelimiterEscapeCharacter;
+        => delimiterIndex > 0 && TemplateText[delimiterIndex - 1] == DelimiterService.DelimiterEscapeCharacter;
 
     /// <summary>
     /// Gets a value indicating whether the token delimiter at the given index position within the
@@ -783,7 +749,7 @@ internal class TokenParser : DependencyCheckerBase, ITokenParser
     /// <see langword="true"/> if the delimiter is not escaped, otherwise <see langword="false"/>
     /// </returns>
     private bool IsDelimiterNotEscaped(int delimiterIndex)
-        => delimiterIndex == 0 || (delimiterIndex > 0 && TemplateText[delimiterIndex - 1] != DelimiterEscapeCharacter);
+        => delimiterIndex == 0 || (delimiterIndex > 0 && TemplateText[delimiterIndex - 1] != DelimiterService.DelimiterEscapeCharacter);
 
     /// <summary>
     /// Sets the found delimiter order based on the passed in parameter values.
@@ -832,10 +798,10 @@ internal class TokenParser : DependencyCheckerBase, ITokenParser
     /// </remarks>
     private void VerifyFoundToken()
     {
-        int tokenNameStart = FirstStartDelimiterIndex + TokenStartDelimiter.Length;
+        int tokenNameStart = FirstStartDelimiterIndex + DelimiterService.StartDelimiter.Length;
         int tokenNameEnd = EndDelimiterIndex;
         int tokenStringStart = FirstStartDelimiterIndex;
-        int tokenStringEnd = EndDelimiterIndex + TokenEndDelimiter.Length;
+        int tokenStringEnd = EndDelimiterIndex + DelimiterService.EndDelimiter.Length;
         string tokenString = TemplateText[tokenStringStart..tokenStringEnd];
         char caseFlag = SameCaseFlag;
 

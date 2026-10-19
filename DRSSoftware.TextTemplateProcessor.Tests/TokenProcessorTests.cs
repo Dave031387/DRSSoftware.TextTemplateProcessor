@@ -3,6 +3,11 @@
 [ExcludeFromCodeCoverage]
 public class TokenProcessorTests
 {
+    private Mock<IDelimiterService> DelimiterServiceMock
+    {
+        get;
+    } = new(MockBehavior.Strict);
+
     private Mock<ILocater> LocaterMock
     {
         get;
@@ -38,6 +43,25 @@ public class TokenProcessorTests
     }
 
     [Fact]
+    public void CreateTokenProcessorWithNullDelimiterService_ShouldThrowException()
+    {
+        // Arrange
+        InitializeMocks();
+        IDelimiterService? delimiterService = null;
+        string expected = GetNullDependencyMessage(nameof(TokenProcessor), nameof(IDelimiterService), nameof(delimiterService));
+
+        // Act
+        Action action = () => _ = new TokenProcessor(LocaterMock.Object, LoggerMock.Object, delimiterService!, TokenParserMock.Object);
+
+        // Assert
+        action
+            .Should()
+            .Throw<ArgumentNullException>()
+            .WithMessage(expected);
+        MocksVerifyNoOtherCalls();
+    }
+
+    [Fact]
     public void CreateTokenProcessorWithNullLocater_ShouldThrowException()
     {
         // Arrange
@@ -46,7 +70,7 @@ public class TokenProcessorTests
         string expected = GetNullDependencyMessage(nameof(TokenProcessor), nameof(ILocater), nameof(locater));
 
         // Act
-        Action action = () => _ = new TokenProcessor(locater!, LoggerMock.Object, TokenParserMock.Object);
+        Action action = () => _ = new TokenProcessor(locater!, LoggerMock.Object, DelimiterServiceMock.Object, TokenParserMock.Object);
 
         // Assert
         action
@@ -65,7 +89,7 @@ public class TokenProcessorTests
         string expected = GetNullDependencyMessage(nameof(TokenProcessor), nameof(ILogger), nameof(logger));
 
         // Act
-        Action action = () => _ = new TokenProcessor(LocaterMock.Object, logger!, TokenParserMock.Object);
+        Action action = () => _ = new TokenProcessor(LocaterMock.Object, logger!, DelimiterServiceMock.Object, TokenParserMock.Object);
 
         // Assert
         action
@@ -84,7 +108,7 @@ public class TokenProcessorTests
         string expected = GetNullDependencyMessage(nameof(TokenProcessor), nameof(ITokenParser), nameof(tokenParser));
 
         // Act
-        Action action = () => _ = new TokenProcessor(LocaterMock.Object, LoggerMock.Object, tokenParser!);
+        Action action = () => _ = new TokenProcessor(LocaterMock.Object, LoggerMock.Object, DelimiterServiceMock.Object, tokenParser!);
 
         // Assert
         action
@@ -112,15 +136,6 @@ public class TokenProcessorTests
             .NotBeNull()
             .And
             .BeEmpty();
-        tokenProcessor.TokenStart
-            .Should()
-            .Be(DefaultTokenStartDelimiter);
-        tokenProcessor.TokenEnd
-            .Should()
-            .Be(DefaultTokenEndDelimiter);
-        tokenProcessor.TokenEscape
-            .Should()
-            .Be(DefaultTokenEscapeCharacter);
         VerifyMocks();
     }
 
@@ -491,8 +506,9 @@ public class TokenProcessorTests
     {
         // Arrange
         InitializeMocks();
-        string original = $"{DefaultTokenEscapeCharacter}{DefaultTokenEndDelimiter}text{DefaultTokenEscapeCharacter}{DefaultTokenEscapeCharacter}{DefaultTokenStartDelimiter}text";
-        string expected = $"{DefaultTokenEndDelimiter}text{DefaultTokenEscapeCharacter}{DefaultTokenStartDelimiter}text";
+        string original = $"{DefaultDelimiterEscapeCharacter}{DefaultTokenEndDelimiter}text{DefaultDelimiterEscapeCharacter}{DefaultDelimiterEscapeCharacter}{DefaultTokenStartDelimiter}text";
+        string expected = $"{DefaultTokenEndDelimiter}text{DefaultDelimiterEscapeCharacter}{DefaultTokenStartDelimiter}text";
+        SetupDelimiterServiceMock();
         TokenParserMock
             .Setup(x => x.InitializeParser(original, false))
             .Verifiable(Times.Once);
@@ -526,6 +542,7 @@ public class TokenProcessorTests
         // Arrange
         InitializeMocks();
         string expected = "template text with no tokens";
+        SetupDelimiterServiceMock();
         TokenParserMock
             .Setup(x => x.InitializeParser(expected, false))
             .Verifiable(Times.Once);
@@ -564,6 +581,7 @@ public class TokenProcessorTests
         string locationName = "location";
         string message = GetMessage(MsgTokenNameNotFound, locationName, tokenName);
         string expected = $"text {tokenString} more text";
+        SetupDelimiterServiceMock();
         LocaterMock
             .SetupGet(x => x.CurrentLocationName)
             .Returns(locationName)
@@ -610,6 +628,7 @@ public class TokenProcessorTests
         string expected = $"text  more text";
         string locationName = "location";
         string message = GetMessage(MsgTokenValueIsEmpty, locationName, tokenName);
+        SetupDelimiterServiceMock();
         LocaterMock
             .SetupGet(x => x.CurrentLocationName)
             .Returns(locationName)
@@ -664,6 +683,7 @@ public class TokenProcessorTests
         TokenInfo tokenInfo2 = new(tokenString2, tokenName2, LowercaseFlag);
         string original = $"text{tokenString1A}text {tokenString2} text {tokenString1B} text";
         string expected = $"text{tokenValue1Upper}text {tokenValue2Lower} text {tokenValue1} text";
+        SetupDelimiterServiceMock();
         TokenParserMock
             .Setup(x => x.InitializeParser(original, false))
             .Verifiable(Times.Once);
@@ -697,49 +717,33 @@ public class TokenProcessorTests
     }
 
     [Fact]
-    public void ResetTokenDelimiters_ShouldSetDelimiterValuesBackToTheirDefaultValues()
+    public void ResetTokenDelimiters_ShouldCallDelimiterServiceMethod()
     {
         // Arrange
         InitializeMocks();
-        string altStartDelimiter = "{{";
-        string altEndDelimiter = "}}";
-        char altEscapeCharacter = '!';
+        DelimiterServiceMock
+            .Setup(x => x.ResetTokenDelimiters())
+            .Verifiable(Times.Once);
         TokenProcessor tokenProcessor = GetTokenProcessor();
-        TokenParserMock.Reset();
-        TokenParserMock
-            .Setup(x => x.SetTokenDelimiterValues(altStartDelimiter, altEndDelimiter, altEscapeCharacter))
-            .Verifiable(Times.Once);
-        TokenParserMock
-            .Setup(x => x.SetTokenDelimiterValues(DefaultTokenStartDelimiter, DefaultTokenEndDelimiter, DefaultTokenEscapeCharacter))
-            .Verifiable(Times.Once);
-        tokenProcessor.SetTokenDelimiters(altStartDelimiter, altEndDelimiter, altEscapeCharacter);
 
         // Act
         tokenProcessor.ResetTokenDelimiters();
 
         // Assert
-        tokenProcessor.TokenStart
-            .Should()
-            .Be(DefaultTokenStartDelimiter);
-        tokenProcessor.TokenEnd
-            .Should()
-            .Be(DefaultTokenEndDelimiter);
-        tokenProcessor.TokenEscape
-            .Should()
-            .Be(DefaultTokenEscapeCharacter);
         VerifyMocks();
     }
 
     [Fact]
-    public void SetTokenDelimitersWhenAllDelimitersAreValid_ShouldSetDelimiterValues()
+    public void SetTokenDelimiters_ShouldCallDelimiterServiceMethod()
     {
         // Arrange
         InitializeMocks();
         string startDelimiter = "{{";
         string endDelimiter = "}}";
         char escapeCharacter = '!';
-        TokenParserMock
-            .Setup(x => x.SetTokenDelimiterValues(startDelimiter, endDelimiter, escapeCharacter))
+        DelimiterServiceMock
+            .Setup(x => x.SetTokenDelimiters(startDelimiter, endDelimiter, escapeCharacter))
+            .Returns(true)
             .Verifiable(Times.Once);
         TokenProcessor tokenProcessor = GetTokenProcessor();
 
@@ -750,178 +754,15 @@ public class TokenProcessorTests
         actual
             .Should()
             .BeTrue();
-        tokenProcessor.TokenStart
-            .Should()
-            .Be(startDelimiter);
-        tokenProcessor.TokenEnd
-            .Should()
-            .Be(endDelimiter);
-        tokenProcessor.TokenEscape
-            .Should()
-            .Be(escapeCharacter);
-        VerifyMocks();
-    }
-
-    [Fact]
-    public void SetTokenDelimitersWhenEndDelimiterAndEscapeCharacterAreTheSame_ShouldLogErrorMessage()
-    {
-        // Arrange
-        InitializeMocks();
-        string startDelimiter = "{{";
-        string endDelimiter = "!";
-        char escapeCharacter = '!';
-        string message = GetMessage(MsgTokenEndAndTokenEscapeAreSame, endDelimiter, escapeCharacter.ToString());
-        AssertSetTokenDelimiterError(message, startDelimiter, endDelimiter, escapeCharacter);
-    }
-
-    [Fact]
-    public void SetTokenDelimitersWhenEndDelimiterIsEmpty_ShouldLogErrorMessage()
-    {
-        // Arrange
-        InitializeMocks();
-        string startDelimiter = "{{";
-        string endDelimiter = EmptyString;
-        char escapeCharacter = '!';
-        string message = GetMessage(MsgTokenEndDelimiterIsEmpty);
-        AssertSetTokenDelimiterError(message, startDelimiter, endDelimiter, escapeCharacter);
-    }
-
-    [Fact]
-    public void SetTokenDelimitersWhenEndDelimiterIsNull_ShouldLogErrorMessage()
-    {
-        // Arrange
-        InitializeMocks();
-        string startDelimiter = "{{";
-        string endDelimiter = null!;
-        char escapeCharacter = '!';
-        string message = GetMessage(MsgTokenEndDelimiterIsNull);
-        AssertSetTokenDelimiterError(message, startDelimiter, endDelimiter, escapeCharacter);
-    }
-
-    [Fact]
-    public void SetTokenDelimitersWhenStartAndEndDelimitersAreEqual_ShouldLogErrorMessage()
-    {
-        // Arrange
-        InitializeMocks();
-        string startDelimiter = "}}";
-        string endDelimiter = "}}";
-        char escapeCharacter = '!';
-        string message = GetMessage(MsgTokenStartAndTokenEndAreSame, startDelimiter, endDelimiter);
-        AssertSetTokenDelimiterError(message, startDelimiter, endDelimiter, escapeCharacter);
-    }
-
-    [Fact]
-    public void SetTokenDelimitersWhenStartDelimiterAndEscapeCharacterAreTheSame_ShouldLogErrorMessage()
-    {
-        // Arrange
-        InitializeMocks();
-        string startDelimiter = "!";
-        string endDelimiter = "}}";
-        char escapeCharacter = '!';
-        string message = GetMessage(MsgTokenStartAndTokenEscapeAreSame, startDelimiter, escapeCharacter.ToString());
-        AssertSetTokenDelimiterError(message, startDelimiter, endDelimiter, escapeCharacter);
-    }
-
-    [Theory]
-    [InlineData(LowercaseFlag)]
-    [InlineData(UppercaseFlag)]
-    [InlineData(SameCaseFlag)]
-    public void SetTokenDelimitersWhenStartDelimiterEndsInCaseFlagCharacter_ShouldLogWarningMessageAndSetDelimiterValues(char caseFlag)
-    {
-        // Arrange
-        InitializeMocks();
-        string startDelimiter = "{{" + caseFlag;
-        string endDelimiter = "}}";
-        char escapeCharacter = '!';
-        string message = GetMessage(MsgTokenStartDelimiterWarning);
-        LoggerMock
-            .Setup(x => x.Log(LogSeverity.Warning, message))
-            .Verifiable(Times.Once);
-        TokenParserMock
-            .Setup(x => x.SetTokenDelimiterValues(startDelimiter, endDelimiter, escapeCharacter))
-            .Verifiable(Times.Once);
-        TokenProcessor tokenProcessor = GetTokenProcessor();
-
-        // Act
-        bool actual = tokenProcessor.SetTokenDelimiters(startDelimiter, endDelimiter, escapeCharacter);
-
-        // Assert
-        actual
-            .Should()
-            .BeTrue();
-        tokenProcessor.TokenStart
-            .Should()
-            .Be(startDelimiter);
-        tokenProcessor.TokenEnd
-            .Should()
-            .Be(endDelimiter);
-        tokenProcessor.TokenEscape
-            .Should()
-            .Be(escapeCharacter);
-        VerifyMocks();
-    }
-
-    [Fact]
-    public void SetTokenDelimitersWhenStartDelimiterIsEmpty_ShouldLogErrorMessage()
-    {
-        // Arrange
-        InitializeMocks();
-        string startDelimiter = EmptyString;
-        string endDelimiter = "}}";
-        char escapeCharacter = '!';
-        string message = GetMessage(MsgTokenStartDelimiterIsEmpty);
-        AssertSetTokenDelimiterError(message, startDelimiter, endDelimiter, escapeCharacter);
-    }
-
-    [Fact]
-    public void SetTokenDelimitersWhenStartDelimiterIsNull_ShouldLogErrorMessage()
-    {
-        // Arrange
-        InitializeMocks();
-        string startDelimiter = null!;
-        string endDelimiter = "}}";
-        char escapeCharacter = '!';
-        string message = GetMessage(MsgTokenStartDelimiterIsNull);
-        AssertSetTokenDelimiterError(message, startDelimiter, endDelimiter, escapeCharacter);
-    }
-
-    private void AssertSetTokenDelimiterError(string message, string startDelimiter, string endDelimiter, char escapeCharacter)
-    {
-        // Arrange
-        LoggerMock
-            .Setup(x => x.Log(LogSeverity.Error, message))
-            .Verifiable(Times.Once);
-        TokenProcessor tokenProcessor = GetTokenProcessor();
-
-        // Act
-        bool actual = tokenProcessor.SetTokenDelimiters(startDelimiter, endDelimiter, escapeCharacter);
-
-        // Assert
-        actual
-            .Should()
-            .BeFalse();
-        tokenProcessor.TokenStart
-            .Should()
-            .Be(DefaultTokenStartDelimiter);
-        tokenProcessor.TokenEnd
-            .Should()
-            .Be(DefaultTokenEndDelimiter);
-        tokenProcessor.TokenEscape
-            .Should()
-            .Be(DefaultTokenEscapeCharacter);
         VerifyMocks();
     }
 
     private TokenProcessor GetTokenProcessor()
-    {
-        TokenParserMock
-            .Setup(x => x.SetTokenDelimiterValues(DefaultTokenStartDelimiter, DefaultTokenEndDelimiter, DefaultTokenEscapeCharacter))
-            .Verifiable(Times.Once);
-        return new(LocaterMock.Object, LoggerMock.Object, TokenParserMock.Object);
-    }
+        => new(LocaterMock.Object, LoggerMock.Object, DelimiterServiceMock.Object, TokenParserMock.Object);
 
     private void InitializeMocks()
     {
+        DelimiterServiceMock.Reset();
         LocaterMock.Reset();
         LoggerMock.Reset();
         TokenParserMock.Reset();
@@ -929,13 +770,35 @@ public class TokenProcessorTests
 
     private void MocksVerifyNoOtherCalls()
     {
+        DelimiterServiceMock.VerifyNoOtherCalls();
         LocaterMock.VerifyNoOtherCalls();
         LoggerMock.VerifyNoOtherCalls();
         TokenParserMock.VerifyNoOtherCalls();
     }
 
+    private void SetupDelimiterServiceMock()
+    {
+        DelimiterServiceMock
+            .SetupGet(x => x.StartDelimiter)
+            .Returns(DefaultTokenStartDelimiter)
+            .Verifiable(Times.AtLeastOnce);
+        DelimiterServiceMock
+            .SetupGet(x => x.EndDelimiter)
+            .Returns(DefaultTokenEndDelimiter)
+            .Verifiable(Times.AtLeastOnce);
+        DelimiterServiceMock
+            .SetupGet(x => x.DelimiterEscapeCharacter)
+            .Returns(DefaultDelimiterEscapeCharacter)
+            .Verifiable(Times.AtLeastOnce);
+    }
+
     private void VerifyMocks()
     {
+        if (DelimiterServiceMock.Setups.Any())
+        {
+            DelimiterServiceMock.VerifyAll();
+        }
+
         if (LocaterMock.Setups.Any())
         {
             LocaterMock.VerifyAll();

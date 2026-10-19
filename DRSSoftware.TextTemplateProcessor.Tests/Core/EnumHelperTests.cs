@@ -37,7 +37,7 @@ public class EnumHelperTests
     {
         // Arrange
         TestEnum enumValue = TestEnum.ValueWithNullDisplayName;
-        string expected = "ValueWithNullDisplayName";
+        string expected = enumValue.GetType().GetEnumName(enumValue)!;
 
         // Act
         string actual = enumValue.GetFriendlyName();
@@ -53,7 +53,7 @@ public class EnumHelperTests
     {
         // Arrange
         TestEnum enumValue = TestEnum.ValueWithoutDisplayName;
-        string expected = "ValueWithoutDisplayName";
+        string expected = enumValue.GetType().GetEnumName(enumValue)!;
 
         // Act
         string actual = enumValue.GetFriendlyName();
