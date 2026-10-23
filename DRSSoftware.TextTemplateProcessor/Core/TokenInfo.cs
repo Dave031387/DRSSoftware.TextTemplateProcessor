@@ -1,6 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
-
-namespace DRSSoftware.TextTemplateProcessor.Core;
+﻿namespace DRSSoftware.TextTemplateProcessor.Core;
 
 /// <summary>
 /// This record is used to store information about a token found in a text string.
@@ -15,7 +13,7 @@ namespace DRSSoftware.TextTemplateProcessor.Core;
 /// A character flag indicating whether the first character of the token substitution string should
 /// be lowercase, uppercase, or unchanged.
 /// </param>
-[ExcludeFromCodeCoverage]
+[System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 internal record TokenInfo(string TokenString, string TokenName, char CaseFlag)
 {
     /// <summary>

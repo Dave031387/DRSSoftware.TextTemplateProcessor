@@ -1,13 +1,13 @@
 ﻿namespace DRSSoftware.TextTemplateProcessor;
 
 /// <summary>
-/// The <see cref="SegmentHeaderParser" /> class is used for parsing segment headers in a text
+/// The <see cref="SegmentHeaderParser"/> class is used for parsing segment headers in a text
 /// template file to extract the segment names and control options.
 /// </summary>
 internal class SegmentHeaderParser : DependencyCheckerBase, ISegmentHeaderParser
 {
     /// <summary>
-    /// Constructor that creates an instance of the <see cref="SegmentHeaderParser" /> class and
+    /// Constructor that creates an instance of the <see cref="SegmentHeaderParser"/> class and
     /// initializes dependencies.
     /// </summary>
     /// <param name="controlItemBuilder">
@@ -16,16 +16,20 @@ internal class SegmentHeaderParser : DependencyCheckerBase, ISegmentHeaderParser
     /// <param name="logger">
     /// A reference to a logger object used for logging messages.
     /// </param>
+    /// <param name="optionParser">
+    /// A reference to the option parser service.
+    /// </param>
     /// <param name="indentProcessor">
     /// A reference to an indent processor object used for managing line indentation in the
     /// generated text file.
     /// </param>
     /// <exception cref="ArgumentNullException">
-    /// Exception is thrown if any of the dependencies passed into the constructor are
-    /// <see langword="null" />.
+    /// Exception is thrown if any of the dependencies passed into the constructor are <see langword="null"/>.
     /// </exception>
-    internal SegmentHeaderParser(IControlItemBuilder controlItemBuilder, IIndentProcessor indentProcessor,
-                                 ILogger logger)
+    internal SegmentHeaderParser(IControlItemBuilder controlItemBuilder,
+                                 IIndentProcessor indentProcessor,
+                                 ILogger logger,
+                                 IOptionParser optionParser)
     {
         ControlItemBuilder = NullDependencyCheck(controlItemBuilder,
                                                  nameof(SegmentHeaderParser),
@@ -39,6 +43,10 @@ internal class SegmentHeaderParser : DependencyCheckerBase, ISegmentHeaderParser
                                      nameof(SegmentHeaderParser),
                                      nameof(ILogger),
                                      nameof(logger));
+        OptionParser = NullDependencyCheck(optionParser,
+                                           nameof(SegmentHeaderParser),
+                                           nameof(IOptionParser),
+                                           nameof(optionParser));
     }
 
     /// <summary>
@@ -66,6 +74,15 @@ internal class SegmentHeaderParser : DependencyCheckerBase, ISegmentHeaderParser
     }
 
     /// <summary>
+    /// Gets a reference to the option parser service.
+    /// </summary>
+    private IOptionParser OptionParser
+    {
+        get;
+        init;
+    }
+
+    /// <summary>
     /// This method parses a segment header line from a text template file and extracts the segment
     /// name and control information.
     /// </summary>
@@ -73,165 +90,103 @@ internal class SegmentHeaderParser : DependencyCheckerBase, ISegmentHeaderParser
     /// A segment header line from a text template file.
     /// </param>
     /// <returns>
-    /// A <see cref="ControlItem" /> object containing the segment name and control information.
+    /// A <see cref="ControlItem"/> object containing the segment name and control information.
     /// </returns>
-    public ControlItem ParseSegmentHeader(string headerLine)
+    public ControlItem Parse(string headerLine)
     {
+        string[] args;
         ControlItemBuilder.Initialize();
 
-        if (headerLine.Length < 5 || headerLine[4] == ' ')
+        if (headerLine.Length < 5 || headerLine[4] is ' ')
         {
-            ControlItemBuilder.SegmentName = UnknownSegmentName;
             string message = GetMessage(MsgSegmentNameIsMissing);
             Logger.Log(LogSeverity.Error, message);
+            string newHeaderLine = $"{SegmentHeaderCode} {UnknownSegmentName} {headerLine[3..]}";
+            args = newHeaderLine.Split(OptionSeparatorChars, StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
+        }
+        else
+        {
+            args = headerLine.Split(OptionSeparatorChars, StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
         }
 
-        string[] args = headerLine.Split(OptionSeparatorChars, StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
+        string segmentName = args[1];
 
-        if (string.IsNullOrEmpty(ControlItemBuilder.SegmentName))
+        if (IsValidName(segmentName))
         {
-            string segmentName = args[1];
-
-            if (IsValidName(segmentName))
-            {
-                ControlItemBuilder.SegmentName = segmentName;
-            }
-            else
-            {
-                ControlItemBuilder.SegmentName = UnknownSegmentName;
-                string message = GetMessage(MsgInvalidSegmentName,
-                                            segmentName);
-                Logger.Log(LogSeverity.Error, message);
-            }
+            ControlItemBuilder.SegmentName = segmentName;
+        }
+        else
+        {
+            ControlItemBuilder.SegmentName = UnknownSegmentName;
+            string message = GetMessage(MsgInvalidSegmentName,
+                                        segmentName);
+            Logger.Log(LogSeverity.Error, message);
         }
 
         if (args.Length > 2)
         {
-            ParseSegmentOptions(args);
+            ParseSegmentOptions(segmentName, args);
         }
 
         return ControlItemBuilder.Build();
     }
 
     /// <summary>
-    /// Parse a single segment option from a segment header line and return the option name and
-    /// value as a tuple.
-    /// </summary>
-    /// <param name="arg">
-    /// The segment option to parse.
-    /// </param>
-    /// <returns>
-    /// A tuple containing the option name and value.
-    /// </returns>
-    private (string optionName, string optionValue) ParseSegmentOption(string arg)
-    {
-        string segmentName = ControlItemBuilder.SegmentName;
-        (string optionName, string optionValue) result = (string.Empty, string.Empty);
-
-        int optionIndex;
-
-        if (arg.Contains(OptionValueSeparator))
-        {
-            optionIndex = arg.IndexOf(OptionValueSeparator);
-        }
-        else
-        {
-            string message = GetMessage(MsgInvalidFormOfOption,
-                                       segmentName,
-                                       arg);
-            Logger.Log(LogSeverity.Error, message);
-            return result;
-        }
-
-        if (optionIndex < 1)
-        {
-            string message = GetMessage(MsgOptionNameMustPrecedeEqualsSign,
-                                       segmentName);
-            Logger.Log(LogSeverity.Error, message);
-            return result;
-        }
-
-        result.optionName = arg[..optionIndex].ToUpperInvariant();
-
-        if (!IsValidSegmentHeaderOption(result.optionName))
-        {
-            string message = GetMessage(MsgUnknownSegmentOptionFound,
-                                       segmentName,
-                                       arg);
-            Logger.Log(LogSeverity.Error, message);
-            return result;
-        }
-
-        optionIndex++;
-
-        if (optionIndex == arg.Length)
-        {
-            string message = GetMessage(MsgOptionValueMustFollowEqualsSign,
-                                       segmentName,
-                                       result.optionName);
-            Logger.Log(LogSeverity.Error, message);
-            return result;
-        }
-
-        result.optionValue = arg[optionIndex..];
-
-        return result;
-    }
-
-    /// <summary>
     /// Parse the segment options from a segment header line and set the corresponding properties on
     /// the given control item.
     /// </summary>
+    /// <param name="segmentName">
+    /// The name of the segment where the option <paramref name="args"/> are defined.
+    /// </param>
     /// <param name="args">
     /// The option arguments from the segment header line.
     /// </param>
-    private void ParseSegmentOptions(string[] args)
+    private void ParseSegmentOptions(string segmentName, string[] args)
     {
-        string segmentName = ControlItemBuilder.SegmentName;
         bool firstTimeIndentOptionFound = false;
         bool padSegmentOptionFound = false;
         bool tabOptionFound = false;
 
         for (int i = 2; i < args.Length; i++)
         {
-            (string optionName, string optionValue) = ParseSegmentOption(args[i]);
+            Option option = OptionParser.Parse(args[i], IsValidSegmentHeaderOption, SegmentHeaderOptionGroup, segmentName);
 
-            if (string.IsNullOrEmpty(optionValue))
+            if (option.IsEmpty)
             {
                 continue;
             }
 
-            if ((optionName == FirstTimeIndentOption && firstTimeIndentOptionFound)
-                || (optionName == PadSegmentNameOption && padSegmentOptionFound)
-                || (optionName == TabSizeOption && tabOptionFound))
+            if ((option.Name == FirstTimeIndentOption && firstTimeIndentOptionFound)
+                || (option.Name == PadSegmentNameOption && padSegmentOptionFound)
+                || (option.Name == TabSizeOption && tabOptionFound))
             {
                 string message = GetMessage(MsgFoundDuplicateOptionNameOnHeaderLine,
                                             segmentName,
-                                            optionName);
+                                            option.Name);
                 Logger.Log(LogSeverity.Warning, message);
                 continue;
             }
 
-            switch (optionName)
+            switch (option.Name)
             {
                 case FirstTimeIndentOption:
-                    SetFirstTimeIndentOption(optionValue);
+                    SetFirstTimeIndentOption(segmentName, option.Value);
                     firstTimeIndentOptionFound = true;
                     break;
 
                 case PadSegmentNameOption:
-                    SetPadSegmentOption(optionValue);
+                    SetPadSegmentOption(segmentName, option.Value);
                     padSegmentOptionFound = true;
                     break;
 
                 case TabSizeOption:
-                    SetTabSizeOption(optionValue);
+                    SetTabSizeOption(segmentName, option.Value);
                     tabOptionFound = true;
                     break;
 
                 default:
-                    // This case should never be reached because the option name is validated in the
-                    // ParseSegmentOption method.
+                    // This case should never be reached because the option name is validated by the
+                    // OptionParser class.
                     break;
             }
         }
@@ -241,17 +196,20 @@ internal class SegmentHeaderParser : DependencyCheckerBase, ISegmentHeaderParser
     /// Validate the first time indent option and set the corresponding property on the given
     /// control item if the option value is valid.
     /// </summary>
+    /// <param name="segmentName">
+    /// The name of the segment where the first time indent is being set.
+    /// </param>
     /// <param name="optionValue">
     /// The value of the option to validate.
     /// </param>
-    private void SetFirstTimeIndentOption(string optionValue)
+    private void SetFirstTimeIndentOption(string segmentName, string optionValue)
     {
         if (IndentProcessor.IsValidIndentValue(optionValue, out int indentValue))
         {
             if (indentValue == 0)
             {
                 string message = GetMessage(MsgFirstTimeIndentSetToZero,
-                                            ControlItemBuilder.SegmentName);
+                                            segmentName);
                 Logger.Log(LogSeverity.Warning, message);
             }
             else
@@ -262,7 +220,7 @@ internal class SegmentHeaderParser : DependencyCheckerBase, ISegmentHeaderParser
         else
         {
             string message = GetMessage(MsgFirstTimeIndentIsInvalid,
-                                        ControlItemBuilder.SegmentName,
+                                        segmentName,
                                         optionValue);
             Logger.Log(LogSeverity.Error, message);
         }
@@ -272,10 +230,13 @@ internal class SegmentHeaderParser : DependencyCheckerBase, ISegmentHeaderParser
     /// Validate the pad segment option and set the corresponding property on the given control item
     /// if the option value is valid.
     /// </summary>
+    /// <param name="segmentName">
+    /// The name of the segment where the pas segment is being set.
+    /// </param>
     /// <param name="optionValue">
     /// The value of the option to validate.
     /// </param>
-    private void SetPadSegmentOption(string optionValue)
+    private void SetPadSegmentOption(string segmentName, string optionValue)
     {
         if (IsValidName(optionValue))
         {
@@ -284,7 +245,7 @@ internal class SegmentHeaderParser : DependencyCheckerBase, ISegmentHeaderParser
         else
         {
             string message = GetMessage(MsgInvalidPadSegmentName,
-                                        ControlItemBuilder.SegmentName,
+                                        segmentName,
                                         optionValue);
             Logger.Log(LogSeverity.Error, message);
         }
@@ -294,10 +255,13 @@ internal class SegmentHeaderParser : DependencyCheckerBase, ISegmentHeaderParser
     /// Validate the tab size option and set the corresponding property on the given control item if
     /// the option value is valid.
     /// </summary>
+    /// <param name="segmentName">
+    /// The name of the segment where the tab value is being set.
+    /// </param>
     /// <param name="optionValue">
     /// The value of the option to validate.
     /// </param>
-    private void SetTabSizeOption(string optionValue)
+    private void SetTabSizeOption(string segmentName, string optionValue)
     {
         if (IndentProcessor.IsValidTabSizeValue(optionValue, out int tabValue))
         {
@@ -306,7 +270,7 @@ internal class SegmentHeaderParser : DependencyCheckerBase, ISegmentHeaderParser
         else
         {
             string message = GetMessage(MsgInvalidTabSizeOption,
-                                        ControlItemBuilder.SegmentName,
+                                        segmentName,
                                         optionValue);
             Logger.Log(LogSeverity.Error, message);
         }

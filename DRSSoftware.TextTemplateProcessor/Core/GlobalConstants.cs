@@ -101,9 +101,29 @@ internal static class GlobalConstants
     public const string DefaultTokenStartDelimiter = "<#";
 
     /// <summary>
+    /// The string that represents the token delimiter escape option.
+    /// </summary>
+    public const string DelimiterEscapeOption = "ESC";
+
+    /// <summary>
+    /// The string that represents the token end delimiter option.
+    /// </summary>
+    public const string EndDelimiterOption = "EDEL";
+
+    /// <summary>
     /// The string that is used for denoting error severity level in a log message.
     /// </summary>
     public const string ErrorSeverity = "ERROR::::";
+
+    /// <summary>
+    /// The string that is used to indicate the start of the file header line in the text template file.
+    /// </summary>
+    public const string FileHeaderCode = "@@@";
+
+    /// <summary>
+    /// The string used to identify the file header option group.
+    /// </summary>
+    public const string FileHeaderOptionGroup = "file header";
 
     /// <summary>
     /// The string that represents the First Time Indent option.
@@ -230,6 +250,11 @@ internal static class GlobalConstants
     public const string SegmentHeaderCode = "###";
 
     /// <summary>
+    /// The string used to identify the segment header option group.
+    /// </summary>
+    public const string SegmentHeaderOptionGroup = "segment header";
+
+    /// <summary>
     /// The search pattern that is used in locating the solution file with the ".sln" file extension.
     /// </summary>
     public const string SolutionFileSearchPattern1 = "*.sln";
@@ -238,6 +263,11 @@ internal static class GlobalConstants
     /// The search pattern that is used in locating the solution file with the ".slnx" file extension.
     /// </summary>
     public const string SolutionFileSearchPattern2 = "*.slnx";
+
+    /// <summary>
+    /// The string that represents the token start delimiter option.
+    /// </summary>
+    public const string StartDelimiterOption = "SDEL";
 
     /// <summary>
     /// The string that represents the Tab Size option.

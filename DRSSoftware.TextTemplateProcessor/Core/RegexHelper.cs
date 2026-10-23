@@ -3,25 +3,25 @@
 namespace DRSSoftware.TextTemplateProcessor.Core;
 
 /// <summary>
-/// Helper class for handling various <see cref="Regex" /> pattern matching operations against given
+/// Helper class for handling various <see cref="Regex"/> pattern matching operations against given
 /// string values.
 /// </summary>
 internal static partial class RegexHelper
 {
     /// <summary>
-    /// Counts the number of format items in the given <paramref name="compositeString" />.
+    /// Counts the number of format items in the given <paramref name="compositeString"/>.
     /// </summary>
     /// <param name="compositeString">
     /// The composite string containing zero or more format items.
     /// </param>
     /// <returns>
-    /// The number of format items in <paramref name="compositeString" />.
+    /// The number of format items in <paramref name="compositeString"/>.
     /// </returns>
     public static int GetFormatItemCount(string compositeString)
         => FormatItemRegex().Count(compositeString);
 
     /// <summary>
-    /// Gets a value indicating whether or not the given <paramref name="textLine" /> begins with an
+    /// Gets a value indicating whether or not the given <paramref name="textLine"/> begins with an
     /// absolute indent indicator string.
     /// </summary>
     /// <remarks>
@@ -31,14 +31,14 @@ internal static partial class RegexHelper
     /// The text template line to be checked.
     /// </param>
     /// <returns>
-    /// <see langword="true" /> if <paramref name="textLine" /> begins with an absolute indent
-    /// indicator string; otherwise, <see langword="false" />.
+    /// <see langword="true"/> if <paramref name="textLine"/> begins with an absolute indent
+    /// indicator string; otherwise, <see langword="false"/>.
     /// </returns>
     public static bool HasAbsoluteIndent(string textLine)
         => AbsoluteIndentRegex().IsMatch(textLine);
 
     /// <summary>
-    /// Gets a value indicating whether or not the given <paramref name="textLine" /> begins with an
+    /// Gets a value indicating whether or not the given <paramref name="textLine"/> begins with an
     /// absolute indent indicator string.
     /// </summary>
     /// <remarks>
@@ -49,57 +49,57 @@ internal static partial class RegexHelper
     /// The text template line to be checked.
     /// </param>
     /// <returns>
-    /// <see langword="true" /> if <paramref name="textLine" /> begins with an absolute indent
-    /// indicator string; otherwise, <see langword="false" />.
+    /// <see langword="true"/> if <paramref name="textLine"/> begins with an absolute indent
+    /// indicator string; otherwise, <see langword="false"/>.
     /// </returns>
     public static bool HasAbsoluteIndentCode(string textLine)
         => AbsoluteIndentCodeRegex().IsMatch(textLine);
 
     /// <summary>
-    /// Gets a value indicating whether or not the given <paramref name="textLine" /> begins with
-    /// any valid indent indicator string.
+    /// Gets a value indicating whether or not the given <paramref name="textLine"/> begins with any
+    /// valid indent indicator string.
     /// </summary>
     /// <param name="textLine">
     /// The text template line to be checked.
     /// </param>
     /// <returns>
-    /// <see langword="true" /> if <paramref name="textLine" /> begins with any valid indent
-    /// indicator string; otherwise, <see langword="false" />.
+    /// <see langword="true"/> if <paramref name="textLine"/> begins with any valid indent indicator
+    /// string; otherwise, <see langword="false"/>.
     /// </returns>
     public static bool HasIndentCode(string textLine)
         => IndentCodeRegex().IsMatch(textLine);
 
     /// <summary>
-    /// Gets a value indicating whether or not the given <paramref name="textLine" /> doesn't start
+    /// Gets a value indicating whether or not the given <paramref name="textLine"/> doesn't start
     /// with any control code.
     /// </summary>
     /// <param name="textLine">
     /// The text template line to be checked.
     /// </param>
     /// <returns>
-    /// <see langword="true" /> if <paramref name="textLine" /> doesn't start with any control code;
-    /// otherwise, <see langword="false" />.
+    /// <see langword="true"/> if <paramref name="textLine"/> doesn't start with any control code;
+    /// otherwise, <see langword="false"/>.
     /// </returns>
     public static bool HasNoControlCode(string textLine)
         => NoControlCodeRegex().IsMatch(textLine);
 
     /// <summary>
-    /// Gets a value indicating whether or not the given <paramref name="textLine" /> begins with an
+    /// Gets a value indicating whether or not the given <paramref name="textLine"/> begins with an
     /// absolute one-time indent indicator string.
     /// </summary>
     /// <param name="textLine">
     /// The text template line to be checked.
     /// </param>
     /// <returns>
-    /// <see langword="true" /> if <paramref name="textLine" /> begins with an absolute one-time
-    /// indent indicator string; otherwise, <see langword="false" />.
+    /// <see langword="true"/> if <paramref name="textLine"/> begins with an absolute one-time
+    /// indent indicator string; otherwise, <see langword="false"/>.
     /// </returns>
     public static bool HasOneTimeAbsoluteIndentCode(string textLine)
         => OneTimeAbsoluteIndentCodeRegex().IsMatch(textLine);
 
     /// <summary>
-    /// Gets a value indicating whether or not the given <paramref name="textLine" /> begins with
-    /// any one-time indent indicator string.
+    /// Gets a value indicating whether or not the given <paramref name="textLine"/> begins with any
+    /// one-time indent indicator string.
     /// </summary>
     /// <remarks>
     /// Both absolute and relative one-time indent indicator strings are considered valid.
@@ -108,42 +108,42 @@ internal static partial class RegexHelper
     /// The text template line to be checked.
     /// </param>
     /// <returns>
-    /// <see langword="true" /> if <paramref name="textLine" /> begins with any one-time indent
-    /// indicator string; otherwise, <see langword="false" />.
+    /// <see langword="true"/> if <paramref name="textLine"/> begins with any one-time indent
+    /// indicator string; otherwise, <see langword="false"/>.
     /// </returns>
     public static bool HasOneTimeIndent(string textLine)
         => OneTimeIndentRegex().IsMatch(textLine);
 
     /// <summary>
-    /// Gets a value indicating whether or not the given <paramref name="textLine" /> begins with a
+    /// Gets a value indicating whether or not the given <paramref name="textLine"/> begins with a
     /// relative one-time left indent indicator string.
     /// </summary>
     /// <param name="textLine">
     /// The text template line to be checked.
     /// </param>
     /// <returns>
-    /// <see langword="true" /> if <paramref name="textLine" /> begins with a relative one-time left
-    /// indent indicator string; otherwise, <see langword="false" />.
+    /// <see langword="true"/> if <paramref name="textLine"/> begins with a relative one-time left
+    /// indent indicator string; otherwise, <see langword="false"/>.
     /// </returns>
     public static bool HasOneTimeRelativeLeftIndentCode(string textLine)
         => OneTimeRelativeLeftIndentCodeRegex().IsMatch(textLine);
 
     /// <summary>
-    /// Gets a value indicating whether or not the given <paramref name="textLine" /> begins with a
+    /// Gets a value indicating whether or not the given <paramref name="textLine"/> begins with a
     /// relative one-time right indent indicator string.
     /// </summary>
     /// <param name="textLine">
     /// The text template line to be checked.
     /// </param>
     /// <returns>
-    /// <see langword="true" /> if <paramref name="textLine" /> begins with a relative one-time
-    /// right indent indicator string; otherwise, <see langword="false" />.
+    /// <see langword="true"/> if <paramref name="textLine"/> begins with a relative one-time right
+    /// indent indicator string; otherwise, <see langword="false"/>.
     /// </returns>
     public static bool HasOneTimeRelativeRightIndentCode(string textLine)
         => OneTimeRelativeRightIndentCodeRegex().IsMatch(textLine);
 
     /// <summary>
-    /// Gets a value indicating whether or not the given <paramref name="textLine" /> begins with a
+    /// Gets a value indicating whether or not the given <paramref name="textLine"/> begins with a
     /// relative indent indicator string.
     /// </summary>
     /// <remarks>
@@ -153,14 +153,14 @@ internal static partial class RegexHelper
     /// The text template line to be checked.
     /// </param>
     /// <returns>
-    /// <see langword="true" /> if <paramref name="textLine" /> begins with a relative indent
-    /// indicator string; otherwise, <see langword="false" />.
+    /// <see langword="true"/> if <paramref name="textLine"/> begins with a relative indent
+    /// indicator string; otherwise, <see langword="false"/>.
     /// </returns>
     public static bool HasRelativeIndent(string textLine)
         => RelativeIndentRegex().IsMatch(textLine);
 
     /// <summary>
-    /// Gets a value indicating whether or not the given <paramref name="textLine" /> begins with a
+    /// Gets a value indicating whether or not the given <paramref name="textLine"/> begins with a
     /// relative left indent indicator string.
     /// </summary>
     /// <remarks>
@@ -171,14 +171,14 @@ internal static partial class RegexHelper
     /// The text template line to be checked.
     /// </param>
     /// <returns>
-    /// <see langword="true" /> if <paramref name="textLine" /> begins with a relative left indent
-    /// indicator string; otherwise, <see langword="false" />.
+    /// <see langword="true"/> if <paramref name="textLine"/> begins with a relative left indent
+    /// indicator string; otherwise, <see langword="false"/>.
     /// </returns>
     public static bool HasRelativeLeftIndentCode(string textLine)
         => RelativeLeftIndentCodeRegex().IsMatch(textLine);
 
     /// <summary>
-    /// Gets a value indicating whether or not the given <paramref name="textLine" /> begins with a
+    /// Gets a value indicating whether or not the given <paramref name="textLine"/> begins with a
     /// relative right indent indicator string.
     /// </summary>
     /// <remarks>
@@ -189,265 +189,308 @@ internal static partial class RegexHelper
     /// The text template line to be checked.
     /// </param>
     /// <returns>
-    /// <see langword="true" /> if <paramref name="textLine" /> begins with a relative right indent
-    /// indicator string; otherwise, <see langword="false" />.
+    /// <see langword="true"/> if <paramref name="textLine"/> begins with a relative right indent
+    /// indicator string; otherwise, <see langword="false"/>.
     /// </returns>
     public static bool HasRelativeRightIndentCode(string textLine)
         => RelativeRightIndentCodeRegex().IsMatch(textLine);
 
     /// <summary>
-    /// Gets a value indicating whether or not the given <paramref name="textLine" /> begins with a
+    /// Gets a value indicating whether or not the given <paramref name="textLine"/> begins with a
     /// valid control code or no control code.
     /// </summary>
     /// <param name="textLine">
     /// The text template line to be checked.
     /// </param>
     /// <returns>
-    /// <see langword="true" /> if <paramref name="textLine" /> begins with a valid control code or
-    /// no control code; otherwise, <see langword="false" />.
+    /// <see langword="true"/> if <paramref name="textLine"/> begins with a valid control code or no
+    /// control code; otherwise, <see langword="false"/>.
     /// </returns>
     public static bool HasValidControlCode(string textLine)
         => ValidControlCodeRegex().IsMatch(textLine);
 
     /// <summary>
-    /// Gets a value indicating whether or not the given <paramref name="textLine" /> is a comment
-    /// line.
+    /// Gets a value indicating whether or not the given <paramref name="textLine"/> is a comment line.
     /// </summary>
     /// <param name="textLine">
     /// The text template line to be checked.
     /// </param>
     /// <returns>
-    /// <see langword="true" /> if <paramref name="textLine" /> is a comment line; otherwise,
-    /// <see langword="false" />.
+    /// <see langword="true"/> if <paramref name="textLine"/> is a comment line; otherwise, <see langword="false"/>.
     /// </returns>
     public static bool IsCommentLine(string textLine)
         => CommentLineRegex().IsMatch(textLine);
 
     /// <summary>
-    /// Gets a value indicating whether or not the given <paramref name="textLine" /> is a segment
+    /// Gets a value indicating whether or not the given <paramref name="textLine"/> is a file
     /// header line.
     /// </summary>
     /// <param name="textLine">
     /// The text template line to be checked.
     /// </param>
     /// <returns>
-    /// <see langword="true" /> if <paramref name="textLine" /> is a segment header line; otherwise,
-    /// <see langword="false" />.
+    /// <see langword="true"/> if <paramref name="textLine"/> is a file header line; otherwise, <see langword="false"/>.
+    /// </returns>
+    public static bool IsFileHeader(string textLine)
+        => FileHeaderRegex().IsMatch(textLine);
+
+    /// <summary>
+    /// Gets a value indicating whether or not the given <paramref name="textLine"/> is a segment
+    /// header line.
+    /// </summary>
+    /// <param name="textLine">
+    /// The text template line to be checked.
+    /// </param>
+    /// <returns>
+    /// <see langword="true"/> if <paramref name="textLine"/> is a segment header line; otherwise,
+    /// <see langword="false"/>.
     /// </returns>
     public static bool IsSegmentHeader(string textLine)
         => SegmentHeaderRegex().IsMatch(textLine);
 
     /// <summary>
-    /// Gets a value indicating whether or not the given <paramref name="name" /> is valid.
+    /// Gets a value indicating whether or not the given <paramref name="option"/> is a valid file
+    /// header option.
+    /// </summary>
+    /// <param name="option">
+    /// The file header option to be validated.
+    /// </param>
+    /// <returns>
+    /// <see langword="true"/> if <paramref name="option"/> is a valid file header option;
+    /// otherwise, <see langword="false"/>.
+    /// </returns>
+    public static bool IsValidFileHeaderOption(string option)
+        => ValidFileHeaderOption().IsMatch(option);
+
+    /// <summary>
+    /// Gets a value indicating whether or not the given <paramref name="name"/> is valid.
     /// </summary>
     /// <param name="name">
     /// The name to be validated.
     /// </param>
     /// <returns>
-    /// <see langword="true" /> if <paramref name="name" /> is not <see langword="null" /> and
-    /// constitutes a valid name. Otherwise, returns <see langword="false" />.
+    /// <see langword="true"/> if <paramref name="name"/> is not <see langword="null"/> and
+    /// constitutes a valid name. Otherwise, returns <see langword="false"/>.
     /// </returns>
     public static bool IsValidName(string? name)
         => name is not null && ValidNameRegex().IsMatch(name);
 
     /// <summary>
-    /// Gets a value indicating whether or not the given <paramref name="option" /> is a valid
+    /// Gets a value indicating whether or not the given <paramref name="option"/> is a valid
     /// segment header option.
     /// </summary>
     /// <param name="option">
     /// The segment header option to be validated.
     /// </param>
     /// <returns>
-    /// <see langword="true" /> if <paramref name="option" /> is a valid segment header option;
-    /// otherwise, <see langword="false" />.
+    /// <see langword="true"/> if <paramref name="option"/> is a valid segment header option;
+    /// otherwise, <see langword="false"/>.
     /// </returns>
     public static bool IsValidSegmentHeaderOption(string option)
         => ValidSegmentHeaderOption().IsMatch(option);
 
     /// <summary>
-    /// Gets a <see cref="Regex" /> object used for matching text lines that begin with an absolute
+    /// Gets a <see cref="Regex"/> object used for matching text lines that begin with an absolute
     /// indent indicator string.
     /// </summary>
     /// <returns>
-    /// A <see cref="Regex" /> object used for matching text lines that begin with an absolute
-    /// indent indicator string.
+    /// A <see cref="Regex"/> object used for matching text lines that begin with an absolute indent
+    /// indicator string.
     /// </returns>
     [GeneratedRegex($@"^{Normal}{Absolute}{AnyDigit} ", RegexOptions.Compiled)]
     private static partial Regex AbsoluteIndentCodeRegex();
 
     /// <summary>
-    /// Gets a <see cref="Regex" /> object used for matching text lines that begin with an absolute
+    /// Gets a <see cref="Regex"/> object used for matching text lines that begin with an absolute
     /// indent or absolute one-time indent indicator string.
     /// </summary>
     /// <remarks>
-    /// A <see cref="Regex" /> object used for matching text lines that begin with an absolute
-    /// indent or absolute one-time indent indicator string.
+    /// A <see cref="Regex"/> object used for matching text lines that begin with an absolute indent
+    /// or absolute one-time indent indicator string.
     /// </remarks>
     [GeneratedRegex($@"^[{Normal}{OneTime}]{Absolute}{AnyDigit} ", RegexOptions.Compiled)]
     private static partial Regex AbsoluteIndentRegex();
 
     /// <summary>
-    /// Gets a <see cref="Regex" /> object used for matching text lines that begin with a comment
+    /// Gets a <see cref="Regex"/> object used for matching text lines that begin with a comment
     /// line indicator string.
     /// </summary>
     /// <returns>
-    /// A <see cref="Regex" /> object used for matching text lines that begin with a comment line
+    /// A <see cref="Regex"/> object used for matching text lines that begin with a comment line
     /// indicator string.
     /// </returns>
     [GeneratedRegex($@"^{CommentCode} ", RegexOptions.Compiled)]
     private static partial Regex CommentLineRegex();
 
     /// <summary>
-    /// Gets a <see cref="Regex" /> object used for matching format items in a composite string.
+    /// Gets a <see cref="Regex"/> object used for matching text template lines that begin with a
+    /// file header indicator string.
+    /// </summary>
+    /// <returns>
+    /// A <see cref="Regex"/> object used for matching text template lines that begin with a file
+    /// header indicator string.
+    /// </returns>
+    [GeneratedRegex($@"^{FileHeaderCode} ", RegexOptions.Compiled)]
+    private static partial Regex FileHeaderRegex();
+
+    /// <summary>
+    /// Gets a <see cref="Regex"/> object used for matching format items in a composite string.
     /// </summary>
     /// <remarks>
     /// Only format items with index values between 0 and 9 (inclusive) are matched. Format items
     /// with index values greater than 9 are not matched.
     /// </remarks>
     /// <returns>
-    /// A <see cref="Regex" /> object used for matching format items in a composite string.
+    /// A <see cref="Regex"/> object used for matching format items in a composite string.
     /// </returns>
     [GeneratedRegex($@"\{{{AnyDigit}}}", RegexOptions.Compiled)]
     private static partial Regex FormatItemRegex();
 
     /// <summary>
-    /// Gets a <see cref="Regex" /> object used for matching text lines that begin with any valid
+    /// Gets a <see cref="Regex"/> object used for matching text lines that begin with any valid
     /// indent indicator string.
     /// </summary>
     /// <returns>
-    /// A <see cref="Regex" /> object used for matching text lines that begin with any valid indent
+    /// A <see cref="Regex"/> object used for matching text lines that begin with any valid indent
     /// indicator string.
     /// </returns>
     [GeneratedRegex($@"^[{Normal}{OneTime}][{Absolute}{RelativeLeft}{RelativeRight}]{AnyDigit} ", RegexOptions.Compiled)]
     private static partial Regex IndentCodeRegex();
 
     /// <summary>
-    /// Gets a <see cref="Regex" /> object used for matching text lines that don't begin with any
+    /// Gets a <see cref="Regex"/> object used for matching text lines that don't begin with any
     /// indent indicator string.
     /// </summary>
     /// <returns>
-    /// A <see cref="Regex" /> object used for matching text lines that don't begin with any indent
+    /// A <see cref="Regex"/> object used for matching text lines that don't begin with any indent
     /// indicator string.
     /// </returns>
     [GeneratedRegex($@"^{NoControlCode} ", RegexOptions.Compiled)]
     private static partial Regex NoControlCodeRegex();
 
     /// <summary>
-    /// Gets a <see cref="Regex" /> object used for matching text lines that begin with an absolute
+    /// Gets a <see cref="Regex"/> object used for matching text lines that begin with an absolute
     /// one-time indent indicator string.
     /// </summary>
     /// <returns>
-    /// A <see cref="Regex" /> object used for matching text lines that begin with an absolute
+    /// A <see cref="Regex"/> object used for matching text lines that begin with an absolute
     /// one-time indent indicator string.
     /// </returns>
     [GeneratedRegex($@"^{OneTime}{Absolute}{AnyDigit} ", RegexOptions.Compiled)]
     private static partial Regex OneTimeAbsoluteIndentCodeRegex();
 
     /// <summary>
-    /// Gets a <see cref="Regex" /> object used for matching text lines that begin with a one-time
+    /// Gets a <see cref="Regex"/> object used for matching text lines that begin with a one-time
     /// indent indicator string.
     /// </summary>
     /// <returns>
-    /// A <see cref="Regex" /> object used for matching text lines that begin with a one-time indent
+    /// A <see cref="Regex"/> object used for matching text lines that begin with a one-time indent
     /// indicator string.
     /// </returns>
     [GeneratedRegex($@"^{OneTime}[{Absolute}{RelativeLeft}{RelativeRight}]{AnyDigit} ", RegexOptions.Compiled)]
     private static partial Regex OneTimeIndentRegex();
 
     /// <summary>
-    /// Gets a <see cref="Regex" /> object used for matching text lines that begin with a relative
+    /// Gets a <see cref="Regex"/> object used for matching text lines that begin with a relative
     /// one-time left indent indicator string.
     /// </summary>
     /// <returns>
-    /// A <see cref="Regex" /> object used for matching text lines that begin with a relative
+    /// A <see cref="Regex"/> object used for matching text lines that begin with a relative
     /// one-time left indent indicator string.
     /// </returns>
     [GeneratedRegex($@"^{OneTime}{RelativeLeft}{AnyDigit} ", RegexOptions.Compiled)]
     private static partial Regex OneTimeRelativeLeftIndentCodeRegex();
 
     /// <summary>
-    /// Gets a <see cref="Regex" /> object used for matching text lines that begin with a relative
+    /// Gets a <see cref="Regex"/> object used for matching text lines that begin with a relative
     /// one-time right indent indicator string.
     /// </summary>
     /// <returns>
-    /// A <see cref="Regex" /> object used for matching text lines that begin with a relative
+    /// A <see cref="Regex"/> object used for matching text lines that begin with a relative
     /// one-time right indent indicator string.
     /// </returns>
     [GeneratedRegex($@"^{OneTime}{RelativeRight}{AnyDigit} ", RegexOptions.Compiled)]
     private static partial Regex OneTimeRelativeRightIndentCodeRegex();
 
     /// <summary>
-    /// Gets a <see cref="Regex" /> object used for matching text lines that begin with a relative
+    /// Gets a <see cref="Regex"/> object used for matching text lines that begin with a relative
     /// indent indicator string.
     /// </summary>
     /// <returns>
-    /// A <see cref="Regex" /> object used for matching text lines that begin with a relative indent
+    /// A <see cref="Regex"/> object used for matching text lines that begin with a relative indent
     /// indicator string.
     /// </returns>
     [GeneratedRegex($@"^[{Normal}{OneTime}][{RelativeLeft}{RelativeRight}]{AnyDigit} ", RegexOptions.Compiled)]
     private static partial Regex RelativeIndentRegex();
 
     /// <summary>
-    /// Gets a <see cref="Regex" /> object used for matching text lines that begin with a relative
+    /// Gets a <see cref="Regex"/> object used for matching text lines that begin with a relative
     /// left indent indicator string.
     /// </summary>
     /// <returns>
-    /// A <see cref="Regex" /> object used for matching text lines that begin with a relative left
+    /// A <see cref="Regex"/> object used for matching text lines that begin with a relative left
     /// indent indicator string.
     /// </returns>
     [GeneratedRegex($@"^{Normal}{RelativeLeft}{AnyDigit} ", RegexOptions.Compiled)]
     private static partial Regex RelativeLeftIndentCodeRegex();
 
     /// <summary>
-    /// Gets a <see cref="Regex" /> object used for matching text lines that begin with a relative
+    /// Gets a <see cref="Regex"/> object used for matching text lines that begin with a relative
     /// right indent indicator string.
     /// </summary>
     /// <returns>
-    /// A <see cref="Regex" /> object used for matching text lines that begin with a relative right
+    /// A <see cref="Regex"/> object used for matching text lines that begin with a relative right
     /// indent indicator string.
     /// </returns>
     [GeneratedRegex($@"^{Normal}{RelativeRight}{AnyDigit} ", RegexOptions.Compiled)]
     private static partial Regex RelativeRightIndentCodeRegex();
 
     /// <summary>
-    /// Gets a <see cref="Regex" /> object used for matching text template lines that begin with a
+    /// Gets a <see cref="Regex"/> object used for matching text template lines that begin with a
     /// segment header indicator string.
     /// </summary>
     /// <returns>
-    /// A <see cref="Regex" /> object used for matching text template lines that begin with a
-    /// segment header indicator string.
+    /// A <see cref="Regex"/> object used for matching text template lines that begin with a segment
+    /// header indicator string.
     /// </returns>
     [GeneratedRegex($@"^{SegmentHeaderCode} ", RegexOptions.Compiled)]
     private static partial Regex SegmentHeaderRegex();
 
     /// <summary>
-    /// Gets a <see cref="Regex" /> object used for matching text template lines that begin with any
+    /// Gets a <see cref="Regex"/> object used for matching text template lines that begin with any
     /// valid indicator string.
     /// </summary>
     /// <returns>
-    /// A <see cref="Regex" /> object used for matching text template lines that begin with any
-    /// valid indicator string.
+    /// A <see cref="Regex"/> object used for matching text template lines that begin with any valid
+    /// indicator string.
     /// </returns>
-    [GeneratedRegex($@"^([{Normal}{OneTime}][{Absolute}{RelativeLeft}{RelativeRight}]{AnyDigit}|{NoControlCode}|{CommentCode}|{SegmentHeaderCode}) ", RegexOptions.Compiled)]
+    [GeneratedRegex($@"^([{Normal}{OneTime}][{Absolute}{RelativeLeft}{RelativeRight}]{AnyDigit}|{NoControlCode}|{CommentCode}|{SegmentHeaderCode}|{FileHeaderCode}) ", RegexOptions.Compiled)]
     private static partial Regex ValidControlCodeRegex();
 
     /// <summary>
-    /// Gets a <see cref="Regex" /> object used for validating segment names on a segment header
-    /// line.
+    /// Gets a <see cref="Regex"/> object used for validating file header options on a file header line.
     /// </summary>
     /// <returns>
-    /// A <see cref="Regex" /> object used for validating segment names on a segment header line.
+    /// A <see cref="Regex"/> object used for validating file header options on a file header line.
+    /// </returns>
+    [GeneratedRegex($"^(({StartDelimiterOption})|({EndDelimiterOption})|({DelimiterEscapeOption})|({TabSizeOption}))$", RegexOptions.Compiled)]
+    private static partial Regex ValidFileHeaderOption();
+
+    /// <summary>
+    /// Gets a <see cref="Regex"/> object used for validating segment names on a segment header line.
+    /// </summary>
+    /// <returns>
+    /// A <see cref="Regex"/> object used for validating segment names on a segment header line.
     /// </returns>
     [GeneratedRegex($@"^({AnyLetter})({AnyLetter}|{AnyDigit}|_)*$", RegexOptions.Compiled | RegexOptions.IgnoreCase)]
     private static partial Regex ValidNameRegex();
 
     /// <summary>
-    /// Gets a <see cref="Regex" /> object used for validating segment header options on a segment
+    /// Gets a <see cref="Regex"/> object used for validating segment header options on a segment
     /// header line.
     /// </summary>
     /// <returns>
-    /// A <see cref="Regex" /> object used for validating segment header options on a segment header
-    /// line.
+    /// A <see cref="Regex"/> object used for validating segment header options on a segment header line.
     /// </returns>
     [GeneratedRegex($"^(({FirstTimeIndentOption})|({PadSegmentNameOption})|({TabSizeOption}))$", RegexOptions.Compiled)]
     private static partial Regex ValidSegmentHeaderOption();

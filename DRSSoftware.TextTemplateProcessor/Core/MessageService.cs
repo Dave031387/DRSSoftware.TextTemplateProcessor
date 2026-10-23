@@ -42,7 +42,7 @@ internal static class MessageService
     // internal const string MsgInvalidControlCode = "The following template line doesn't begin with a valid control code: \"{0}\"";
     internal const string MsgInvalidDirectoryCharacters = "The directory path contains invalid characters.";
     internal const string MsgInvalidFileNameCharacters = "The file name contains invalid characters.";
-    internal const string MsgInvalidFormOfOption = "Segment options must follow the form \"option=value\" with no intervening spaces. Found \"{1}\" on the {0} segment header.";
+    internal const string MsgInvalidFormOfOption = "Header options must follow the form \"option=value\" with no intervening spaces. Found \"{1}\" on the {0}.";
     internal const string MsgInvalidPadSegmentName = $"\"{{1}}\" is not a valid name for the {PadSegmentNameOption} option for segment {{0}}. It will be ignored.";
     internal const string MsgInvalidSegmentName = "\"{0}\" is not a valid segment name. The segment will be ignored.";
     internal const string MsgInvalidTabSizeOption = $"The {TabSizeOption} option value \"{{1}}\" for segment {{0}} is invalid and will be ignored.";
@@ -59,8 +59,8 @@ internal static class MessageService
     // internal const string MsgNoTextLinesFollowingSegmentHeader = "The header line for segment {0} must be followed by one or more valid text lines. The segment will be ignored.";
     internal const string MsgNullDirectoryPath = "The directory path must not be null.";
     internal const string MsgNullFilePath = "The file path must not be null.";
-    internal const string MsgOptionNameMustPrecedeEqualsSign = "An option name must appear immediately before the equals sign with no intervening spaces in the {0} segment header.";
-    internal const string MsgOptionValueMustFollowEqualsSign = "The value for the {1} option must appear immediately after the equals sign with no intervening spaces in the {0} segment header.";
+    internal const string MsgOptionNameMustPrecedeEqualsSign = "An option name must appear immediately before the equals sign with no intervening spaces on the {0}.";
+    internal const string MsgOptionValueMustFollowEqualsSign = "The value for the {1} option must appear immediately after the equals sign with no intervening spaces on the {0}.";
     // internal const string MsgOutputDirectoryCleared = "The output directory has been cleared.";
     // internal const string MsgOutputDirectoryNotSet = "The output file can't be written because the output directory hasn't been set.";
     // internal const string MsgPadSegmentMustBeDefinedEarlier = "The pad segment name {1} referenced by segment {0} must be defined earlier in the template file. It will be ignored.";
@@ -121,7 +121,7 @@ internal static class MessageService
     internal const string MsgUnableToWriteToTextFile = "An unexpected exception occurred while attempting to write to text file: \"{0}\"";
     internal const string MsgUncPathIsNotSupported = "UNC paths are not supported in this version of the Text Template Processor. The specified path was \"{0}\"";
     // internal const string MsgUnknownSegmentName = "A request was made to generate segment {0} but that segment wasn't found in the template file.";
-    internal const string MsgUnknownSegmentOptionFound = "An unknown segment option \"{1}\" was found on segment {0}. It will be ignored.";
+    internal const string MsgUnknownSegmentOptionFound = "An unknown option \"{1}\" was found on the {0}. It will be ignored.";
     internal const string MsgUnknownTokenName = "Invalid attempt to assign a replacement value to unknown token name \"{1}\" in segment {0}. The token will be ignored.";
     internal const string MsgWarningCount = "  Warnings: {0}";
     // internal const string MsgWritingTextFile = "Writing generated text to file: \"{0}\"";

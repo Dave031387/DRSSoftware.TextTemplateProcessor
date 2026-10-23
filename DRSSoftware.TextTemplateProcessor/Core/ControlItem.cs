@@ -1,19 +1,19 @@
 ﻿namespace DRSSoftware.TextTemplateProcessor.Core;
 
 /// <summary>
-/// The <see cref="ControlItem" /> class saves the values of any options that were specified on a
+/// The <see cref="ControlItem"/> class saves the values of any options that were specified on a
 /// segment header line in the text template file. This information is used to control the
 /// formatting of the segment when it is being used to generate the output file.
 /// </summary>
 /// <remarks>
-/// Each <see cref="ControlItem" /> object is associated with a single segment in the text template
+/// Each <see cref="ControlItem"/> object is associated with a single segment in the text template
 /// file. This segment is called the associated segment.
 /// </remarks>
 [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 internal class ControlItem
 {
     /// <summary>
-    /// Creates a new instance of the <see cref="ControlItem" /> class with default values.
+    /// Creates a new instance of the <see cref="ControlItem"/> class with default values.
     /// </summary>
     internal ControlItem()
     {
@@ -25,8 +25,8 @@ internal class ControlItem
     }
 
     /// <summary>
-    /// Gets or sets an integer value indicating how many tab stops the first line of the associated
-    /// segment should be indented the first time the segment is processed.
+    /// Gets an integer value indicating how many tab stops the first line of the associated segment
+    /// should be indented the first time the segment is processed.
     /// </summary>
     internal int FirstTimeIndent
     {
@@ -45,12 +45,11 @@ internal class ControlItem
     }
 
     /// <summary>
-    /// Gets or sets the name of the pad segment that should be inserted ahead of the associated
-    /// segment on the second and subsequent times the associated segment is processed.
+    /// Gets the name of the pad segment that should be inserted ahead of the associated segment on
+    /// the second and subsequent times the associated segment is processed.
     /// </summary>
     /// <remarks>
-    /// This property will be an empty string if nothing should be inserted ahead of the associated
-    /// segment.
+    /// This property will be an empty string if nothing should be inserted ahead of the associated segment.
     /// </remarks>
     internal string PadSegment
     {
@@ -59,7 +58,7 @@ internal class ControlItem
     }
 
     /// <summary>
-    /// Gets or sets the name of the segment that this control item object belongs to.
+    /// Gets the name of the segment that this control item object belongs to.
     /// </summary>
     internal string SegmentName
     {
@@ -72,13 +71,13 @@ internal class ControlItem
     /// time the associated segment is processed.
     /// </summary>
     /// <remarks>
-    /// Returns <see langword="true" /> only when a valid pad segment has been specified and the
+    /// Returns <see langword="true"/> only when a valid pad segment has been specified and the
     /// IsFirstTime property is false.
     /// </remarks>
     internal bool ShouldGeneratePadSegment => !(string.IsNullOrEmpty(PadSegment) || IsFirstTime);
 
     /// <summary>
-    /// Gets or sets the tab size for the associated segment.
+    /// Gets the tab size for the associated segment.
     /// </summary>
     internal int TabSize
     {

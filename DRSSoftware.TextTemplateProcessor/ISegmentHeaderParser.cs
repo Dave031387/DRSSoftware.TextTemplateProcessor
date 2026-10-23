@@ -16,5 +16,5 @@ internal interface ISegmentHeaderParser
     /// <returns>
     /// A <see cref="ControlItem" /> object containing the segment name and control information.
     /// </returns>
-    ControlItem ParseSegmentHeader(string headerLine);
+    ControlItem Parse(string headerLine);
 }

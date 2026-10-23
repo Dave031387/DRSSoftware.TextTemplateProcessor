@@ -1,4 +1,6 @@
-﻿namespace DRSSoftware.TextTemplateProcessor.Core;
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace DRSSoftware.TextTemplateProcessor.Core;
 
 /// <summary>
 /// The <see cref="ControlItemBuilder" /> class provides a way to create and configure instances of
@@ -33,7 +35,7 @@ internal class ControlItemBuilder : IControlItemBuilder
     {
         get;
         set;
-    } = string.Empty;
+    }
 
     /// <summary>
     /// Gets or sets the name of the segment that this control item object belongs to.
@@ -42,7 +44,7 @@ internal class ControlItemBuilder : IControlItemBuilder
     {
         get;
         set;
-    } = string.Empty;
+    }
 
     /// <summary>
     /// Gets or sets the tab size for the associated segment.
@@ -75,6 +77,7 @@ internal class ControlItemBuilder : IControlItemBuilder
     /// <summary>
     /// Initializes this <see cref="ControlItemBuilder" /> instance.
     /// </summary>
+    [MemberNotNull(nameof(PadSegment), nameof(SegmentName))]
     public void Initialize()
     {
         FirstTimeIndent = 0;
