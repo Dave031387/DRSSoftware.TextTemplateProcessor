@@ -24,7 +24,7 @@ public class MessageWriterTests
             .Should()
             .ThrowExactly<ArgumentNullException>()
             .WithMessage(expected);
-        MocksVerifyNoOtherCalls();
+        VerifyMocks();
     }
 
     [Fact]
@@ -40,7 +40,7 @@ public class MessageWriterTests
         messageWriter
             .Should()
             .NotBeNull();
-        MocksVerifyNoOtherCalls();
+        VerifyMocks();
     }
 
     [Theory]

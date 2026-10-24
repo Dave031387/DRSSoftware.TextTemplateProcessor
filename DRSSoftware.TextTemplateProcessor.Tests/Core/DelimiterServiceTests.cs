@@ -47,7 +47,7 @@ public class DelimiterServiceTests
         actual.DelimiterEscapeCharacter
             .Should()
             .Be(DefaultDelimiterEscapeCharacter);
-        MocksVerifyNoOtherCalls();
+        VerifyMocks();
     }
 
     [Fact]

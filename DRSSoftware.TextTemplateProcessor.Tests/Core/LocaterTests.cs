@@ -4,7 +4,7 @@
 public class LocaterTests
 {
     [Fact]
-    public void InstantiateLocater_ShouldInitializeProperties()
+    public void CreateLocater_ShouldInitializeProperties()
     {
         // Arrange
         string expectedLocationName = EmptyString;

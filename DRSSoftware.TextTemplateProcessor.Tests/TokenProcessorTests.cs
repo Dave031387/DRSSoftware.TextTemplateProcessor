@@ -58,7 +58,7 @@ public class TokenProcessorTests
             .Should()
             .Throw<ArgumentNullException>()
             .WithMessage(expected);
-        MocksVerifyNoOtherCalls();
+        VerifyMocks();
     }
 
     [Fact]
@@ -77,7 +77,7 @@ public class TokenProcessorTests
             .Should()
             .Throw<ArgumentNullException>()
             .WithMessage(expected);
-        MocksVerifyNoOtherCalls();
+        VerifyMocks();
     }
 
     [Fact]
@@ -96,7 +96,7 @@ public class TokenProcessorTests
             .Should()
             .Throw<ArgumentNullException>()
             .WithMessage(expected);
-        MocksVerifyNoOtherCalls();
+        VerifyMocks();
     }
 
     [Fact]
@@ -115,7 +115,7 @@ public class TokenProcessorTests
             .Should()
             .Throw<ArgumentNullException>()
             .WithMessage(expected);
-        MocksVerifyNoOtherCalls();
+        VerifyMocks();
     }
 
     [Fact]

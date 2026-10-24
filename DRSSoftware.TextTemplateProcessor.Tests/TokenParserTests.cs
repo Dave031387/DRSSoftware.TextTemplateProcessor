@@ -42,7 +42,7 @@ public class TokenParserTests
             .Should()
             .Throw<ArgumentNullException>()
             .WithMessage(expected);
-        MocksVerifyNoOtherCalls();
+        VerifyMocks();
     }
 
     [Fact]
@@ -61,7 +61,7 @@ public class TokenParserTests
             .Should()
             .Throw<ArgumentNullException>()
             .WithMessage(expected);
-        MocksVerifyNoOtherCalls();
+        VerifyMocks();
     }
 
     [Fact]
@@ -82,7 +82,7 @@ public class TokenParserTests
             .NotBeNull()
             .And
             .BeEmpty();
-        MocksVerifyNoOtherCalls();
+        VerifyMocks();
     }
 
     [Fact]
@@ -393,7 +393,7 @@ public class TokenParserTests
         InitializeMocks();
         SetupDelimiterServiceMock();
         TokenParser tokenParser = GetTokenParser();
-        string caseString = caseFlag == Space ? string.Empty : $"{caseFlag}";
+        string caseString = caseFlag == Space ? EmptyString : $"{caseFlag}";
         string tokenName = "1,Invalid Name";
         string tokenString = $"{StartDelimiter}{caseString}{text2}{tokenName}{text3}{EndDelimiter}";
         string escapedTokenString = $"{EscapedStartDelimiter}{caseString}{text2}{tokenName}{text3}{EscapedEndDelimiter}";
@@ -432,7 +432,7 @@ public class TokenParserTests
         InitializeMocks();
         SetupDelimiterServiceMock();
         TokenParser tokenParser = GetTokenParser();
-        string caseString = caseFlag == Space ? string.Empty : $"{caseFlag}";
+        string caseString = caseFlag == Space ? EmptyString : $"{caseFlag}";
         string tokenString = $"{StartDelimiter}{caseString}{text2}{text3}{EndDelimiter}";
         string escapedTokenString = $"{EscapedStartDelimiter}{caseString}{text2}{text3}{EscapedEndDelimiter}";
         string originalText = $"{text1}{tokenString}{text4}{StartDelimiter}";
@@ -470,7 +470,7 @@ public class TokenParserTests
         InitializeMocks();
         SetupDelimiterServiceMock();
         TokenParser tokenParser = GetTokenParser();
-        string caseString = caseFlag == Space ? string.Empty : $"{caseFlag}";
+        string caseString = caseFlag == Space ? EmptyString : $"{caseFlag}";
         char expectedCase = caseFlag == Space ? SameCaseFlag : caseFlag;
         string tokenName = "Token1";
         string tokenString = $"{StartDelimiter}{caseString}{text2}{tokenName}{text3}{EndDelimiter}";
@@ -499,7 +499,7 @@ public class TokenParserTests
         InitializeMocks();
         SetupDelimiterServiceMock();
         TokenParser tokenParser = GetTokenParser();
-        string caseString = caseFlag == Space ? string.Empty : $"{caseFlag}";
+        string caseString = caseFlag == Space ? EmptyString : $"{caseFlag}";
         string tokenName = "1,Invalid Name";
         string tokenString = $"{StartDelimiter}{caseString}{text2}{tokenName}{text3}{EndDelimiter}";
         string escapedTokenString = $"{EscapedStartDelimiter}{caseString}{text2}{tokenName}{text3}{EscapedEndDelimiter}";
@@ -534,7 +534,7 @@ public class TokenParserTests
         InitializeMocks();
         SetupDelimiterServiceMock();
         TokenParser tokenParser = GetTokenParser();
-        string caseString = caseFlag == Space ? string.Empty : $"{caseFlag}";
+        string caseString = caseFlag == Space ? EmptyString : $"{caseFlag}";
         string tokenString = $"{StartDelimiter}{caseString}{text2}{text3}{EndDelimiter}";
         string escapedTokenString = $"{EscapedStartDelimiter}{caseString}{text2}{text3}{EscapedEndDelimiter}";
         string originalText = $"{text1}{tokenString}{text4}{EscapedStartDelimiter}";
@@ -568,7 +568,7 @@ public class TokenParserTests
         InitializeMocks();
         SetupDelimiterServiceMock();
         TokenParser tokenParser = GetTokenParser();
-        string caseString = caseFlag == Space ? string.Empty : $"{caseFlag}";
+        string caseString = caseFlag == Space ? EmptyString : $"{caseFlag}";
         char expectedCase = caseFlag == Space ? SameCaseFlag : caseFlag;
         string tokenName = "Token1";
         string tokenString = $"{StartDelimiter}{caseString}{text2}{tokenName}{text3}{EndDelimiter}";
@@ -597,7 +597,7 @@ public class TokenParserTests
         InitializeMocks();
         SetupDelimiterServiceMock();
         TokenParser tokenParser = GetTokenParser();
-        string caseString = caseFlag == Space ? string.Empty : $"{caseFlag}";
+        string caseString = caseFlag == Space ? EmptyString : $"{caseFlag}";
         string tokenName = "1,Invalid Name";
         string tokenString = $"{StartDelimiter}{caseString}{text2}{tokenName}{text3}{EndDelimiter}";
         string escapedTokenString = $"{EscapedStartDelimiter}{caseString}{text2}{tokenName}{text3}{EscapedEndDelimiter}";
@@ -632,7 +632,7 @@ public class TokenParserTests
         InitializeMocks();
         SetupDelimiterServiceMock();
         TokenParser tokenParser = GetTokenParser();
-        string caseString = caseFlag == Space ? string.Empty : $"{caseFlag}";
+        string caseString = caseFlag == Space ? EmptyString : $"{caseFlag}";
         string tokenString = $"{StartDelimiter}{caseString}{text2}{text3}{EndDelimiter}";
         string escapedTokenString = $"{EscapedStartDelimiter}{caseString}{text2}{text3}{EscapedEndDelimiter}";
         string originalText = $"{text1}{tokenString}{text4}";
@@ -666,7 +666,7 @@ public class TokenParserTests
         InitializeMocks();
         SetupDelimiterServiceMock();
         TokenParser tokenParser = GetTokenParser();
-        string caseString = caseFlag == Space ? string.Empty : $"{caseFlag}";
+        string caseString = caseFlag == Space ? EmptyString : $"{caseFlag}";
         char expectedCase = caseFlag == Space ? SameCaseFlag : caseFlag;
         string tokenName = "Token1";
         string tokenString = $"{StartDelimiter}{caseString}{text2}{tokenName}{text3}{EndDelimiter}";

@@ -88,11 +88,11 @@ internal class OptionParser : DependencyCheckerBase, IOptionParser
             return option;
         }
 
-        option.Name = optionString[..optionIndex].ToUpperInvariant();
+        string optionName = optionString[..optionIndex].ToUpperInvariant();
 
-        if (!validator(option.Name))
+        if (!validator(optionName))
         {
-            string message = GetMessage(MsgUnknownSegmentOptionFound,
+            string message = GetMessage(MsgUnknownHeaderOptionFound,
                                         identifierString,
                                         optionString);
             Logger.Log(LogSeverity.Error, message);
@@ -105,11 +105,12 @@ internal class OptionParser : DependencyCheckerBase, IOptionParser
         {
             string message = GetMessage(MsgOptionValueMustFollowEqualsSign,
                                         identifierString,
-                                        option.Name);
+                                        optionName);
             Logger.Log(LogSeverity.Error, message);
             return option;
         }
 
+        option.Name = optionName;
         option.Value = optionString[optionIndex..];
 
         return option;

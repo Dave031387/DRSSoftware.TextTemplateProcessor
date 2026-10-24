@@ -31,7 +31,7 @@ public class ConsoleLoggerTests
             .Should()
             .ThrowExactly<ArgumentNullException>()
             .WithMessage(expected);
-        MocksVerifyNoOtherCalls();
+        VerifyMocks();
     }
 
     [Fact]
@@ -50,7 +50,7 @@ public class ConsoleLoggerTests
             .Should()
             .ThrowExactly<ArgumentNullException>()
             .WithMessage(expected);
-        MocksVerifyNoOtherCalls();
+        VerifyMocks();
     }
 
     [Fact]
@@ -69,7 +69,7 @@ public class ConsoleLoggerTests
         consoleLogger.CurrentOperationType
             .Should()
             .Be(DefaultOperationType);
-        MocksVerifyNoOtherCalls();
+        VerifyMocks();
     }
 
     [Fact]

@@ -31,7 +31,7 @@ public class IndentProcessorTests
             .Should()
             .ThrowExactly<ArgumentNullException>()
             .WithMessage(expected);
-        MocksVerifyNoOtherCalls();
+        VerifyMocks();
     }
 
     [Fact]
@@ -50,7 +50,7 @@ public class IndentProcessorTests
             .Should()
             .ThrowExactly<ArgumentNullException>()
             .WithMessage(expected);
-        MocksVerifyNoOtherCalls();
+        VerifyMocks();
     }
 
     [Fact]
@@ -72,7 +72,7 @@ public class IndentProcessorTests
         indentProcessor.TabSize
             .Should()
             .Be(DefaultTabSize);
-        MocksVerifyNoOtherCalls();
+        VerifyMocks();
     }
 
     // Case 01 / firstTimeOffset = 0 / isRelative = true / indent < 0 / calculated value < 0 /
@@ -896,7 +896,7 @@ public class IndentProcessorTests
         actual
             .Should()
             .Be(expected);
-        MocksVerifyNoOtherCalls();
+        VerifyMocks();
     }
 
     [Theory]
@@ -983,7 +983,7 @@ public class IndentProcessorTests
         actual
             .Should()
             .Be(expected);
-        MocksVerifyNoOtherCalls();
+        VerifyMocks();
     }
 
     [Fact]
@@ -1005,7 +1005,7 @@ public class IndentProcessorTests
         indentProcessor.TabSize
             .Should()
             .Be(DefaultTabSize);
-        MocksVerifyNoOtherCalls();
+        VerifyMocks();
     }
 
     [Fact]
@@ -1030,7 +1030,7 @@ public class IndentProcessorTests
         indentProcessor.CurrentIndent
             .Should()
             .Be(expectedCurrentIndent);
-        MocksVerifyNoOtherCalls();
+        VerifyMocks();
     }
 
     [Fact]
@@ -1060,7 +1060,7 @@ public class IndentProcessorTests
         indentProcessor.CurrentIndent
             .Should()
             .Be(expectedCurrentIndent);
-        MocksVerifyNoOtherCalls();
+        VerifyMocks();
     }
 
     [Theory]
@@ -1136,7 +1136,7 @@ public class IndentProcessorTests
         indentProcessor.TabSize
             .Should()
             .Be(expectedTabSize);
-        MocksVerifyNoOtherCalls();
+        VerifyMocks();
     }
 
     private static void SetCurrentIndent(IndentProcessor indentProcessor, int indent)
