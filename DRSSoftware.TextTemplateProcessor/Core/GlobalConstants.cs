@@ -31,6 +31,11 @@ internal static class GlobalConstants
     public const string AnyLetter = "[a-z]";
 
     /// <summary>
+    /// An integer value equal to the length of the control code field of the text template file. Therefore, the first file header option will be the second argument.
+    /// </summary>
+    public const int ControlCodeLength = 3;
+
+    /// <summary>
     /// The string that is used to indicate the start of a comment line in a text template file.
     /// </summary>
     public const string CommentCode = "///";

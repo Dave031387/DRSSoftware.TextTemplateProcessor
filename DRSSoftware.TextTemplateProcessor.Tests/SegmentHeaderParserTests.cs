@@ -421,7 +421,7 @@ public class SegmentHeaderParserTests
             .Setup(x => x.IsValidIndentValue(stringValue1, out firstValue))
             .Returns(true)
             .Verifiable(Times.Once);
-        string expectedMessage = GetMessage(MsgFoundDuplicateOptionNameOnHeaderLine,
+        string expectedMessage = GetMessage(MsgFoundDuplicateSegmentHeaderOption,
                                             segmentName,
                                             FirstTimeIndentOption);
         LoggerMock
@@ -459,7 +459,7 @@ public class SegmentHeaderParserTests
         SetupControlItemBuilderMock(expected);
         SetupOptionParserMock(segmentName, PadSegmentNameOption, firstValue, true);
         SetupOptionParserMock(segmentName, PadSegmentNameOption, secondValue, true);
-        string expectedMessage = GetMessage(MsgFoundDuplicateOptionNameOnHeaderLine,
+        string expectedMessage = GetMessage(MsgFoundDuplicateSegmentHeaderOption,
                                             segmentName,
                                             PadSegmentNameOption);
         LoggerMock
@@ -503,7 +503,7 @@ public class SegmentHeaderParserTests
             .Setup(x => x.IsValidTabSizeValue(stringValue1, out firstValue))
             .Returns(true)
             .Verifiable(Times.Once);
-        string expectedMessage = GetMessage(MsgFoundDuplicateOptionNameOnHeaderLine,
+        string expectedMessage = GetMessage(MsgFoundDuplicateSegmentHeaderOption,
                                             segmentName,
                                             TabSizeOption);
         LoggerMock
@@ -545,7 +545,7 @@ public class SegmentHeaderParserTests
             .Setup(x => x.IsValidTabSizeValue(stringValue, out intValue))
             .Returns(false)
             .Verifiable(Times.Once);
-        string expectedMessage = GetMessage(MsgInvalidTabSizeOption,
+        string expectedMessage = GetMessage(MsgInvalidSegmentHeaderTabSizeOption,
                                             segmentName,
                                             stringValue);
         LoggerMock
