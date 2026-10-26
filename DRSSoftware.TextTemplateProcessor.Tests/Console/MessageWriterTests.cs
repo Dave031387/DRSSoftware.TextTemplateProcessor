@@ -1,18 +1,12 @@
 ﻿namespace DRSSoftware.TextTemplateProcessor.Console;
 
 [ExcludeFromCodeCoverage]
-public class MessageWriterTests
+public class MessageWriterTests : MoqUnitTestBase
 {
-    private Mock<IConsoleWriter> ConsoleWriterMock
-    {
-        get;
-    } = new(MockBehavior.Strict);
-
     [Fact]
     public void CreateMessageWriterWithNullDependency_ShouldThrowException()
     {
         // Arrange
-        InitializeMocks();
         IConsoleWriter consoleWriter = null!;
         string expected = GetNullDependencyMessage(nameof(MessageWriter), nameof(IConsoleWriter), nameof(consoleWriter));
 
@@ -24,15 +18,11 @@ public class MessageWriterTests
             .Should()
             .ThrowExactly<ArgumentNullException>()
             .WithMessage(expected);
-        VerifyMocks();
     }
 
     [Fact]
     public void CreateMessageWriterWithValidDependency_ShouldSucceed()
     {
-        // Arrange
-        InitializeMocks();
-
         // Act
         MessageWriter messageWriter = GetMessageWriter();
 
@@ -40,7 +30,6 @@ public class MessageWriterTests
         messageWriter
             .Should()
             .NotBeNull();
-        VerifyMocks();
     }
 
     [Theory]
@@ -52,9 +41,8 @@ public class MessageWriterTests
     public void WriteLineWithFormatItems_ShouldWriteFormattedMessageToConsole(string message, params string[] args)
     {
         // Arrange
-        InitializeMocks();
         string expected = "This is a test message.";
-        ConsoleWriterMock
+        GetMock<IConsoleWriter>()
             .Setup(x => x.WriteLine(expected))
             .Verifiable(Times.Once);
         MessageWriter messageWriter = GetMessageWriter();
@@ -70,9 +58,8 @@ public class MessageWriterTests
     public void WriteLineWithNoFormatItems_ShouldWriteMessageToConsole()
     {
         // Arrange
-        InitializeMocks();
         string message = "This is a test message.";
-        ConsoleWriterMock
+        GetMock<IConsoleWriter>()
             .Setup(x => x.WriteLine(message))
             .Verifiable(Times.Once);
         MessageWriter messageWriter = GetMessageWriter();
@@ -85,21 +72,5 @@ public class MessageWriterTests
     }
 
     private MessageWriter GetMessageWriter()
-        => new(ConsoleWriterMock.Object);
-
-    private void InitializeMocks()
-        => ConsoleWriterMock.Reset();
-
-    private void MocksVerifyNoOtherCalls()
-        => ConsoleWriterMock.VerifyNoOtherCalls();
-
-    private void VerifyMocks()
-    {
-        if (ConsoleWriterMock.Setups.Any())
-        {
-            ConsoleWriterMock.Verify();
-        }
-
-        MocksVerifyNoOtherCalls();
-    }
+        => new(GetMock<IConsoleWriter>().Object);
 }

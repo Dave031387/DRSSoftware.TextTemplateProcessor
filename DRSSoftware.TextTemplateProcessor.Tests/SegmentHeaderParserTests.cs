@@ -1,110 +1,79 @@
 ﻿namespace DRSSoftware.TextTemplateProcessor;
 
 [ExcludeFromCodeCoverage]
-public class SegmentHeaderParserTests
+public class SegmentHeaderParserTests : MoqUnitTestBase
 {
-    private Mock<IControlItemBuilder> ControlItemBuilderMock
-    {
-        get;
-    } = new(MockBehavior.Strict);
-
-    private Mock<IIndentProcessor> IndentProcessorMock
-    {
-        get;
-    } = new(MockBehavior.Strict);
-
-    private Mock<ILogger> LoggerMock
-    {
-        get;
-    } = new(MockBehavior.Strict);
-
-    private Mock<IOptionParser> OptionParserMock
-    {
-        get;
-    } = new(MockBehavior.Strict);
-
     [Fact]
     public void CreateSegmentHeaderParserWithNullControlItemBuilder_ShouldThrowException()
     {
         // Arrange
-        InitializeMocks();
         IControlItemBuilder controlItemBuilder = null!;
         string expected = GetNullDependencyMessage(nameof(SegmentHeaderParser), nameof(IControlItemBuilder), nameof(controlItemBuilder));
 
         // Act
-        Action action = () => _ = new SegmentHeaderParser(controlItemBuilder, IndentProcessorMock.Object, LoggerMock.Object, OptionParserMock.Object);
+        Action action = () => _ = new SegmentHeaderParser(controlItemBuilder, GetMock<IIndentProcessor>().Object, GetMock<ILogger>().Object, GetMock<IOptionParser>().Object);
 
         // Assert
         action
             .Should()
             .Throw<ArgumentNullException>()
             .WithMessage(expected);
-        VerifyMocks();
     }
 
     [Fact]
     public void CreateSegmentHeaderParserWithNullIndentProcessor_ShouldThrowException()
     {
         // Arrange
-        InitializeMocks();
         IIndentProcessor indentProcessor = null!;
         string expected = GetNullDependencyMessage(nameof(SegmentHeaderParser), nameof(IIndentProcessor), nameof(indentProcessor));
 
         // Act
-        Action action = () => _ = new SegmentHeaderParser(ControlItemBuilderMock.Object, indentProcessor, LoggerMock.Object, OptionParserMock.Object);
+        Action action = () => _ = new SegmentHeaderParser(GetMock<IControlItemBuilder>().Object, indentProcessor, GetMock<ILogger>().Object, GetMock<IOptionParser>().Object);
 
         // Assert
         action
             .Should()
             .Throw<ArgumentNullException>()
             .WithMessage(expected);
-        VerifyMocks();
     }
 
     [Fact]
     public void CreateSegmentHeaderParserWithNullLogger_ShouldThrowException()
     {
         // Arrange
-        InitializeMocks();
         ILogger logger = null!;
         string expected = GetNullDependencyMessage(nameof(SegmentHeaderParser), nameof(ILogger), nameof(logger));
 
         // Act
-        Action action = () => _ = new SegmentHeaderParser(ControlItemBuilderMock.Object, IndentProcessorMock.Object, logger, OptionParserMock.Object);
+        Action action = () => _ = new SegmentHeaderParser(GetMock<IControlItemBuilder>().Object, GetMock<IIndentProcessor>().Object, logger, GetMock<IOptionParser>().Object);
 
         // Assert
         action
             .Should()
             .Throw<ArgumentNullException>()
             .WithMessage(expected);
-        VerifyMocks();
     }
 
     [Fact]
     public void CreateSegmentHeaderParserWithNullOptionParser_ShouldThrowException()
     {
         // Arrange
-        InitializeMocks();
         IOptionParser optionParser = null!;
         string expected = GetNullDependencyMessage(nameof(SegmentHeaderParser), nameof(IOptionParser), nameof(optionParser));
 
         // Act
-        Action action = () => _ = new SegmentHeaderParser(ControlItemBuilderMock.Object, IndentProcessorMock.Object, LoggerMock.Object, optionParser!);
+        Action action = () => _ = new SegmentHeaderParser(GetMock<IControlItemBuilder>().Object, GetMock<IIndentProcessor>().Object, GetMock<ILogger>().Object, optionParser);
 
         // Assert
         action
             .Should()
             .Throw<ArgumentNullException>()
             .WithMessage(expected);
-        VerifyMocks();
     }
 
     [Fact]
     public void CreateSegmentHeaderParserWithValidDependencies_ShouldCreateInstance()
     {
-        // Arrange
-        InitializeMocks();
-
         // Act
         SegmentHeaderParser parser = GetSegmentHeaderParser();
 
@@ -112,14 +81,12 @@ public class SegmentHeaderParserTests
         parser
             .Should()
             .NotBeNull();
-        VerifyMocks();
     }
 
     [Fact]
     public void ParseSegmentHeaderWhenMultipleOptionsArePresent_ShouldParseAllOptions()
     {
         // Arrange
-        InitializeMocks();
         string segmentName = "ABC123";
         int intValue = 2;
         string stringValue = intValue.ToString();
@@ -136,7 +103,7 @@ public class SegmentHeaderParserTests
         SetupControlItemBuilderMock(expected);
         SetupOptionParserMock(segmentName, FirstTimeIndentOption, stringValue, true);
         SetupOptionParserMock(segmentName, PadSegmentNameOption, padSegment, true);
-        IndentProcessorMock
+        GetMock<IIndentProcessor>()
             .Setup(x => x.IsValidIndentValue(stringValue, out intValue))
             .Returns(true)
             .Verifiable(Times.Once);
@@ -156,7 +123,6 @@ public class SegmentHeaderParserTests
     public void ParseSegmentHeaderWhenSegmentNameIsInvalid_ShouldLogError()
     {
         // Arrange
-        InitializeMocks();
         string invalidSegmentName = "123ABC";
         string segmentHeaderLine = $"{SegmentHeaderCode} {invalidSegmentName}";
         ControlItem expected = new()
@@ -170,7 +136,7 @@ public class SegmentHeaderParserTests
         SetupControlItemBuilderMock(expected);
         string expectedMessage = string.Format(MsgInvalidSegmentName,
                                                invalidSegmentName);
-        LoggerMock
+        GetMock<ILogger>()
             .Setup(x => x.Log(LogSeverity.Error, expectedMessage))
             .Verifiable(Times.Once);
         SegmentHeaderParser parser = GetSegmentHeaderParser();
@@ -191,7 +157,6 @@ public class SegmentHeaderParserTests
     public void ParseSegmentHeaderWhenSegmentNameIsMissing_ShouldLogError(string segmentHeaderLine)
     {
         // Arrange
-        InitializeMocks();
         ControlItem expected = new()
         {
             FirstTimeIndent = 0,
@@ -202,7 +167,7 @@ public class SegmentHeaderParserTests
         };
         SetupControlItemBuilderMock(expected);
         string expectedMessage = GetMessage(MsgSegmentNameIsMissing);
-        LoggerMock
+        GetMock<ILogger>()
             .Setup(x => x.Log(LogSeverity.Error, expectedMessage))
             .Verifiable(Times.Once);
         SegmentHeaderParser parser = GetSegmentHeaderParser();
@@ -221,7 +186,6 @@ public class SegmentHeaderParserTests
     public void ParseSegmentHeaderWhenSegmentNameIsValid_ShouldNotLogError()
     {
         // Arrange
-        InitializeMocks();
         string segmentName = "ABC123";
         string segmentHeaderLine = $"{SegmentHeaderCode} {segmentName}";
         ControlItem expected = new()
@@ -251,7 +215,6 @@ public class SegmentHeaderParserTests
     public void ParseSegmentHeaderWithFirstTimeIndentOptionOutOfRange_ShouldLogError(int intValue)
     {
         // Arrange
-        InitializeMocks();
         string segmentName = "ABC123";
         string stringValue = intValue.ToString();
         string segmentHeaderLine = $"{SegmentHeaderCode} {segmentName} {FirstTimeIndentOption}={stringValue}";
@@ -265,14 +228,14 @@ public class SegmentHeaderParserTests
         };
         SetupControlItemBuilderMock(expected);
         SetupOptionParserMock(segmentName, FirstTimeIndentOption, stringValue, true);
-        IndentProcessorMock
+        GetMock<IIndentProcessor>()
             .Setup(x => x.IsValidIndentValue(stringValue, out intValue))
             .Returns(false)
             .Verifiable(Times.Once);
         string expectedMessage = GetMessage(MsgFirstTimeIndentIsInvalid,
                                             segmentName,
                                             stringValue);
-        LoggerMock
+        GetMock<ILogger>()
             .Setup(x => x.Log(LogSeverity.Error, expectedMessage))
             .Verifiable(Times.Once);
         SegmentHeaderParser parser = GetSegmentHeaderParser();
@@ -291,7 +254,6 @@ public class SegmentHeaderParserTests
     public void ParseSegmentHeaderWithFirstTimeIndentOptionSetToZero_ShouldLogWarning()
     {
         // Arrange
-        InitializeMocks();
         string segmentName = "ABC123";
         int intValue = 0;
         string stringValue = intValue.ToString();
@@ -307,13 +269,13 @@ public class SegmentHeaderParserTests
         SetupControlItemBuilderMock(expected);
         SetupOptionParserMock(segmentName, FirstTimeIndentOption, stringValue, true);
 
-        IndentProcessorMock
+        GetMock<IIndentProcessor>()
             .Setup(x => x.IsValidIndentValue(stringValue, out intValue))
             .Returns(true)
             .Verifiable(Times.Once);
         string expectedMessage = GetMessage(MsgFirstTimeIndentSetToZero,
                                             segmentName);
-        LoggerMock
+        GetMock<ILogger>()
             .Setup(x => x.Log(LogSeverity.Warning, expectedMessage))
             .Verifiable(Times.Once);
         SegmentHeaderParser parser = GetSegmentHeaderParser();
@@ -332,7 +294,6 @@ public class SegmentHeaderParserTests
     public void ParseSegmentHeaderWithInvalidOption_ShouldIgnoreOption()
     {
         // Arrange
-        InitializeMocks();
         string segmentName = "ABC123";
         string optionName = "INVALID";
         string optionValue = "value";
@@ -363,7 +324,6 @@ public class SegmentHeaderParserTests
     public void ParseSegmentHeaderWithInvalidPadSegmentOptionValue_ShouldLogError()
     {
         // Arrange
-        InitializeMocks();
         string segmentName = "ABC123";
         string invalidPadSegmentName = "_wrong";
         string segmentHeaderLine = $"{SegmentHeaderCode} {segmentName} {PadSegmentNameOption}={invalidPadSegmentName}";
@@ -380,7 +340,7 @@ public class SegmentHeaderParserTests
         string expectedMessage = GetMessage(MsgInvalidPadSegmentName,
                                             segmentName,
                                             invalidPadSegmentName);
-        LoggerMock
+        GetMock<ILogger>()
             .Setup(x => x.Log(LogSeverity.Error, expectedMessage))
             .Verifiable(Times.Once);
         SegmentHeaderParser parser = GetSegmentHeaderParser();
@@ -399,7 +359,6 @@ public class SegmentHeaderParserTests
     public void ParseSegmentHeaderWithMultipleFirstTimeIndentOptions_ShouldSaveFirstValueAndLogWarning()
     {
         // Arrange
-        InitializeMocks();
         string segmentName = "ABC123";
         int firstValue = MinIndentValue;
         string stringValue1 = firstValue.ToString();
@@ -417,14 +376,14 @@ public class SegmentHeaderParserTests
         SetupControlItemBuilderMock(expected);
         SetupOptionParserMock(segmentName, FirstTimeIndentOption, stringValue1, true);
         SetupOptionParserMock(segmentName, FirstTimeIndentOption, stringValue2, true);
-        IndentProcessorMock
+        GetMock<IIndentProcessor>()
             .Setup(x => x.IsValidIndentValue(stringValue1, out firstValue))
             .Returns(true)
             .Verifiable(Times.Once);
         string expectedMessage = GetMessage(MsgFoundDuplicateSegmentHeaderOption,
                                             segmentName,
                                             FirstTimeIndentOption);
-        LoggerMock
+        GetMock<ILogger>()
             .Setup(x => x.Log(LogSeverity.Warning, expectedMessage))
             .Verifiable(Times.Once);
         SegmentHeaderParser parser = GetSegmentHeaderParser();
@@ -443,7 +402,6 @@ public class SegmentHeaderParserTests
     public void ParseSegmentHeaderWithMultiplePadOptions_ShouldSaveFirstValueAndLogWarning()
     {
         // Arrange
-        InitializeMocks();
         string segmentName = "ABC123";
         string firstValue = "PadSegment1";
         string secondValue = "PadSegment2";
@@ -462,7 +420,7 @@ public class SegmentHeaderParserTests
         string expectedMessage = GetMessage(MsgFoundDuplicateSegmentHeaderOption,
                                             segmentName,
                                             PadSegmentNameOption);
-        LoggerMock
+        GetMock<ILogger>()
             .Setup(x => x.Log(LogSeverity.Warning, expectedMessage))
             .Verifiable(Times.Once);
         SegmentHeaderParser parser = GetSegmentHeaderParser();
@@ -481,7 +439,6 @@ public class SegmentHeaderParserTests
     public void ParseSegmentHeaderWithMultipleTabOptions_ShouldSaveFirstValueAndLogWarning()
     {
         // Arrange
-        InitializeMocks();
         string segmentName = "ABC123";
         int firstValue = MinTabSize;
         string stringValue1 = firstValue.ToString();
@@ -499,14 +456,14 @@ public class SegmentHeaderParserTests
         SetupControlItemBuilderMock(expected);
         SetupOptionParserMock(segmentName, TabSizeOption, stringValue1, true);
         SetupOptionParserMock(segmentName, TabSizeOption, stringValue2, true);
-        IndentProcessorMock
+        GetMock<IIndentProcessor>()
             .Setup(x => x.IsValidTabSizeValue(stringValue1, out firstValue))
             .Returns(true)
             .Verifiable(Times.Once);
         string expectedMessage = GetMessage(MsgFoundDuplicateSegmentHeaderOption,
                                             segmentName,
                                             TabSizeOption);
-        LoggerMock
+        GetMock<ILogger>()
             .Setup(x => x.Log(LogSeverity.Warning, expectedMessage))
             .Verifiable(Times.Once);
         SegmentHeaderParser parser = GetSegmentHeaderParser();
@@ -527,7 +484,6 @@ public class SegmentHeaderParserTests
     public void ParseSegmentHeaderWithTabSizeOptionOutOfRange_ShouldLogError(int intValue)
     {
         // Arrange
-        InitializeMocks();
         string segmentName = "ABC123";
         string stringValue = intValue.ToString();
         string segmentHeaderLine = $"{SegmentHeaderCode} {segmentName} {TabSizeOption}={stringValue}";
@@ -541,14 +497,14 @@ public class SegmentHeaderParserTests
         };
         SetupControlItemBuilderMock(expected);
         SetupOptionParserMock(segmentName, TabSizeOption, stringValue, true);
-        IndentProcessorMock
+        GetMock<IIndentProcessor>()
             .Setup(x => x.IsValidTabSizeValue(stringValue, out intValue))
             .Returns(false)
             .Verifiable(Times.Once);
         string expectedMessage = GetMessage(MsgInvalidSegmentHeaderTabSizeOption,
                                             segmentName,
                                             stringValue);
-        LoggerMock
+        GetMock<ILogger>()
             .Setup(x => x.Log(LogSeverity.Error, expectedMessage))
             .Verifiable(Times.Once);
         SegmentHeaderParser parser = GetSegmentHeaderParser();
@@ -569,7 +525,6 @@ public class SegmentHeaderParserTests
     public void ParseSegmentHeaderWithValidFirstTimeIndentOption_ShouldNotLogError(int intValue)
     {
         // Arrange
-        InitializeMocks();
         string segmentName = "ABC123";
         string stringValue = intValue.ToString();
         string segmentHeaderLine = $"{SegmentHeaderCode} {segmentName} {FirstTimeIndentOption}={stringValue}";
@@ -583,7 +538,7 @@ public class SegmentHeaderParserTests
         };
         SetupControlItemBuilderMock(expected);
         SetupOptionParserMock(segmentName, FirstTimeIndentOption, stringValue, true);
-        IndentProcessorMock
+        GetMock<IIndentProcessor>()
             .Setup(x => x.IsValidIndentValue(stringValue, out intValue))
             .Returns(true)
             .Verifiable(Times.Once);
@@ -603,7 +558,6 @@ public class SegmentHeaderParserTests
     public void ParseSegmentHeaderWithValidPadSegmentOptionValue_ShouldNotLogError()
     {
         // Arrange
-        InitializeMocks();
         string segmentName = "ABC123";
         string validPadSegmentName = "valid_pad_segment";
         string segmentHeaderLine = $"{SegmentHeaderCode} {segmentName} {PadSegmentNameOption}={validPadSegmentName}";
@@ -635,7 +589,6 @@ public class SegmentHeaderParserTests
     public void ParseSegmentHeaderWithValidTabSizeOption_ShouldNotLogError(int intValue)
     {
         // Arrange
-        InitializeMocks();
         string segmentName = "ABC123";
         string stringValue = intValue.ToString();
         string segmentHeaderLine = $"{SegmentHeaderCode} {segmentName} {TabSizeOption}={stringValue}";
@@ -649,7 +602,7 @@ public class SegmentHeaderParserTests
         };
         SetupControlItemBuilderMock(expected);
         SetupOptionParserMock(segmentName, TabSizeOption, stringValue, true);
-        IndentProcessorMock
+        GetMock<IIndentProcessor>()
             .Setup(x => x.IsValidTabSizeValue(stringValue, out intValue))
             .Returns(true)
             .Verifiable(Times.Once);
@@ -666,56 +619,44 @@ public class SegmentHeaderParserTests
     }
 
     private SegmentHeaderParser GetSegmentHeaderParser()
-        => new(ControlItemBuilderMock.Object, IndentProcessorMock.Object, LoggerMock.Object, OptionParserMock.Object);
-
-    private void InitializeMocks()
-    {
-        ControlItemBuilderMock.Reset();
-        IndentProcessorMock.Reset();
-        LoggerMock.Reset();
-        OptionParserMock.Reset();
-    }
-
-    private void MocksVerifyNoOtherCalls()
-    {
-        ControlItemBuilderMock.VerifyNoOtherCalls();
-        IndentProcessorMock.VerifyNoOtherCalls();
-        LoggerMock.VerifyNoOtherCalls();
-        OptionParserMock.VerifyNoOtherCalls();
-    }
+        => new(GetMock<IControlItemBuilder>().Object,
+               GetMock<IIndentProcessor>().Object,
+               GetMock<ILogger>().Object,
+               GetMock<IOptionParser>().Object);
 
     private void SetupControlItemBuilderMock(ControlItem controlItem)
     {
-        ControlItemBuilderMock
+        Mock<IControlItemBuilder> controlItemBuilderMock = GetMock<IControlItemBuilder>();
+        controlItemBuilderMock
             .Setup(static x => x.Initialize())
             .Verifiable(Times.Once);
 
-        ControlItemBuilderMock
+        controlItemBuilderMock
             .Setup(static x => x.Build())
             .Returns(controlItem)
             .Verifiable(Times.Once);
 
-        ControlItemBuilderMock
+        controlItemBuilderMock
             .SetupSet(x => x.SegmentName = controlItem.SegmentName)
             .Verifiable(Times.Once);
 
         if (controlItem.FirstTimeIndent is not 0)
         {
-            ControlItemBuilderMock
+            controlItemBuilderMock
                 .SetupSet(x => x.FirstTimeIndent = controlItem.FirstTimeIndent)
                 .Verifiable(Times.Once);
         }
 
         if (controlItem.TabSize is not 0)
         {
-            ControlItemBuilderMock
+            controlItemBuilderMock
                 .SetupSet(x => x.TabSize = controlItem.TabSize)
                 .Verifiable(Times.Once);
         }
 
         if (!string.IsNullOrEmpty(controlItem.PadSegment))
         {
-            ControlItemBuilderMock
+            controlItemBuilderMock
                 .SetupSet(x => x.PadSegment = controlItem.PadSegment)
                 .Verifiable(Times.Once);
         }
@@ -737,34 +678,9 @@ public class SegmentHeaderParserTests
             expected.Value = EmptyString;
         }
 
-        OptionParserMock
+        GetMock<IOptionParser>()
             .Setup(x => x.Parse(optionString, IsValidSegmentHeaderOption, SegmentHeaderOptionGroup, segmentName))
             .Returns(expected)
             .Verifiable(Times.Once);
-    }
-
-    private void VerifyMocks()
-    {
-        if (ControlItemBuilderMock.Setups.Any())
-        {
-            ControlItemBuilderMock.VerifyAll();
-        }
-
-        if (IndentProcessorMock.Setups.Any())
-        {
-            IndentProcessorMock.VerifyAll();
-        }
-
-        if (LoggerMock.Setups.Any())
-        {
-            LoggerMock.VerifyAll();
-        }
-
-        if (OptionParserMock.Setups.Any())
-        {
-            OptionParserMock.VerifyAll();
-        }
-
-        MocksVerifyNoOtherCalls();
     }
 }

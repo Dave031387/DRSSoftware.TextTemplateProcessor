@@ -1,7 +1,7 @@
 ﻿namespace DRSSoftware.TextTemplateProcessor;
 
 [ExcludeFromCodeCoverage]
-public class TokenParserTests
+public class TokenParserTests : MoqUnitTestBase
 {
     // NOTE: The unit tests for the GetNextToken method have names that start with
     // "GetNextToken_Case" followed by a 1 to 3-digit number. The digits are the numbers 1 through
@@ -9,67 +9,47 @@ public class TokenParserTests
     // token end delimiter, and 4 is an escaped token end delimiter. The order of the numbers
     // indicates the order that the delimiters are found in the template text string.
     private const string EndDelimiter = DefaultTokenEndDelimiter;
-
     private const string EscapedEndDelimiter = DefaultDelimiterEscapeString + DefaultTokenEndDelimiter;
-
     private const string EscapedStartDelimiter = DefaultDelimiterEscapeString + DefaultTokenStartDelimiter;
-
     private const string StartDelimiter = DefaultTokenStartDelimiter;
-
-    private Mock<IDelimiterService> DelimiterServiceMock
-    {
-        get;
-    } = new(MockBehavior.Strict);
-
-    private Mock<ILogger> LoggerMock
-    {
-        get;
-    } = new(MockBehavior.Strict);
 
     [Fact]
     public void CreateTokenParserWithNullDelimiterService_ShouldThrowException()
     {
         // Arrange
-        InitializeMocks();
         IDelimiterService? delimiterService = null;
         string expected = GetNullDependencyMessage(nameof(TokenParser), nameof(IDelimiterService), nameof(delimiterService));
 
         // Act
-        Action action = () => _ = new TokenParser(LoggerMock.Object, delimiterService!);
+        Action action = () => _ = new TokenParser(GetMock<ILogger>().Object, delimiterService!);
 
         // Assert
         action
             .Should()
             .Throw<ArgumentNullException>()
             .WithMessage(expected);
-        VerifyMocks();
     }
 
     [Fact]
     public void CreateTokenParserWithNullLogger_ShouldThrowException()
     {
         // Arrange
-        InitializeMocks();
         ILogger? logger = null;
         string expected = GetNullDependencyMessage(nameof(TokenParser), nameof(ILogger), nameof(logger));
 
         // Act
-        Action action = () => _ = new TokenParser(logger!, DelimiterServiceMock.Object);
+        Action action = () => _ = new TokenParser(logger!, GetMock<IDelimiterService>().Object);
 
         // Assert
         action
             .Should()
             .Throw<ArgumentNullException>()
             .WithMessage(expected);
-        VerifyMocks();
     }
 
     [Fact]
     public void CreateTokenParserWithValidDependencies_ShouldInitializeStateCorrectly()
     {
-        // Arrange
-        InitializeMocks();
-
         // Act
         TokenParser actual = GetTokenParser();
 
@@ -82,14 +62,12 @@ public class TokenParserTests
             .NotBeNull()
             .And
             .BeEmpty();
-        VerifyMocks();
     }
 
     [Fact]
     public void EscapeLastFoundTokenWhenNoTokenFound_ShouldDoNothing()
     {
         // Arrange
-        InitializeMocks();
         SetupDelimiterServiceMock(DefaultTokenStartDelimiter, DefaultTokenEndDelimiter, Space);
         TokenParser tokenParser = GetTokenParser();
         string expected = "text with no token strings";
@@ -110,7 +88,6 @@ public class TokenParserTests
     public void EscapeLastFoundTokenWhenTokenWasFound_ShouldEscapeTheToken()
     {
         // Arrange
-        InitializeMocks();
         SetupDelimiterServiceMock();
         TokenParser tokenParser = GetTokenParser();
         string prefixText = $"text before the token {StartDelimiter} FirstToken {EndDelimiter} ";
@@ -139,7 +116,6 @@ public class TokenParserTests
     public void GetNextToken_Case0_ShouldReturnEmptyTokenInfoAndUnchangedText()
     {
         // Arrange
-        InitializeMocks();
         SetupDelimiterServiceMock(DefaultTokenStartDelimiter, DefaultTokenEndDelimiter, Space);
         TokenParser tokenParser = GetTokenParser();
         string expected = "string with no delimiters";
@@ -165,13 +141,12 @@ public class TokenParserTests
     public void GetNextToken_Case1_ShouldEscapeStartDelimiter(string text1, string text2)
     {
         // Arrange
-        InitializeMocks();
         SetupDelimiterServiceMock();
         TokenParser tokenParser = GetTokenParser();
         string originalText = $"{text1}{StartDelimiter}{text2}";
         string expected = $"{text1}{EscapedStartDelimiter}{text2}";
         string message = GetMessage(MsgTokenStartDelimiterWillBeEscaped);
-        LoggerMock
+        GetMock<ILogger>()
             .Setup(x => x.Log(LogSeverity.Error, message))
             .Verifiable(Times.Once);
         tokenParser.InitializeParser(originalText, true);
@@ -196,13 +171,12 @@ public class TokenParserTests
     public void GetNextToken_Case11_ShouldEscapeAllStartDelimiters(string text1, string text2, string text3, string text4)
     {
         // Arrange
-        InitializeMocks();
         SetupDelimiterServiceMock();
         TokenParser tokenParser = GetTokenParser();
         string originalText = $"{text1}{StartDelimiter}{text2}{StartDelimiter}{text3}{StartDelimiter}{text4}";
         string expected = $"{text1}{EscapedStartDelimiter}{text2}{EscapedStartDelimiter}{text3}{EscapedStartDelimiter}{text4}";
         string message = GetMessage(MsgMissingTokenEndDelimiter);
-        LoggerMock
+        GetMock<ILogger>()
             .Setup(x => x.Log(LogSeverity.Error, message))
             .Verifiable(Times.Once);
         tokenParser.InitializeParser(originalText, true);
@@ -227,17 +201,16 @@ public class TokenParserTests
     public void GetNextToken_Case113_ShouldEscapeStartDelimitersAndEndDelimiter(string text1, string text2, string text3)
     {
         // Arrange
-        InitializeMocks();
         SetupDelimiterServiceMock();
         TokenParser tokenParser = GetTokenParser();
         string originalText = $"{text1}{StartDelimiter}{text2}{StartDelimiter}{EscapedStartDelimiter}{EndDelimiter}{text3}";
         string expected = $"{text1}{EscapedStartDelimiter}{text2}{EscapedStartDelimiter}{EscapedStartDelimiter}{EscapedEndDelimiter}{text3}";
         string message1 = GetMessage(MsgTokenStartDelimiterWillBeEscaped);
         string message2 = GetMessage(MsgMissingTokenStartDelimiter);
-        LoggerMock
+        GetMock<ILogger>()
             .Setup(x => x.Log(LogSeverity.Error, message1))
             .Verifiable(Times.Exactly(2));
-        LoggerMock
+        GetMock<ILogger>()
             .Setup(x => x.Log(LogSeverity.Error, message2))
             .Verifiable(Times.Once);
         tokenParser.InitializeParser(originalText, true);
@@ -262,13 +235,12 @@ public class TokenParserTests
     public void GetNextToken_Case114_ShouldEscapeStartDelimiters(string text1, string text2, string text3, string text4)
     {
         // Arrange
-        InitializeMocks();
         SetupDelimiterServiceMock();
         TokenParser tokenParser = GetTokenParser();
         string originalText = $"{text1}{StartDelimiter}{text2}{StartDelimiter}{text3}{EscapedEndDelimiter}{text4}";
         string expected = $"{text1}{EscapedStartDelimiter}{text2}{EscapedStartDelimiter}{text3}{EscapedEndDelimiter}{text4}";
         string message = GetMessage(MsgTokenStartDelimiterWillBeEscaped);
-        LoggerMock
+        GetMock<ILogger>()
             .Setup(x => x.Log(LogSeverity.Error, message))
             .Verifiable(Times.Exactly(2));
         tokenParser.InitializeParser(originalText, true);
@@ -293,13 +265,12 @@ public class TokenParserTests
     public void GetNextToken_Case12_ShouldEscapeAllStartDelimiters(string text1, string text2, string text3, string text4)
     {
         // Arrange
-        InitializeMocks();
         SetupDelimiterServiceMock();
         TokenParser tokenParser = GetTokenParser();
         string originalText = $"{text1}{StartDelimiter}{text2}{EscapedStartDelimiter}{text3}{StartDelimiter}{text4}";
         string expected = $"{text1}{EscapedStartDelimiter}{text2}{EscapedStartDelimiter}{text3}{EscapedStartDelimiter}{text4}";
         string message = GetMessage(MsgMissingTokenEndDelimiter);
-        LoggerMock
+        GetMock<ILogger>()
             .Setup(x => x.Log(LogSeverity.Error, message))
             .Verifiable(Times.Once);
         tokenParser.InitializeParser(originalText, true);
@@ -324,17 +295,16 @@ public class TokenParserTests
     public void GetNextToken_Case123_ShouldEscapeStartDelimiterAndEndDelimiter(string text1, string text2, string text3, string text4)
     {
         // Arrange
-        InitializeMocks();
         SetupDelimiterServiceMock();
         TokenParser tokenParser = GetTokenParser();
         string originalText = $"{text1}{StartDelimiter}{text2}{EscapedStartDelimiter}{text3}{EndDelimiter}{text4}";
         string expected = $"{text1}{EscapedStartDelimiter}{text2}{EscapedStartDelimiter}{text3}{EscapedEndDelimiter}{text4}";
         string message1 = GetMessage(MsgTokenStartDelimiterWillBeEscaped);
         string message2 = GetMessage(MsgMissingTokenStartDelimiter);
-        LoggerMock
+        GetMock<ILogger>()
             .Setup(x => x.Log(LogSeverity.Error, message1))
             .Verifiable(Times.Once);
-        LoggerMock
+        GetMock<ILogger>()
             .Setup(x => x.Log(LogSeverity.Error, message2))
             .Verifiable(Times.Once);
         tokenParser.InitializeParser(originalText, true);
@@ -359,13 +329,12 @@ public class TokenParserTests
     public void GetNextToken_Case124_ShouldEscapeStartDelimiter(string text1, string text2, string text3, string text4)
     {
         // Arrange
-        InitializeMocks();
         SetupDelimiterServiceMock();
         TokenParser tokenParser = GetTokenParser();
         string originalText = $"{text1}{StartDelimiter}{text2}{EscapedStartDelimiter}{text3}{EscapedEndDelimiter}{text4}";
         string expected = $"{text1}{EscapedStartDelimiter}{text2}{EscapedStartDelimiter}{text3}{EscapedEndDelimiter}{text4}";
         string message = GetMessage(MsgTokenStartDelimiterWillBeEscaped);
-        LoggerMock
+        GetMock<ILogger>()
             .Setup(x => x.Log(LogSeverity.Error, message))
             .Verifiable(Times.Once);
         tokenParser.InitializeParser(originalText, true);
@@ -390,7 +359,6 @@ public class TokenParserTests
     public void GetNextToken_Case131WithInvalidTokenName_ShouldEscapeTokenDelimiters(char caseFlag, string text1, string text2, string text3, string text4)
     {
         // Arrange
-        InitializeMocks();
         SetupDelimiterServiceMock();
         TokenParser tokenParser = GetTokenParser();
         string caseString = caseFlag == Space ? EmptyString : $"{caseFlag}";
@@ -401,10 +369,10 @@ public class TokenParserTests
         string expected = $"{text1}{escapedTokenString}{text4}{EscapedStartDelimiter}";
         string message1 = GetMessage(MsgTokenHasInvalidName, tokenName);
         string message2 = GetMessage(MsgTokenStartDelimiterWillBeEscaped);
-        LoggerMock
+        GetMock<ILogger>()
             .Setup(x => x.Log(LogSeverity.Error, message1))
             .Verifiable(Times.Once);
-        LoggerMock
+        GetMock<ILogger>()
             .Setup(x => x.Log(LogSeverity.Error, message2))
             .Verifiable(Times.Once);
         tokenParser.InitializeParser(originalText, true);
@@ -429,7 +397,6 @@ public class TokenParserTests
     public void GetNextToken_Case131WithMissingTokenName_ShouldEscapeTokenDelimiters(char caseFlag, string text1, string text2, string text3, string text4)
     {
         // Arrange
-        InitializeMocks();
         SetupDelimiterServiceMock();
         TokenParser tokenParser = GetTokenParser();
         string caseString = caseFlag == Space ? EmptyString : $"{caseFlag}";
@@ -439,10 +406,10 @@ public class TokenParserTests
         string expected = $"{text1}{escapedTokenString}{text4}{EscapedStartDelimiter}";
         string message1 = GetMessage(MsgMissingTokenName);
         string message2 = GetMessage(MsgTokenStartDelimiterWillBeEscaped);
-        LoggerMock
+        GetMock<ILogger>()
             .Setup(x => x.Log(LogSeverity.Error, message1))
             .Verifiable(Times.Once);
-        LoggerMock
+        GetMock<ILogger>()
             .Setup(x => x.Log(LogSeverity.Error, message2))
             .Verifiable(Times.Once);
         tokenParser.InitializeParser(originalText, true);
@@ -467,7 +434,6 @@ public class TokenParserTests
     public void GetNextToken_Case131WithValidToken_ShouldReturnValidTokenInfo(char caseFlag, string text1, string text2, string text3, string text4)
     {
         // Arrange
-        InitializeMocks();
         SetupDelimiterServiceMock();
         TokenParser tokenParser = GetTokenParser();
         string caseString = caseFlag == Space ? EmptyString : $"{caseFlag}";
@@ -496,7 +462,6 @@ public class TokenParserTests
     public void GetNextToken_Case132WithInvalidTokenName_ShouldEscapeTokenDelimiters(char caseFlag, string text1, string text2, string text3, string text4)
     {
         // Arrange
-        InitializeMocks();
         SetupDelimiterServiceMock();
         TokenParser tokenParser = GetTokenParser();
         string caseString = caseFlag == Space ? EmptyString : $"{caseFlag}";
@@ -506,7 +471,7 @@ public class TokenParserTests
         string originalText = $"{text1}{tokenString}{text4}{EscapedStartDelimiter}";
         string expected = $"{text1}{escapedTokenString}{text4}{EscapedStartDelimiter}";
         string message = GetMessage(MsgTokenHasInvalidName, tokenName);
-        LoggerMock
+        GetMock<ILogger>()
             .Setup(x => x.Log(LogSeverity.Error, message))
             .Verifiable(Times.Once);
         tokenParser.InitializeParser(originalText, true);
@@ -531,7 +496,6 @@ public class TokenParserTests
     public void GetNextToken_Case132WithMissingTokenName_ShouldEscapeTokenDelimiters(char caseFlag, string text1, string text2, string text3, string text4)
     {
         // Arrange
-        InitializeMocks();
         SetupDelimiterServiceMock();
         TokenParser tokenParser = GetTokenParser();
         string caseString = caseFlag == Space ? EmptyString : $"{caseFlag}";
@@ -540,7 +504,7 @@ public class TokenParserTests
         string originalText = $"{text1}{tokenString}{text4}{EscapedStartDelimiter}";
         string expected = $"{text1}{escapedTokenString}{text4}{EscapedStartDelimiter}";
         string message = GetMessage(MsgMissingTokenName);
-        LoggerMock
+        GetMock<ILogger>()
             .Setup(x => x.Log(LogSeverity.Error, message))
             .Verifiable(Times.Once);
         tokenParser.InitializeParser(originalText, true);
@@ -565,7 +529,6 @@ public class TokenParserTests
     public void GetNextToken_Case132WithValidToken_ShouldReturnValidTokenInfo(char caseFlag, string text1, string text2, string text3, string text4)
     {
         // Arrange
-        InitializeMocks();
         SetupDelimiterServiceMock();
         TokenParser tokenParser = GetTokenParser();
         string caseString = caseFlag == Space ? EmptyString : $"{caseFlag}";
@@ -594,7 +557,6 @@ public class TokenParserTests
     public void GetNextToken_Case13WithInvalidTokenName_ShouldEscapeTokenDelimiters(char caseFlag, string text1, string text2, string text3, string text4)
     {
         // Arrange
-        InitializeMocks();
         SetupDelimiterServiceMock();
         TokenParser tokenParser = GetTokenParser();
         string caseString = caseFlag == Space ? EmptyString : $"{caseFlag}";
@@ -604,7 +566,7 @@ public class TokenParserTests
         string originalText = $"{text1}{tokenString}{text4}";
         string expected = $"{text1}{escapedTokenString}{text4}";
         string message = GetMessage(MsgTokenHasInvalidName, tokenName);
-        LoggerMock
+        GetMock<ILogger>()
             .Setup(x => x.Log(LogSeverity.Error, message))
             .Verifiable(Times.Once);
         tokenParser.InitializeParser(originalText, true);
@@ -629,7 +591,6 @@ public class TokenParserTests
     public void GetNextToken_Case13WithMissingTokenName_ShouldEscapeTokenDelimiters(char caseFlag, string text1, string text2, string text3, string text4)
     {
         // Arrange
-        InitializeMocks();
         SetupDelimiterServiceMock();
         TokenParser tokenParser = GetTokenParser();
         string caseString = caseFlag == Space ? EmptyString : $"{caseFlag}";
@@ -638,7 +599,7 @@ public class TokenParserTests
         string originalText = $"{text1}{tokenString}{text4}";
         string expected = $"{text1}{escapedTokenString}{text4}";
         string message = GetMessage(MsgMissingTokenName);
-        LoggerMock
+        GetMock<ILogger>()
             .Setup(x => x.Log(LogSeverity.Error, message))
             .Verifiable(Times.Once);
         tokenParser.InitializeParser(originalText, true);
@@ -663,7 +624,6 @@ public class TokenParserTests
     public void GetNextToken_Case13WithValidToken_ShouldReturnValidTokenInfo(char caseFlag, string text1, string text2, string text3, string text4)
     {
         // Arrange
-        InitializeMocks();
         SetupDelimiterServiceMock();
         TokenParser tokenParser = GetTokenParser();
         string caseString = caseFlag == Space ? EmptyString : $"{caseFlag}";
@@ -693,13 +653,12 @@ public class TokenParserTests
     public void GetNextToken_Case14_ShouldEscapeStartDelimiter(string text1, string text2, string text3)
     {
         // Arrange
-        InitializeMocks();
         SetupDelimiterServiceMock();
         TokenParser tokenParser = GetTokenParser();
         string originalText = $"{text1}{StartDelimiter}{text2}{EscapedEndDelimiter}{text3}";
         string expected = $"{text1}{EscapedStartDelimiter}{text2}{EscapedEndDelimiter}{text3}";
         string message = GetMessage(MsgTokenStartDelimiterWillBeEscaped);
-        LoggerMock
+        GetMock<ILogger>()
             .Setup(x => x.Log(LogSeverity.Error, message))
             .Verifiable(Times.Once);
         tokenParser.InitializeParser(originalText, true);
@@ -724,13 +683,12 @@ public class TokenParserTests
     public void GetNextToken_Case141_ShouldEscapeStartDelimiters(string text1, string text2, string text3, string text4)
     {
         // Arrange
-        InitializeMocks();
         SetupDelimiterServiceMock();
         TokenParser tokenParser = GetTokenParser();
         string originalText = $"{text1}{StartDelimiter}{text2}{EscapedEndDelimiter}{text3}{StartDelimiter}{text4}";
         string expected = $"{text1}{EscapedStartDelimiter}{text2}{EscapedEndDelimiter}{text3}{EscapedStartDelimiter}{text4}";
         string message = GetMessage(MsgTokenStartDelimiterWillBeEscaped);
-        LoggerMock
+        GetMock<ILogger>()
             .Setup(x => x.Log(LogSeverity.Error, message))
             .Verifiable(Times.Exactly(2));
         tokenParser.InitializeParser(originalText, true);
@@ -755,13 +713,12 @@ public class TokenParserTests
     public void GetNextToken_Case142_ShouldEscapeStartDelimiter(string text1, string text2, string text3, string text4)
     {
         // Arrange
-        InitializeMocks();
         SetupDelimiterServiceMock();
         TokenParser tokenParser = GetTokenParser();
         string originalText = $"{text1}{StartDelimiter}{text2}{EscapedEndDelimiter}{text3}{EscapedStartDelimiter}{text4}";
         string expected = $"{text1}{EscapedStartDelimiter}{text2}{EscapedEndDelimiter}{text3}{EscapedStartDelimiter}{text4}";
         string message = GetMessage(MsgTokenStartDelimiterWillBeEscaped);
-        LoggerMock
+        GetMock<ILogger>()
             .Setup(x => x.Log(LogSeverity.Error, message))
             .Verifiable(Times.Once);
         tokenParser.InitializeParser(originalText, true);
@@ -786,7 +743,6 @@ public class TokenParserTests
     public void GetNextToken_Case2_ShouldReturnUnchangedText(string text1, string text2)
     {
         // Arrange
-        InitializeMocks();
         SetupDelimiterServiceMock();
         TokenParser tokenParser = GetTokenParser();
         string expected = $"{text1}{EscapedStartDelimiter}{text2}";
@@ -812,13 +768,12 @@ public class TokenParserTests
     public void GetNextToken_Case21_ShouldEscapeAllStartDelimiters(string text1, string text2, string text3, string text4)
     {
         // Arrange
-        InitializeMocks();
         SetupDelimiterServiceMock();
         TokenParser tokenParser = GetTokenParser();
         string originalText = $"{text1}{EscapedStartDelimiter}{text2}{StartDelimiter}{text3}{StartDelimiter}{text4}";
         string expected = $"{text1}{EscapedStartDelimiter}{text2}{EscapedStartDelimiter}{text3}{EscapedStartDelimiter}{text4}";
         string message = GetMessage(MsgMissingTokenEndDelimiter);
-        LoggerMock
+        GetMock<ILogger>()
             .Setup(x => x.Log(LogSeverity.Error, message))
             .Verifiable(Times.Once);
         tokenParser.InitializeParser(originalText, true);
@@ -843,17 +798,16 @@ public class TokenParserTests
     public void GetNextToken_Case213_ShouldEscapeStartDelimiterAndEndDelimiter(string text1, string text2, string text3)
     {
         // Arrange
-        InitializeMocks();
         SetupDelimiterServiceMock();
         TokenParser tokenParser = GetTokenParser();
         string originalText = $"{text1}{EscapedStartDelimiter}{text2}{StartDelimiter}{EscapedStartDelimiter}{EndDelimiter}{text3}";
         string expected = $"{text1}{EscapedStartDelimiter}{text2}{EscapedStartDelimiter}{EscapedStartDelimiter}{EscapedEndDelimiter}{text3}";
         string message1 = GetMessage(MsgTokenStartDelimiterWillBeEscaped);
         string message2 = GetMessage(MsgMissingTokenStartDelimiter);
-        LoggerMock
+        GetMock<ILogger>()
             .Setup(x => x.Log(LogSeverity.Error, message1))
             .Verifiable(Times.Once);
-        LoggerMock
+        GetMock<ILogger>()
             .Setup(x => x.Log(LogSeverity.Error, message2))
             .Verifiable(Times.Once);
         tokenParser.InitializeParser(originalText, true);
@@ -878,13 +832,12 @@ public class TokenParserTests
     public void GetNextToken_Case214_ShouldEscapeStartDelimiter(string text1, string text2, string text3)
     {
         // Arrange
-        InitializeMocks();
         SetupDelimiterServiceMock();
         TokenParser tokenParser = GetTokenParser();
         string originalText = $"{text1}{EscapedStartDelimiter}{text2}{StartDelimiter}{text3}{EscapedEndDelimiter}";
         string expected = $"{text1}{EscapedStartDelimiter}{text2}{EscapedStartDelimiter}{text3}{EscapedEndDelimiter}";
         string message = GetMessage(MsgTokenStartDelimiterWillBeEscaped);
-        LoggerMock
+        GetMock<ILogger>()
             .Setup(x => x.Log(LogSeverity.Error, message))
             .Verifiable(Times.Once);
         tokenParser.InitializeParser(originalText, true);
@@ -909,7 +862,6 @@ public class TokenParserTests
     public void GetNextToken_Case22_ShouldReturnUnchangedText(string text1, string text2, string text3)
     {
         // Arrange
-        InitializeMocks();
         SetupDelimiterServiceMock();
         TokenParser tokenParser = GetTokenParser();
         string expected = $"{text1}{EscapedStartDelimiter}{text2}{EscapedStartDelimiter}{text3}";
@@ -935,13 +887,12 @@ public class TokenParserTests
     public void GetNextToken_Case223_ShouldEscapeEndDelimiter(string text1, string text2, string text3, string text4)
     {
         // Arrange
-        InitializeMocks();
         SetupDelimiterServiceMock();
         TokenParser tokenParser = GetTokenParser();
         string originalText = $"{text1}{EscapedStartDelimiter}{text2}{EscapedStartDelimiter}{text3}{EndDelimiter}{text4}";
         string expected = $"{text1}{EscapedStartDelimiter}{text2}{EscapedStartDelimiter}{text3}{EscapedEndDelimiter}{text4}";
         string message = GetMessage(MsgMissingTokenStartDelimiter);
-        LoggerMock
+        GetMock<ILogger>()
             .Setup(x => x.Log(LogSeverity.Error, message))
             .Verifiable(Times.Once);
         tokenParser.InitializeParser(originalText, true);
@@ -966,7 +917,6 @@ public class TokenParserTests
     public void GetNextToken_Case224_ShouldReturnUnchangedText(string text1, string text2, string text3, string text4)
     {
         // Arrange
-        InitializeMocks();
         SetupDelimiterServiceMock();
         TokenParser tokenParser = GetTokenParser();
         string expected = $"{text1}{EscapedStartDelimiter}{text2}{EscapedStartDelimiter}{text3}{EscapedEndDelimiter}{text4}";
@@ -992,13 +942,12 @@ public class TokenParserTests
     public void GetNextToken_Case23_ShouldEscapeAllEndDelimiters(string text1, string text2, string text3, string text4)
     {
         // Arrange
-        InitializeMocks();
         SetupDelimiterServiceMock();
         TokenParser tokenParser = GetTokenParser();
         string originalText = $"{text1}{EscapedStartDelimiter}{text2}{EndDelimiter}{text3}{EndDelimiter}{text4}";
         string expected = $"{text1}{EscapedStartDelimiter}{text2}{EscapedEndDelimiter}{text3}{EscapedEndDelimiter}{text4}";
         string message = GetMessage(MsgMissingTokenStartDelimiter);
-        LoggerMock
+        GetMock<ILogger>()
             .Setup(x => x.Log(LogSeverity.Error, message))
             .Verifiable(Times.Once);
         tokenParser.InitializeParser(originalText, true);
@@ -1023,17 +972,16 @@ public class TokenParserTests
     public void GetNextToken_Case231_ShouldEscapeStartAndEndDelimiters(string text1, string text2, string text3, string text4)
     {
         // Arrange
-        InitializeMocks();
         SetupDelimiterServiceMock();
         TokenParser tokenParser = GetTokenParser();
         string originalText = $"{text1}{EscapedStartDelimiter}{text2}{EndDelimiter}{text3}{StartDelimiter}{text4}";
         string expected = $"{text1}{EscapedStartDelimiter}{text2}{EscapedEndDelimiter}{text3}{EscapedStartDelimiter}{text4}";
         string message1 = GetMessage(MsgTokenEndDelimiterWillBeEscaped);
         string message2 = GetMessage(MsgTokenStartDelimiterWillBeEscaped);
-        LoggerMock
+        GetMock<ILogger>()
             .Setup(x => x.Log(LogSeverity.Error, message1))
             .Verifiable(Times.Once);
-        LoggerMock
+        GetMock<ILogger>()
             .Setup(x => x.Log(LogSeverity.Error, message2))
             .Verifiable(Times.Once);
         tokenParser.InitializeParser(originalText, true);
@@ -1058,13 +1006,12 @@ public class TokenParserTests
     public void GetNextToken_Case232_ShouldEscapeEndDelimiter(string text1, string text2, string text3, string text4)
     {
         // Arrange
-        InitializeMocks();
         SetupDelimiterServiceMock();
         TokenParser tokenParser = GetTokenParser();
         string originalText = $"{text1}{EscapedStartDelimiter}{text2}{EndDelimiter}{text3}{EscapedStartDelimiter}{text4}";
         string expected = $"{text1}{EscapedStartDelimiter}{text2}{EscapedEndDelimiter}{text3}{EscapedStartDelimiter}{text4}";
         string message = GetMessage(MsgTokenEndDelimiterWillBeEscaped);
-        LoggerMock
+        GetMock<ILogger>()
             .Setup(x => x.Log(LogSeverity.Error, message))
             .Verifiable(Times.Once);
         tokenParser.InitializeParser(originalText, true);
@@ -1089,7 +1036,6 @@ public class TokenParserTests
     public void GetNextToken_Case24_ShouldReturnUnchangedText(string text1, string text2, string text3)
     {
         // Arrange
-        InitializeMocks();
         SetupDelimiterServiceMock();
         TokenParser tokenParser = GetTokenParser();
         string expected = $"{text1}{EscapedStartDelimiter}{text2}{EscapedEndDelimiter}{text3}";
@@ -1115,13 +1061,12 @@ public class TokenParserTests
     public void GetNextToken_Case241_ShouldEscapeStartDelimiter(string text1, string text2, string text3, string text4)
     {
         // Arrange
-        InitializeMocks();
         SetupDelimiterServiceMock();
         TokenParser tokenParser = GetTokenParser();
         string originalText = $"{text1}{EscapedStartDelimiter}{text2}{EscapedEndDelimiter}{text3}{StartDelimiter}{text4}";
         string expected = $"{text1}{EscapedStartDelimiter}{text2}{EscapedEndDelimiter}{text3}{EscapedStartDelimiter}{text4}";
         string message = GetMessage(MsgTokenStartDelimiterWillBeEscaped);
-        LoggerMock
+        GetMock<ILogger>()
             .Setup(x => x.Log(LogSeverity.Error, message))
             .Verifiable(Times.Once);
         tokenParser.InitializeParser(originalText, true);
@@ -1146,7 +1091,6 @@ public class TokenParserTests
     public void GetNextToken_Case242_ShouldReturnUnchangedText(string text1, string text2, string text3, string text4)
     {
         // Arrange
-        InitializeMocks();
         SetupDelimiterServiceMock();
         TokenParser tokenParser = GetTokenParser();
         string expected = $"{text1}{EscapedStartDelimiter}{text2}{EscapedEndDelimiter}{text3}{EscapedStartDelimiter}{text4}";
@@ -1172,13 +1116,12 @@ public class TokenParserTests
     public void GetNextToken_Case3_ShouldEscapeAllEndDelimiters(string text1, string text2, string text3)
     {
         // Arrange
-        InitializeMocks();
         SetupDelimiterServiceMock();
         TokenParser tokenParser = GetTokenParser();
         string originalText = $"{text1}{EndDelimiter}{text2}{EndDelimiter}{text3}";
         string expected = $"{text1}{EscapedEndDelimiter}{text2}{EscapedEndDelimiter}{text3}";
         string message = GetMessage(MsgMissingTokenStartDelimiter);
-        LoggerMock
+        GetMock<ILogger>()
             .Setup(x => x.Log(LogSeverity.Error, message))
             .Verifiable(Times.Once);
         tokenParser.InitializeParser(originalText, true);
@@ -1203,17 +1146,16 @@ public class TokenParserTests
     public void GetNextToken_Case31_ShouldEscapeStartAndEndDelimiters(string text1, string text2, string text3)
     {
         // Arrange
-        InitializeMocks();
         SetupDelimiterServiceMock();
         TokenParser tokenParser = GetTokenParser();
         string originalText = $"{text1}{EndDelimiter}{text2}{StartDelimiter}{text3}";
         string expected = $"{text1}{EscapedEndDelimiter}{text2}{EscapedStartDelimiter}{text3}";
         string message1 = GetMessage(MsgTokenEndDelimiterWillBeEscaped);
         string message2 = GetMessage(MsgTokenStartDelimiterWillBeEscaped);
-        LoggerMock
+        GetMock<ILogger>()
             .Setup(x => x.Log(LogSeverity.Error, message1))
             .Verifiable(Times.Once);
-        LoggerMock
+        GetMock<ILogger>()
             .Setup(x => x.Log(LogSeverity.Error, message2))
             .Verifiable(Times.Once);
         tokenParser.InitializeParser(originalText, true);
@@ -1238,17 +1180,16 @@ public class TokenParserTests
     public void GetNextToken_Case311_ShouldEscapeStartDelimitersAndEndDelimiter(string text1, string text2, string text3, string text4)
     {
         // Arrange
-        InitializeMocks();
         SetupDelimiterServiceMock();
         TokenParser tokenParser = GetTokenParser();
         string originalText = $"{text1}{EndDelimiter}{text2}{StartDelimiter}{text3}{StartDelimiter}{text4}";
         string expected = $"{text1}{EscapedEndDelimiter}{text2}{EscapedStartDelimiter}{text3}{EscapedStartDelimiter}{text4}";
         string message1 = GetMessage(MsgMissingTokenEndDelimiter);
         string message2 = GetMessage(MsgTokenEndDelimiterWillBeEscaped);
-        LoggerMock
+        GetMock<ILogger>()
             .Setup(x => x.Log(LogSeverity.Error, message1))
             .Verifiable(Times.Once);
-        LoggerMock
+        GetMock<ILogger>()
             .Setup(x => x.Log(LogSeverity.Error, message2))
             .Verifiable(Times.Once);
         tokenParser.InitializeParser(originalText, true);
@@ -1273,17 +1214,16 @@ public class TokenParserTests
     public void GetNextToken_Case312_ShouldEscapeStartDelimiterAndEndDelimiter(string text1, string text2, string text3, string text4)
     {
         // Arrange
-        InitializeMocks();
         SetupDelimiterServiceMock();
         TokenParser tokenParser = GetTokenParser();
         string originalText = $"{text1}{EndDelimiter}{text2}{StartDelimiter}{text3}{EscapedStartDelimiter}{text4}";
         string expected = $"{text1}{EscapedEndDelimiter}{text2}{EscapedStartDelimiter}{text3}{EscapedStartDelimiter}{text4}";
         string message1 = GetMessage(MsgMissingTokenEndDelimiter);
         string message2 = GetMessage(MsgTokenEndDelimiterWillBeEscaped);
-        LoggerMock
+        GetMock<ILogger>()
             .Setup(x => x.Log(LogSeverity.Error, message1))
             .Verifiable(Times.Once);
-        LoggerMock
+        GetMock<ILogger>()
             .Setup(x => x.Log(LogSeverity.Error, message2))
             .Verifiable(Times.Once);
         tokenParser.InitializeParser(originalText, true);
@@ -1308,13 +1248,12 @@ public class TokenParserTests
     public void GetNextToken_Case32_ShouldEscapeAllStartDelimiters(string text1, string text2, string text3, string text4)
     {
         // Arrange
-        InitializeMocks();
         SetupDelimiterServiceMock();
         TokenParser tokenParser = GetTokenParser();
         string originalText = $"{text1}{EndDelimiter}{text2}{EscapedStartDelimiter}{text3}{EndDelimiter}{text4}";
         string expected = $"{text1}{EscapedEndDelimiter}{text2}{EscapedStartDelimiter}{text3}{EscapedEndDelimiter}{text4}";
         string message = GetMessage(MsgMissingTokenStartDelimiter);
-        LoggerMock
+        GetMock<ILogger>()
             .Setup(x => x.Log(LogSeverity.Error, message))
             .Verifiable(Times.Once);
         tokenParser.InitializeParser(originalText, true);
@@ -1339,17 +1278,16 @@ public class TokenParserTests
     public void GetNextToken_Case321_ShouldEscapeStartDelimitersAndEndDelimiter(string text1, string text2, string text3, string text4)
     {
         // Arrange
-        InitializeMocks();
         SetupDelimiterServiceMock();
         TokenParser tokenParser = GetTokenParser();
         string originalText = $"{text1}{EndDelimiter}{text2}{EscapedStartDelimiter}{text3}{StartDelimiter}{text4}";
         string expected = $"{text1}{EscapedEndDelimiter}{text2}{EscapedStartDelimiter}{text3}{EscapedStartDelimiter}{text4}";
         string message1 = GetMessage(MsgMissingTokenEndDelimiter);
         string message2 = GetMessage(MsgTokenEndDelimiterWillBeEscaped);
-        LoggerMock
+        GetMock<ILogger>()
             .Setup(x => x.Log(LogSeverity.Error, message1))
             .Verifiable(Times.Once);
-        LoggerMock
+        GetMock<ILogger>()
             .Setup(x => x.Log(LogSeverity.Error, message2))
             .Verifiable(Times.Once);
         tokenParser.InitializeParser(originalText, true);
@@ -1374,13 +1312,12 @@ public class TokenParserTests
     public void GetNextToken_Case322_ShouldEscapeEndDelimiter(string text1, string text2, string text3, string text4)
     {
         // Arrange
-        InitializeMocks();
         SetupDelimiterServiceMock();
         TokenParser tokenParser = GetTokenParser();
         string originalText = $"{text1}{EndDelimiter}{text2}{EscapedStartDelimiter}{text3}{EscapedStartDelimiter}{text4}";
         string expected = $"{text1}{EscapedEndDelimiter}{text2}{EscapedStartDelimiter}{text3}{EscapedStartDelimiter}{text4}";
         string message = GetMessage(MsgTokenEndDelimiterWillBeEscaped);
-        LoggerMock
+        GetMock<ILogger>()
             .Setup(x => x.Log(LogSeverity.Error, message))
             .Verifiable(Times.Once);
         tokenParser.InitializeParser(originalText, true);
@@ -1405,7 +1342,6 @@ public class TokenParserTests
     public void GetNextToken_Case4_ShouldReturnUnchangedText(string text1, string text2)
     {
         // Arrange
-        InitializeMocks();
         SetupDelimiterServiceMock();
         TokenParser tokenParser = GetTokenParser();
         string expected = $"{text1}{EscapedEndDelimiter}{text2}";
@@ -1431,13 +1367,12 @@ public class TokenParserTests
     public void GetNextToken_Case41_ShouldEscapeStartDelimiter(string text1, string text2, string text3)
     {
         // Arrange
-        InitializeMocks();
         SetupDelimiterServiceMock();
         TokenParser tokenParser = GetTokenParser();
         string originalText = $"{text1}{EscapedEndDelimiter}{text2}{StartDelimiter}{text3}";
         string expected = $"{text1}{EscapedEndDelimiter}{text2}{EscapedStartDelimiter}{text3}";
         string message = GetMessage(MsgTokenStartDelimiterWillBeEscaped);
-        LoggerMock
+        GetMock<ILogger>()
             .Setup(x => x.Log(LogSeverity.Error, message))
             .Verifiable(Times.Once);
         tokenParser.InitializeParser(originalText, true);
@@ -1462,13 +1397,12 @@ public class TokenParserTests
     public void GetNextToken_Case411_ShouldEscapeStartDelimiters(string text1, string text2, string text3, string text4)
     {
         // Arrange
-        InitializeMocks();
         SetupDelimiterServiceMock();
         TokenParser tokenParser = GetTokenParser();
         string originalText = $"{text1}{EscapedEndDelimiter}{text2}{StartDelimiter}{text3}{StartDelimiter}{text4}";
         string expected = $"{text1}{EscapedEndDelimiter}{text2}{EscapedStartDelimiter}{text3}{EscapedStartDelimiter}{text4}";
         string message = GetMessage(MsgMissingTokenEndDelimiter);
-        LoggerMock
+        GetMock<ILogger>()
             .Setup(x => x.Log(LogSeverity.Error, message))
             .Verifiable(Times.Once);
         tokenParser.InitializeParser(originalText, true);
@@ -1493,13 +1427,12 @@ public class TokenParserTests
     public void GetNextToken_Case412_ShouldEscapeStartDelimiter(string text1, string text2, string text3, string text4)
     {
         // Arrange
-        InitializeMocks();
         SetupDelimiterServiceMock();
         TokenParser tokenParser = GetTokenParser();
         string originalText = $"{text1}{EscapedEndDelimiter}{text2}{StartDelimiter}{text3}{EscapedStartDelimiter}{text4}";
         string expected = $"{text1}{EscapedEndDelimiter}{text2}{EscapedStartDelimiter}{text3}{EscapedStartDelimiter}{text4}";
         string message = GetMessage(MsgMissingTokenEndDelimiter);
-        LoggerMock
+        GetMock<ILogger>()
             .Setup(x => x.Log(LogSeverity.Error, message))
             .Verifiable(Times.Once);
         tokenParser.InitializeParser(originalText, true);
@@ -1524,7 +1457,6 @@ public class TokenParserTests
     public void GetNextToken_Case42_ShouldReturnUnchangedText(string text1, string text2, string text3)
     {
         // Arrange
-        InitializeMocks();
         SetupDelimiterServiceMock();
         TokenParser tokenParser = GetTokenParser();
         string expected = $"{text1}{EscapedEndDelimiter}{text2}{EscapedStartDelimiter}{text3}";
@@ -1550,13 +1482,12 @@ public class TokenParserTests
     public void GetNextToken_Case421_ShouldEscapeStartDelimiter(string text1, string text2, string text3, string text4)
     {
         // Arrange
-        InitializeMocks();
         SetupDelimiterServiceMock();
         TokenParser tokenParser = GetTokenParser();
         string originalText = $"{text1}{EscapedEndDelimiter}{text2}{EscapedStartDelimiter}{text3}{StartDelimiter}{text4}";
         string expected = $"{text1}{EscapedEndDelimiter}{text2}{EscapedStartDelimiter}{text3}{EscapedStartDelimiter}{text4}";
         string message = GetMessage(MsgMissingTokenEndDelimiter);
-        LoggerMock
+        GetMock<ILogger>()
             .Setup(x => x.Log(LogSeverity.Error, message))
             .Verifiable(Times.Once);
         tokenParser.InitializeParser(originalText, true);
@@ -1581,7 +1512,6 @@ public class TokenParserTests
     public void GetNextToken_Case422_ShouldReturnUnchangedText(string text1, string text2, string text3, string text4)
     {
         // Arrange
-        InitializeMocks();
         SetupDelimiterServiceMock();
         TokenParser tokenParser = GetTokenParser();
         string expected = $"{text1}{EscapedEndDelimiter}{text2}{EscapedStartDelimiter}{text3}{EscapedStartDelimiter}{text4}";
@@ -1606,7 +1536,6 @@ public class TokenParserTests
     public void GetNextToken_ShouldAdvanceSearchIndexPastFirstFoundStartDelimiter()
     {
         // Arrange
-        InitializeMocks();
         SetupDelimiterServiceMock();
         TokenParser tokenParser = GetTokenParser();
         char caseFlag1 = LowercaseFlag;
@@ -1640,7 +1569,6 @@ public class TokenParserTests
     public void GetNextToken_ShouldAdvanceSearchIndexPastSecondFoundToken(string firstStartDelimiter, string secondStartDelimiter, string endDelimiter)
     {
         // Arrange
-        InitializeMocks();
         SetupDelimiterServiceMock();
         TokenParser tokenParser = GetTokenParser();
         string tokenName = "Token1";
@@ -1664,7 +1592,6 @@ public class TokenParserTests
     public void GetNextToken_ShouldAdvanceSearchIndexPastSecondFoundTokenWhenOnlyEscapedStartTokensAreFound()
     {
         // Arrange
-        InitializeMocks();
         SetupDelimiterServiceMock();
         TokenParser tokenParser = GetTokenParser();
         string templateText = $"text {EscapedStartDelimiter} text {EscapedStartDelimiter} text {StartDelimiter} text";
@@ -1696,7 +1623,6 @@ public class TokenParserTests
     public void GetNextToken_ShouldAdvanceSearchIndexToEndOfTextLine(string firstStartDelimiter, string secondDelimiter, string thirdDelimiter)
     {
         // Arrange
-        InitializeMocks();
         SetupDelimiterServiceMock();
         TokenParser tokenParser = GetTokenParser();
         string templateText = $"text {firstStartDelimiter} text {secondDelimiter} text {thirdDelimiter} text";
@@ -1720,7 +1646,6 @@ public class TokenParserTests
     public void GetNextTokenWithAlternateDelimiterValues_ShouldReturnFoundTokenAndEscapeInvalidDelimiters()
     {
         // Arrange
-        InitializeMocks();
         TokenParser tokenParser = GetTokenParser();
         string startDelimiter = "<{{";
         string endDelimiter = "}>";
@@ -1733,13 +1658,13 @@ public class TokenParserTests
         string message2 = GetMessage(MsgTokenEndDelimiterWillBeEscaped);
         string message3 = GetMessage(MsgMissingTokenEndDelimiter);
         SetupDelimiterServiceMock(startDelimiter, endDelimiter, escapeCharacter);
-        LoggerMock
+        GetMock<ILogger>()
             .Setup(x => x.Log(LogSeverity.Error, message1))
             .Verifiable(Times.Once);
-        LoggerMock
+        GetMock<ILogger>()
             .Setup(x => x.Log(LogSeverity.Error, message2))
             .Verifiable(Times.Once);
-        LoggerMock
+        GetMock<ILogger>()
             .Setup(x => x.Log(LogSeverity.Error, message3))
             .Verifiable(Times.Once);
         tokenParser.InitializeParser(originalText, true);
@@ -1787,54 +1712,29 @@ public class TokenParserTests
             .Be(validTokenFound);
     }
 
-    private TokenParser GetTokenParser() => new(LoggerMock.Object, DelimiterServiceMock.Object);
-
-    private void InitializeMocks()
-    {
-        DelimiterServiceMock.Reset();
-        LoggerMock.Reset();
-    }
-
-    private void MocksVerifyNoOtherCalls()
-    {
-        DelimiterServiceMock.VerifyNoOtherCalls();
-        LoggerMock.VerifyNoOtherCalls();
-    }
+    private TokenParser GetTokenParser()
+        => new(GetMock<ILogger>().Object,
+               GetMock<IDelimiterService>().Object);
 
     private void SetupDelimiterServiceMock(string startDelimiter = DefaultTokenStartDelimiter,
                                            string endDelimiter = DefaultTokenEndDelimiter,
                                            char escapeCharacter = DefaultDelimiterEscapeCharacter)
     {
-        DelimiterServiceMock
+        GetMock<IDelimiterService>()
             .SetupGet(x => x.StartDelimiter)
             .Returns(startDelimiter)
             .Verifiable();
-        DelimiterServiceMock
+        GetMock<IDelimiterService>()
             .SetupGet(x => x.EndDelimiter)
             .Returns(endDelimiter)
             .Verifiable();
 
         if (escapeCharacter is not Space)
         {
-            DelimiterServiceMock
+            GetMock<IDelimiterService>()
                 .SetupGet(x => x.DelimiterEscapeCharacter)
                 .Returns(escapeCharacter)
                 .Verifiable();
         }
-    }
-
-    private void VerifyMocks()
-    {
-        if (DelimiterServiceMock.Setups.Any())
-        {
-            DelimiterServiceMock.VerifyAll();
-        }
-
-        if (LoggerMock.Setups.Any())
-        {
-            LoggerMock.VerifyAll();
-        }
-
-        MocksVerifyNoOtherCalls();
     }
 }

@@ -1,7 +1,7 @@
 ﻿namespace DRSSoftware.TextTemplateProcessor.Console;
 
 [ExcludeFromCodeCoverage]
-public class ConsoleLoggerTests
+public class ConsoleLoggerTests : MoqUnitTestBase
 {
     private const string SampleLogMessage = "Sample log message for {0} operation type.";
 
@@ -19,46 +19,39 @@ public class ConsoleLoggerTests
     public void CreateConsoleLoggerWithNullLocater_ShouldThrowException()
     {
         // Arrange
-        InitializeMocks();
         ILocater locater = null!;
         string expected = GetNullDependencyMessage(nameof(LoggerBase), nameof(ILocater), nameof(locater));
 
         // Act
-        Action action = () => _ = new ConsoleLogger(locater, MessageWriterMock.Object);
+        Action action = () => _ = new ConsoleLogger(locater, GetMock<IMessageWriter>().Object);
 
         // Assert
         action
             .Should()
             .ThrowExactly<ArgumentNullException>()
             .WithMessage(expected);
-        VerifyMocks();
     }
 
     [Fact]
     public void CreateConsoleLoggerWithNullMessageWriter_ShouldThrowException()
     {
         // Arrange
-        InitializeMocks();
         IMessageWriter messageWriter = null!;
         string expected = GetNullDependencyMessage(nameof(ConsoleLogger), nameof(IMessageWriter), nameof(messageWriter));
 
         // Act
-        Action action = () => _ = new ConsoleLogger(LocaterMock.Object, messageWriter);
+        Action action = () => _ = new ConsoleLogger(GetMock<ILocater>().Object, messageWriter);
 
         // Assert
         action
             .Should()
             .ThrowExactly<ArgumentNullException>()
             .WithMessage(expected);
-        VerifyMocks();
     }
 
     [Fact]
     public void CreateConsoleLoggerWithValidDependencies_ShouldSucceed()
     {
-        // Arrange
-        InitializeMocks();
-
         // Act
         ConsoleLogger consoleLogger = GetConsoleLogger();
 
@@ -69,14 +62,12 @@ public class ConsoleLoggerTests
         consoleLogger.CurrentOperationType
             .Should()
             .Be(DefaultOperationType);
-        VerifyMocks();
     }
 
     [Fact]
     public void ErrorCount_ShouldIncrementForErrorMessages()
     {
         // Arrange
-        InitializeMocks();
         LogSeverity logSeverity = LogSeverity.Error;
         string message = "Error message";
         SetupMocks(logSeverity, DefaultOperationType, message, Location.Empty);
@@ -96,7 +87,6 @@ public class ConsoleLoggerTests
     public void ErrorCount_ShouldNotIncrementForDebugMessages()
     {
         // Arrange
-        InitializeMocks();
         LogSeverity logSeverity = LogSeverity.Debug;
         string message = "Debug message";
         SetupMocks(logSeverity, DefaultOperationType, message, Location.Empty);
@@ -116,7 +106,6 @@ public class ConsoleLoggerTests
     public void ErrorCount_ShouldNotIncrementForInformationMessages()
     {
         // Arrange
-        InitializeMocks();
         LogSeverity logSeverity = LogSeverity.Information;
         string message = "Information message";
         SetupMocks(logSeverity, DefaultOperationType, message, Location.Empty);
@@ -136,7 +125,6 @@ public class ConsoleLoggerTests
     public void ErrorCount_ShouldNotIncrementForWarningMessages()
     {
         // Arrange
-        InitializeMocks();
         LogSeverity logSeverity = LogSeverity.Warning;
         string message = "Warning message";
         SetupMocks(logSeverity, DefaultOperationType, message, Location.Empty);
@@ -156,7 +144,6 @@ public class ConsoleLoggerTests
     public void LogMessageForGeneratingOperationType_ShouldWriteMessageToConsole()
     {
         // Arrange
-        InitializeMocks();
         LogSeverity logSeverity = LogSeverity.Debug;
         OperationType currentOperationType = OperationType.Loading;
         OperationType operationType = OperationType.Generating;
@@ -179,7 +166,6 @@ public class ConsoleLoggerTests
     public void LogMessageForLoadingOperationType_ShouldWriteMessageToConsole()
     {
         // Arrange
-        InitializeMocks();
         LogSeverity logSeverity = LogSeverity.Warning;
         OperationType currentOperationType = OperationType.Parsing;
         OperationType operationType = OperationType.Loading;
@@ -202,7 +188,6 @@ public class ConsoleLoggerTests
     public void LogMessageForParsingOperationType_ShouldWriteMessageToConsole()
     {
         // Arrange
-        InitializeMocks();
         LogSeverity logSeverity = LogSeverity.Information;
         OperationType currentOperationType = OperationType.Reset;
         OperationType operationType = OperationType.Parsing;
@@ -225,7 +210,6 @@ public class ConsoleLoggerTests
     public void LogMessageForResetOperationType_ShouldWriteMessageToConsole()
     {
         // Arrange
-        InitializeMocks();
         LogSeverity logSeverity = LogSeverity.Error;
         OperationType currentOperationType = OperationType.Setup;
         OperationType operationType = OperationType.Reset;
@@ -247,7 +231,6 @@ public class ConsoleLoggerTests
     public void LogMessageForSetupOperationType_ShouldWriteMessageToConsole()
     {
         // Arrange
-        InitializeMocks();
         LogSeverity logSeverity = LogSeverity.Warning;
         OperationType currentOperationType = OperationType.User;
         OperationType operationType = OperationType.Setup;
@@ -269,7 +252,6 @@ public class ConsoleLoggerTests
     public void LogMessageForStatusOperationType_ShouldWriteMessageToConsole()
     {
         // Arrange
-        InitializeMocks();
         LogSeverity logSeverity = LogSeverity.Warning;
         OperationType currentOperationType = OperationType.User;
         OperationType operationType = OperationType.Status;
@@ -291,7 +273,6 @@ public class ConsoleLoggerTests
     public void LogMessageForUserOperationType_ShouldWriteMessageToConsole()
     {
         // Arrange
-        InitializeMocks();
         LogSeverity logSeverity = LogSeverity.Error;
         OperationType currentOperationType = OperationType.Writing;
         OperationType operationType = OperationType.User;
@@ -313,7 +294,6 @@ public class ConsoleLoggerTests
     public void LogMessageForWritingOperationType_ShouldWriteMessageToConsole()
     {
         // Arrange
-        InitializeMocks();
         LogSeverity logSeverity = LogSeverity.Debug;
         OperationType currentOperationType = OperationType.Generating;
         OperationType operationType = OperationType.Writing;
@@ -336,7 +316,6 @@ public class ConsoleLoggerTests
     public void LogMessageWhenGeneratingOperationTypeIsCurrent_ShouldWriteMessageToConsole()
     {
         // Arrange
-        InitializeMocks();
         LogSeverity logSeverity = LogSeverity.Error;
         OperationType operationType = OperationType.Generating;
         string message = string.Format(SampleLogMessage, operationType.ToString());
@@ -355,7 +334,6 @@ public class ConsoleLoggerTests
     public void LogMessageWhenLoadingOperationTypeIsCurrent_ShouldWriteMessageToConsole()
     {
         // Arrange
-        InitializeMocks();
         LogSeverity logSeverity = LogSeverity.Information;
         OperationType operationType = OperationType.Loading;
         string message = string.Format(SampleLogMessage, operationType.ToString());
@@ -374,7 +352,6 @@ public class ConsoleLoggerTests
     public void LogMessageWhenParsingOperationTypeIsCurrent_ShouldWriteMessageToConsole()
     {
         // Arrange
-        InitializeMocks();
         LogSeverity logSeverity = LogSeverity.Debug;
         OperationType operationType = OperationType.Parsing;
         string message = string.Format(SampleLogMessage, operationType.ToString());
@@ -393,7 +370,6 @@ public class ConsoleLoggerTests
     public void LogMessageWhenResetOperationTypeIsCurrent_ShouldWriteMessageToConsole()
     {
         // Arrange
-        InitializeMocks();
         LogSeverity logSeverity = LogSeverity.Warning;
         OperationType operationType = OperationType.Reset;
         string message = string.Format(SampleLogMessage, operationType.ToString());
@@ -411,7 +387,6 @@ public class ConsoleLoggerTests
     public void LogMessageWhenSetupOperationTypeIsCurrent_ShouldWriteMessageToConsole()
     {
         // Arrange
-        InitializeMocks();
         LogSeverity logSeverity = LogSeverity.Information;
         OperationType operationType = OperationType.Setup;
         string message = string.Format(SampleLogMessage, operationType.ToString());
@@ -429,7 +404,6 @@ public class ConsoleLoggerTests
     public void LogMessageWhenStatusOperationTypeIsCurrent_ShouldWriteMessageToConsole()
     {
         // Arrange
-        InitializeMocks();
         LogSeverity logSeverity = LogSeverity.Information;
         OperationType operationType = OperationType.Status;
         string message = string.Format(SampleLogMessage, operationType.ToString());
@@ -447,7 +421,6 @@ public class ConsoleLoggerTests
     public void LogMessageWhenUserOperationTypeIsCurrent_ShouldWriteMessageToConsole()
     {
         // Arrange
-        InitializeMocks();
         LogSeverity logSeverity = LogSeverity.Warning;
         OperationType operationType = OperationType.User;
         string message = string.Format(SampleLogMessage, operationType.ToString());
@@ -465,7 +438,6 @@ public class ConsoleLoggerTests
     public void LogMessageWhenWritingOperationTypeIsCurrent_ShouldWriteMessageToConsole()
     {
         // Arrange
-        InitializeMocks();
         LogSeverity logSeverity = LogSeverity.Error;
         OperationType operationType = OperationType.Writing;
         string message = string.Format(SampleLogMessage, operationType.ToString());
@@ -484,7 +456,6 @@ public class ConsoleLoggerTests
     public void LogProcessingSummary_ShouldWriteSummaryMessagesToConsole()
     {
         // Arrange
-        InitializeMocks();
         int errorCount = 2;
         string errorMessage = "Error message";
         LogEntry errorLogEntry = new(LogSeverity.Error, DefaultOperationType, Location.Empty, errorMessage);
@@ -496,19 +467,20 @@ public class ConsoleLoggerTests
         string warningCountMessage = GetMessage(MsgWarningCount, warningCount.ToString());
         LogEntry warningCountLogEntry = new(LogSeverity.Information, OperationType.Status, Location.Empty, warningCountMessage);
         LogEntry processingStatusLogEntry = new(LogSeverity.Information, OperationType.Status, Location.Empty, MsgProcessingSummary);
-        MessageWriterMock
+        Mock<IMessageWriter> messageWriterMock = GetMock<IMessageWriter>();
+        messageWriterMock
             .Setup(x => x.WriteLine(errorLogEntry.ToString()))
             .Verifiable(Times.Exactly(errorCount));
-        MessageWriterMock
+        messageWriterMock
             .Setup(x => x.WriteLine(warningLogEntry.ToString()))
             .Verifiable(Times.Exactly(warningCount));
-        MessageWriterMock
+        messageWriterMock
             .Setup(x => x.WriteLine(processingStatusLogEntry.ToString()))
             .Verifiable(Times.Once);
-        MessageWriterMock
+        messageWriterMock
             .Setup(x => x.WriteLine(errorCountLogEntry.ToString()))
             .Verifiable(Times.Once);
-        MessageWriterMock
+        messageWriterMock
             .Setup(x => x.WriteLine(warningCountLogEntry.ToString()))
             .Verifiable(Times.Once);
         ConsoleLogger consoleLogger = GetConsoleLogger();
@@ -540,7 +512,6 @@ public class ConsoleLoggerTests
     public void ResetCounters_ShouldResetErrorAndWarningCountsToZero()
     {
         // Arrange
-        InitializeMocks();
         string message = "Log message";
         SetupMocks(LogSeverity.Error, DefaultOperationType, message, Location.Empty);
         SetupMocks(LogSeverity.Warning, DefaultOperationType, message, Location.Empty);
@@ -565,7 +536,6 @@ public class ConsoleLoggerTests
     public void WarningCount_ShouldIncrementForWarningMessages()
     {
         // Arrange
-        InitializeMocks();
         LogSeverity logSeverity = LogSeverity.Warning;
         string message = "Warning message";
         SetupMocks(logSeverity, DefaultOperationType, message, Location.Empty);
@@ -585,7 +555,6 @@ public class ConsoleLoggerTests
     public void WarningCount_ShouldNotIncrementForDebugMessages()
     {
         // Arrange
-        InitializeMocks();
         LogSeverity logSeverity = LogSeverity.Debug;
         string message = "Debug message";
         SetupMocks(logSeverity, DefaultOperationType, message, Location.Empty);
@@ -605,7 +574,6 @@ public class ConsoleLoggerTests
     public void WarningCount_ShouldNotIncrementForErrorMessages()
     {
         // Arrange
-        InitializeMocks();
         LogSeverity logSeverity = LogSeverity.Error;
         string message = "Error message";
         SetupMocks(logSeverity, DefaultOperationType, message, Location.Empty);
@@ -625,7 +593,6 @@ public class ConsoleLoggerTests
     public void WarningCount_ShouldNotIncrementForInformationMessages()
     {
         // Arrange
-        InitializeMocks();
         LogSeverity logSeverity = LogSeverity.Information;
         string message = "Information message";
         SetupMocks(logSeverity, DefaultOperationType, message, Location.Empty);
@@ -642,25 +609,15 @@ public class ConsoleLoggerTests
     }
 
     private ConsoleLogger GetConsoleLogger()
-        => new(LocaterMock.Object, MessageWriterMock.Object);
+        => new(GetMock<ILocater>().Object,
+               GetMock<IMessageWriter>().Object);
 
     private ConsoleLogger GetConsoleLogger(OperationType operationType)
-        => new(LocaterMock.Object, MessageWriterMock.Object)
+        => new(GetMock<ILocater>().Object,
+               GetMock<IMessageWriter>().Object)
         {
             CurrentOperationType = operationType
         };
-
-    private void InitializeMocks()
-    {
-        LocaterMock.Reset();
-        MessageWriterMock.Reset();
-    }
-
-    private void MocksVerifyNoOtherCalls()
-    {
-        LocaterMock.VerifyNoOtherCalls();
-        MessageWriterMock.VerifyNoOtherCalls();
-    }
 
     private void SetupMocks(LogSeverity logSeverity, OperationType operationType, string message, Location location)
     {
@@ -668,29 +625,14 @@ public class ConsoleLoggerTests
 
         if (!location.IsEmpty)
         {
-            LocaterMock
+            GetMock<ILocater>()
                 .Setup(x => x.Location)
                 .Returns(location)
                 .Verifiable(Times.Once);
         }
 
-        MessageWriterMock
+        GetMock<IMessageWriter>()
             .Setup(x => x.WriteLine(logEntryText))
             .Verifiable(Times.Once);
-    }
-
-    private void VerifyMocks()
-    {
-        if (LocaterMock.Setups.Any())
-        {
-            LocaterMock.VerifyAll();
-        }
-
-        if (MessageWriterMock.Setups.Any())
-        {
-            MessageWriterMock.VerifyAll();
-        }
-
-        MocksVerifyNoOtherCalls();
     }
 }

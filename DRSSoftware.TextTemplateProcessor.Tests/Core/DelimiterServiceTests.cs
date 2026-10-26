@@ -1,13 +1,8 @@
 ﻿namespace DRSSoftware.TextTemplateProcessor.Core;
 
 [ExcludeFromCodeCoverage]
-public class DelimiterServiceTests
+public class DelimiterServiceTests : MoqUnitTestBase
 {
-    private Mock<ILogger> LoggerMock
-    {
-        get;
-    } = new(MockBehavior.Strict);
-
     [Fact]
     public void CreateDelimiterServiceWithNullLogger_ShouldThrowException()
     {
@@ -28,9 +23,6 @@ public class DelimiterServiceTests
     [Fact]
     public void CreateDelimiterServiceWithValidDependency_ShouldInitializeStateCorrectly()
     {
-        // Arrange
-        InitializeMocks();
-
         // Act
         DelimiterService actual = GetDelimiterService();
 
@@ -47,14 +39,12 @@ public class DelimiterServiceTests
         actual.DelimiterEscapeCharacter
             .Should()
             .Be(DefaultDelimiterEscapeCharacter);
-        VerifyMocks();
     }
 
     [Fact]
     public void ResetTokenDelimiters_ShouldSetDelimiterValuesBackToTheirDefaultValues()
     {
         // Arrange
-        InitializeMocks();
         string altStartDelimiter = "{{";
         string altEndDelimiter = "}}";
         char altEscapeCharacter = '!';
@@ -74,14 +64,12 @@ public class DelimiterServiceTests
         delimiterService.DelimiterEscapeCharacter
             .Should()
             .Be(DefaultDelimiterEscapeCharacter);
-        VerifyMocks();
     }
 
     [Fact]
     public void SetTokenDelimitersWhenAllDelimitersAreValid_ShouldSetDelimiterValues()
     {
         // Arrange
-        InitializeMocks();
         string startDelimiter = "{{";
         string endDelimiter = "}}";
         char escapeCharacter = '!';
@@ -92,7 +80,6 @@ public class DelimiterServiceTests
     public void SetTokenDelimitersWhenEndDelimiterAndEscapeCharacterAreTheSame_ShouldLogErrorMessage()
     {
         // Arrange
-        InitializeMocks();
         string startDelimiter = "{{";
         string endDelimiter = "!";
         char escapeCharacter = '!';
@@ -104,7 +91,6 @@ public class DelimiterServiceTests
     public void SetTokenDelimitersWhenEndDelimiterIsEmpty_ShouldLogErrorMessage()
     {
         // Arrange
-        InitializeMocks();
         string startDelimiter = "{{";
         string endDelimiter = EmptyString;
         char escapeCharacter = '!';
@@ -116,7 +102,6 @@ public class DelimiterServiceTests
     public void SetTokenDelimitersWhenEndDelimiterIsNull_ShouldLogErrorMessage()
     {
         // Arrange
-        InitializeMocks();
         string startDelimiter = "{{";
         string endDelimiter = null!;
         char escapeCharacter = '!';
@@ -128,7 +113,6 @@ public class DelimiterServiceTests
     public void SetTokenDelimitersWhenStartAndEndDelimitersAreEqual_ShouldLogErrorMessage()
     {
         // Arrange
-        InitializeMocks();
         string startDelimiter = "}}";
         string endDelimiter = "}}";
         char escapeCharacter = '!';
@@ -140,7 +124,6 @@ public class DelimiterServiceTests
     public void SetTokenDelimitersWhenStartDelimiterAndEscapeCharacterAreTheSame_ShouldLogErrorMessage()
     {
         // Arrange
-        InitializeMocks();
         string startDelimiter = "!";
         string endDelimiter = "}}";
         char escapeCharacter = '!';
@@ -155,7 +138,6 @@ public class DelimiterServiceTests
     public void SetTokenDelimitersWhenStartDelimiterEndsInCaseFlagCharacter_ShouldLogWarningMessageAndSetDelimiterValues(char caseFlag)
     {
         // Arrange
-        InitializeMocks();
         string startDelimiter = "{{" + caseFlag;
         string endDelimiter = "}}";
         char escapeCharacter = '!';
@@ -167,7 +149,6 @@ public class DelimiterServiceTests
     public void SetTokenDelimitersWhenStartDelimiterIsEmpty_ShouldLogErrorMessage()
     {
         // Arrange
-        InitializeMocks();
         string startDelimiter = EmptyString;
         string endDelimiter = "}}";
         char escapeCharacter = '!';
@@ -179,7 +160,6 @@ public class DelimiterServiceTests
     public void SetTokenDelimitersWhenStartDelimiterIsNull_ShouldLogErrorMessage()
     {
         // Arrange
-        InitializeMocks();
         string startDelimiter = null!;
         string endDelimiter = "}}";
         char escapeCharacter = '!';
@@ -192,7 +172,7 @@ public class DelimiterServiceTests
         // Arrange
         if (!string.IsNullOrEmpty(message))
         {
-            LoggerMock
+            GetMock<ILogger>()
                 .Setup(x => x.Log(logSeverity, message))
                 .Verifiable(Times.Once);
         }
@@ -234,22 +214,11 @@ public class DelimiterServiceTests
                 .Be(escapeCharacter);
         }
 
-        VerifyMocks();
-    }
-
-    private DelimiterService GetDelimiterService() => new(LoggerMock.Object);
-
-    private void InitializeMocks() => LoggerMock.Reset();
-
-    private void MocksVerifyNoOtherCalls() => LoggerMock.VerifyNoOtherCalls();
-
-    private void VerifyMocks()
-    {
-        if (LoggerMock.Setups.Any())
+        if (!string.IsNullOrEmpty(message))
         {
-            LoggerMock.VerifyAll();
+            VerifyMocks();
         }
-
-        MocksVerifyNoOtherCalls();
     }
+
+    private DelimiterService GetDelimiterService() => new(GetMock<ILogger>().Object);
 }

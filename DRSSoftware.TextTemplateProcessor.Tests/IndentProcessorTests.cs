@@ -1,64 +1,47 @@
 ﻿namespace DRSSoftware.TextTemplateProcessor;
 
 [ExcludeFromCodeCoverage]
-public class IndentProcessorTests
+public class IndentProcessorTests : MoqUnitTestBase
 {
     private const string SegmentName = "Segment1";
-
-    private Mock<ILocater> LocaterMock
-    {
-        get;
-    } = new(MockBehavior.Strict);
-
-    private Mock<ILogger> LoggerMock
-    {
-        get;
-    } = new(MockBehavior.Strict);
 
     [Fact]
     public void CreateIndentProcessorWithNullLocater_ShouldThrowException()
     {
         // Arrange
-        InitializeMocks();
         ILocater locater = null!;
         string expected = GetNullDependencyMessage(nameof(IndentProcessor), nameof(ILocater), nameof(locater));
 
         // Act
-        Action action = () => _ = new IndentProcessor(locater, LoggerMock.Object);
+        Action action = () => _ = new IndentProcessor(locater, GetMock<ILogger>().Object);
 
         // Assert
         action
             .Should()
             .ThrowExactly<ArgumentNullException>()
             .WithMessage(expected);
-        VerifyMocks();
     }
 
     [Fact]
     public void CreateIndentProcessorWithNullLogger_ShouldThrowException()
     {
         // Arrange
-        InitializeMocks();
         ILogger logger = null!;
         string expected = GetNullDependencyMessage(nameof(IndentProcessor), nameof(ILogger), nameof(logger));
 
         // Act
-        Action action = () => _ = new IndentProcessor(LocaterMock.Object, logger);
+        Action action = () => _ = new IndentProcessor(GetMock<ILocater>().Object, logger);
 
         // Assert
         action
             .Should()
             .ThrowExactly<ArgumentNullException>()
             .WithMessage(expected);
-        VerifyMocks();
     }
 
     [Fact]
     public void CreateIndentProcessorWithValidDependencies_ShouldSucceedAndInitializeProperties()
     {
-        // Arrange
-        InitializeMocks();
-
         // Act
         IndentProcessor indentProcessor = GetIndentProcessor();
 
@@ -72,7 +55,6 @@ public class IndentProcessorTests
         indentProcessor.TabSize
             .Should()
             .Be(DefaultTabSize);
-        VerifyMocks();
     }
 
     // Case 01 / firstTimeOffset = 0 / isRelative = true / indent < 0 / calculated value < 0 /
@@ -819,10 +801,9 @@ public class IndentProcessorTests
     public void IsValidIndentValue_ShouldLogMessageAndReturnFalseWhenNumberStringIsInvalid(string? numberString)
     {
         // Arrange
-        InitializeMocks();
         string expectedMessage = GetMessage(MsgIndentValueMustBeValidNumber,
                                             numberString);
-        LoggerMock
+        GetMock<ILogger>()
             .Setup(logger => logger.Log(LogSeverity.Error, expectedMessage))
             .Verifiable(Times.Once);
         IndentProcessor indentProcessor = GetIndentProcessor();
@@ -850,11 +831,10 @@ public class IndentProcessorTests
     public void IsValidIndentValue_ShouldLogMessageAndReturnFalseWhenValueIsOutOfRange(int number)
     {
         // Arrange
-        InitializeMocks();
         string numberString = number.ToString();
         string expectedMessage = GetMessage(MsgIndentValueOutOfRange,
                                             numberString);
-        LoggerMock
+        GetMock<ILogger>()
             .Setup(logger => logger.Log(LogSeverity.Error, expectedMessage))
             .Verifiable(Times.Once);
         IndentProcessor indentProcessor = GetIndentProcessor();
@@ -883,7 +863,6 @@ public class IndentProcessorTests
     public void IsValidIndentValue_ShouldParseValueAndReturnTrueWhenNumberStringIsValid(string numberString, int expected)
     {
         // Arrange
-        InitializeMocks();
         IndentProcessor indentProcessor = GetIndentProcessor();
 
         // Act
@@ -896,7 +875,6 @@ public class IndentProcessorTests
         actual
             .Should()
             .Be(expected);
-        VerifyMocks();
     }
 
     [Theory]
@@ -907,10 +885,9 @@ public class IndentProcessorTests
     public void IsValidTabSizeValue_ShouldLogMessageAndReturnFalseWhenNumberStringIsInvalid(string? numberString)
     {
         // Arrange
-        InitializeMocks();
         string expectedMessage = GetMessage(MsgTabSizeValueMustBeValidNumber,
                                             numberString);
-        LoggerMock
+        GetMock<ILogger>()
             .Setup(logger => logger.Log(LogSeverity.Error, expectedMessage))
             .Verifiable(Times.Once);
         IndentProcessor indentProcessor = GetIndentProcessor();
@@ -938,11 +915,10 @@ public class IndentProcessorTests
     public void IsValidTabSizeValue_ShouldLogMessageAndReturnsFalseWhenValueIsOutOfRange(int number)
     {
         // Arrange
-        InitializeMocks();
         string numberString = number.ToString();
         string expectedMessage = GetMessage(MsgTabSizeValueOutOfRange,
                                             numberString);
-        LoggerMock
+        GetMock<ILogger>()
             .Setup(logger => logger.Log(LogSeverity.Error, expectedMessage))
             .Verifiable(Times.Once);
         IndentProcessor indentProcessor = GetIndentProcessor();
@@ -970,7 +946,6 @@ public class IndentProcessorTests
     public void IsValidTabSizeValue_ShouldParseValueAndReturnTrueWhenNumberStringIsValid(string numberString, int expected)
     {
         // Arrange
-        InitializeMocks();
         IndentProcessor indentProcessor = GetIndentProcessor();
 
         // Act
@@ -983,14 +958,12 @@ public class IndentProcessorTests
         actual
             .Should()
             .Be(expected);
-        VerifyMocks();
     }
 
     [Fact]
     public void Reset_ShouldResetCurrentIndentAndTabSize()
     {
         // Arrange
-        InitializeMocks();
         IndentProcessor indentProcessor = GetIndentProcessor();
         SetCurrentIndent(indentProcessor, 4);
         indentProcessor.SetTabSize(DefaultTabSize + 2);
@@ -1005,14 +978,12 @@ public class IndentProcessorTests
         indentProcessor.TabSize
             .Should()
             .Be(DefaultTabSize);
-        VerifyMocks();
     }
 
     [Fact]
     public void RestoreCurrentState_ShouldDoNothingWhenNoStateIsSaved()
     {
         // Arrange
-        InitializeMocks();
         IndentProcessor indentProcessor = GetIndentProcessor();
         int expectedTabSize = DefaultTabSize + 1;
         int tabCount = 3;
@@ -1030,7 +1001,6 @@ public class IndentProcessorTests
         indentProcessor.CurrentIndent
             .Should()
             .Be(expectedCurrentIndent);
-        VerifyMocks();
     }
 
     [Fact]
@@ -1045,7 +1015,6 @@ public class IndentProcessorTests
         indentProcessor.SaveCurrentState();
 
         // Arrange (part 2) - change tab size and current indent to new values
-        InitializeMocks();
         SetCurrentIndent(indentProcessor, tabCount + 2);
         indentProcessor.SetTabSize(DefaultTabSize - 1);
         int expectedCurrentIndent = tabCount * expectedTabSize;
@@ -1060,7 +1029,6 @@ public class IndentProcessorTests
         indentProcessor.CurrentIndent
             .Should()
             .Be(expectedCurrentIndent);
-        VerifyMocks();
     }
 
     [Theory]
@@ -1070,12 +1038,11 @@ public class IndentProcessorTests
     public void SetTabSize_ShouldLogMessageAndSetTabSizeToMaximumWhenValueIsTooLarge(int tabSize)
     {
         // Arrange
-        InitializeMocks();
         int expectedTabSize = MaxTabSize;
         string expectedMessage = GetMessage(MsgTabSizeTooLarge,
                                             tabSize.ToString(),
                                             expectedTabSize.ToString());
-        LoggerMock
+        GetMock<ILogger>()
             .Setup(logger => logger.Log(LogSeverity.Warning, expectedMessage))
             .Verifiable(Times.Once);
         IndentProcessor indentProcessor = GetIndentProcessor();
@@ -1097,12 +1064,11 @@ public class IndentProcessorTests
     public void SetTabSize_ShouldLogMessageAndSetTabSizeToMinimumWhenValueIsTooSmall(int tabSize)
     {
         // Arrange
-        InitializeMocks();
         int expectedTabSize = MinTabSize;
         string expectedMessage = GetMessage(MsgTabSizeTooSmall,
                                             tabSize.ToString(),
                                             expectedTabSize.ToString());
-        LoggerMock
+        GetMock<ILogger>()
             .Setup(logger => logger.Log(LogSeverity.Warning, expectedMessage))
             .Verifiable(Times.Once);
         IndentProcessor indentProcessor = GetIndentProcessor();
@@ -1126,7 +1092,6 @@ public class IndentProcessorTests
     public void SetTabSize_ShouldSetTabSizeToValueWhenValueIsWithinValidRange(int expectedTabSize)
     {
         // Arrange
-        InitializeMocks();
         IndentProcessor indentProcessor = GetIndentProcessor();
 
         // Act
@@ -1136,7 +1101,6 @@ public class IndentProcessorTests
         indentProcessor.TabSize
             .Should()
             .Be(expectedTabSize);
-        VerifyMocks();
     }
 
     private static void SetCurrentIndent(IndentProcessor indentProcessor, int indent)
@@ -1149,19 +1113,8 @@ public class IndentProcessorTests
     }
 
     private IndentProcessor GetIndentProcessor()
-        => new(LocaterMock.Object, LoggerMock.Object);
-
-    private void InitializeMocks()
-    {
-        LocaterMock.Reset();
-        LoggerMock.Reset();
-    }
-
-    private void MocksVerifyNoOtherCalls()
-    {
-        LocaterMock.VerifyNoOtherCalls();
-        LoggerMock.VerifyNoOtherCalls();
-    }
+        => new(GetMock<ILocater>().Object,
+               GetMock<ILogger>().Object);
 
     private void Test_GetFirstTimeIndent(int firstTimeOffset,
                                          int initialIndent,
@@ -1173,15 +1126,13 @@ public class IndentProcessorTests
                                          string? message = null)
     {
         // Arrange
-        InitializeMocks();
-
         if (message is not null)
         {
-            LocaterMock
+            GetMock<ILocater>()
                 .Setup(locater => locater.CurrentLocationName)
                 .Returns(SegmentName)
                 .Verifiable(Times.Once);
-            LoggerMock
+            GetMock<ILogger>()
                 .Setup(logger => logger.Log(LogSeverity.Warning, message))
                 .Verifiable(Times.Once);
         }
@@ -1200,7 +1151,11 @@ public class IndentProcessorTests
         indentProcessor.CurrentIndent
             .Should()
             .Be(expectedCurrentIndent);
-        VerifyMocks();
+
+        if (message is not null)
+        {
+            VerifyMocks();
+        }
     }
 
     private void Test_GetIndent(int initialIndent,
@@ -1212,15 +1167,13 @@ public class IndentProcessorTests
                                 string? message = null)
     {
         // Arrange
-        InitializeMocks();
-
         if (message is not null)
         {
-            LocaterMock
+            GetMock<ILocater>()
                 .Setup(locater => locater.CurrentLocationName)
                 .Returns(SegmentName)
                 .Verifiable(Times.Once);
-            LoggerMock
+            GetMock<ILogger>()
                 .Setup(logger => logger.Log(LogSeverity.Warning, message))
                 .Verifiable(Times.Once);
         }
@@ -1239,21 +1192,10 @@ public class IndentProcessorTests
         indentProcessor.CurrentIndent
             .Should()
             .Be(expectedCurrentIndent);
-        VerifyMocks();
-    }
 
-    private void VerifyMocks()
-    {
-        if (LocaterMock.Setups.Any())
+        if (message is not null)
         {
-            LocaterMock.VerifyAll();
+            VerifyMocks();
         }
-
-        if (LoggerMock.Setups.Any())
-        {
-            LoggerMock.VerifyAll();
-        }
-
-        MocksVerifyNoOtherCalls();
     }
 }

@@ -1,21 +1,15 @@
 ﻿namespace DRSSoftware.TextTemplateProcessor;
 
 [ExcludeFromCodeCoverage]
-public class OptionParserTests
+public class OptionParserTests : MoqUnitTestBase
 {
     private const string SegmentIdentifierString = SegmentName + " " + SegmentHeaderOptionGroup;
     private const string SegmentName = "Segment1";
-
-    private Mock<ILogger> LoggerMock
-    {
-        get;
-    } = new(MockBehavior.Strict);
 
     [Fact]
     public void CreateOptionParserWithNullLogger_ShouldThrowException()
     {
         // Arrange
-        InitializeMocks();
         ILogger logger = null!;
         string expected = GetNullDependencyMessage(nameof(OptionParser), nameof(ILogger), nameof(logger));
 
@@ -27,15 +21,11 @@ public class OptionParserTests
             .Should()
             .Throw<ArgumentNullException>()
             .WithMessage(expected);
-        VerifyMocks();
     }
 
     [Fact]
     public void CreateOptionParserWithValidDependencies_ShouldSucceed()
     {
-        // Arrange
-        InitializeMocks();
-
         // Act
         OptionParser actual = GetOptionParser();
 
@@ -43,7 +33,6 @@ public class OptionParserTests
         actual
             .Should()
             .NotBeNull();
-        VerifyMocks();
     }
 
     [Theory]
@@ -54,7 +43,6 @@ public class OptionParserTests
     public void ParseFileHeaderOptionWhenOptionNameAndValueAreValid_ShouldReturnOptionNameAndValue(string optionName)
     {
         // Arrange
-        InitializeMocks();
         string optionValue = "value";
         string optionString = $"{optionName}={optionValue}";
         OptionParser parser = GetOptionParser();
@@ -72,14 +60,12 @@ public class OptionParserTests
         actual.Value
             .Should()
             .Be(optionValue);
-        VerifyMocks();
     }
 
     [Fact]
     public void ParseFileHeaderOptionWhenOptionNameIsInvalid_ShouldLogErrorMessage()
     {
         // Arrange
-        InitializeMocks();
         string optionString = $"{PadSegmentNameOption}=optionValue";
         string message = GetMessage(MsgUnknownHeaderOptionFound, FileHeaderOptionGroup, optionString);
         OptionParser parser = GetOptionParser();
@@ -98,7 +84,6 @@ public class OptionParserTests
     public void ParseFileHeaderOptionWhenOptionNameIsMissing_ShouldLogErrorMessage()
     {
         // Arrange
-        InitializeMocks();
         string optionString = $"=optionValue";
         string message = GetMessage(MsgOptionNameMustPrecedeEqualsSign, FileHeaderOptionGroup);
         OptionParser parser = GetOptionParser();
@@ -117,7 +102,6 @@ public class OptionParserTests
     public void ParseFileHeaderOptionWhenOptionValueIsMissing_ShouldLogErrorMessage()
     {
         // Arrange
-        InitializeMocks();
         string optionName = EndDelimiterOption;
         string optionString = $"{optionName}=";
         string message = GetMessage(MsgOptionValueMustFollowEqualsSign, FileHeaderOptionGroup, optionName);
@@ -137,7 +121,6 @@ public class OptionParserTests
     public void ParseFileHeaderOptionWhenValueSeparatorIsMissing_ShouldLogErrorMessage()
     {
         // Arrange
-        InitializeMocks();
         string optionString = $"{DelimiterEscapeOption}missingSeparator";
         string message = GetMessage(MsgInvalidFormOfOption, FileHeaderOptionGroup, optionString);
         OptionParser parser = GetOptionParser();
@@ -159,7 +142,6 @@ public class OptionParserTests
     public void ParseSegmentHeaderOptionWhenOptionNameAndValueAreValid_ShouldReturnOptionNameAndValue(string optionName)
     {
         // Arrange
-        InitializeMocks();
         string optionValue = "value";
         string optionString = $"{optionName}={optionValue}";
         OptionParser parser = GetOptionParser();
@@ -177,14 +159,12 @@ public class OptionParserTests
         actual.Value
             .Should()
             .Be(optionValue);
-        VerifyMocks();
     }
 
     [Fact]
     public void ParseSegmentHeaderOptionWhenOptionNameIsInvalid_ShouldLogErrorMessage()
     {
         // Arrange
-        InitializeMocks();
         string optionString = $"{DelimiterEscapeOption}=optionValue";
         string message = GetMessage(MsgUnknownHeaderOptionFound, SegmentIdentifierString, optionString);
         OptionParser parser = GetOptionParser();
@@ -203,7 +183,6 @@ public class OptionParserTests
     public void ParseSegmentHeaderOptionWhenOptionNameIsMissing_ShouldLogErrorMessage()
     {
         // Arrange
-        InitializeMocks();
         string optionString = $"=optionValue";
         string message = GetMessage(MsgOptionNameMustPrecedeEqualsSign, SegmentIdentifierString);
         OptionParser parser = GetOptionParser();
@@ -222,7 +201,6 @@ public class OptionParserTests
     public void ParseSegmentHeaderOptionWhenOptionValueIsMissing_ShouldLogErrorMessage()
     {
         // Arrange
-        InitializeMocks();
         string optionName = FirstTimeIndentOption;
         string optionString = $"{optionName}=";
         string message = GetMessage(MsgOptionValueMustFollowEqualsSign, SegmentIdentifierString, optionName);
@@ -242,7 +220,6 @@ public class OptionParserTests
     public void ParseSegmentHeaderOptionWhenValueSeparatorIsMissing_ShouldLogErrorMessage()
     {
         // Arrange
-        InitializeMocks();
         string optionString = $"{DelimiterEscapeOption}missingSeparator";
         string message = GetMessage(MsgInvalidFormOfOption, SegmentIdentifierString, optionString);
         OptionParser parser = GetOptionParser();
@@ -257,18 +234,14 @@ public class OptionParserTests
         VerifyMocks();
     }
 
-    private OptionParser GetOptionParser() => new(LoggerMock.Object);
-
-    private void InitializeMocks() => LoggerMock.Reset();
-
-    private void MocksVerifyNoOtherCalls() => LoggerMock.VerifyNoOtherCalls();
+    private OptionParser GetOptionParser() => new(GetMock<ILogger>().Object);
 
     private Option ParseFileHeaderOption(OptionParser parser, string optionString, string? message = null)
     {
         // Arrange
         if (message is not null)
         {
-            LoggerMock
+            GetMock<ILogger>()
                 .Setup(x => x.Log(LogSeverity.Error, message))
                 .Verifiable(Times.Once);
         }
@@ -282,22 +255,12 @@ public class OptionParserTests
         // Arrange
         if (message is not null)
         {
-            LoggerMock
+            GetMock<ILogger>()
                 .Setup(x => x.Log(LogSeverity.Error, message))
                 .Verifiable(Times.Once);
         }
 
         // Act
         return parser.Parse(optionString, IsValidSegmentHeaderOption, SegmentHeaderOptionGroup, SegmentName);
-    }
-
-    private void VerifyMocks()
-    {
-        if (LoggerMock.Setups.Any())
-        {
-            LoggerMock.VerifyAll();
-        }
-
-        MocksVerifyNoOtherCalls();
     }
 }
