@@ -65,9 +65,10 @@ public class RegexHelperTests
     [InlineData(OneTime + RelativeLeftChar + "2 ")]
     [InlineData("D" + Absolute + "1 ")]
     [InlineData(Absolute + "1  ")]
-    [InlineData(SegmentHeaderCode + " ")]
-    [InlineData(CommentCode + " ")]
-    [InlineData(NoControlCode + " ")]
+    [InlineData(FileHeaderCode + Space)]
+    [InlineData(SegmentHeaderCode + Space)]
+    [InlineData(CommentCode + Space)]
+    [InlineData(NoControlCode + Space)]
     public void MatchOnAbsoluteIndent_ShouldReturnFalseIfTextDoesNotBeginWithAbsoluteIndentIndicator(string prefix)
     {
         // Arrange
@@ -119,6 +120,7 @@ public class RegexHelperTests
     [InlineData(OneTime + RelativeLeftChar + "3 ")]
     [InlineData(Normal + Absolute + Spaces)]
     [InlineData(Absolute + "8  ")]
+    [InlineData(FileHeaderCode + Space)]
     [InlineData(SegmentHeaderCode + Space)]
     [InlineData(CommentCode + Space)]
     [InlineData(NoControlCode + Space)]
@@ -173,6 +175,7 @@ public class RegexHelperTests
     [InlineData(Normal + Absolute + Spaces)]
     [InlineData(OneTime + RelativeLeftChar + Spaces)]
     [InlineData(OneTime + RelativeRightChar + Spaces)]
+    [InlineData(FileHeaderCode + Space)]
     [InlineData(SegmentHeaderCode + Space)]
     [InlineData(CommentCode + Space)]
     [InlineData(NoControlCode + Space)]
@@ -222,6 +225,7 @@ public class RegexHelperTests
     [InlineData("//  ")]
     [InlineData(Space + CommentCode)]
     [InlineData(CommentCode + "6")]
+    [InlineData(FileHeaderCode + Space)]
     [InlineData(SegmentHeaderCode + Space)]
     [InlineData(NoControlCode + Space)]
     [InlineData(Normal + Absolute + "1 ")]
@@ -263,6 +267,53 @@ public class RegexHelperTests
     }
 
     [Theory]
+    [InlineData("#   ")]
+    [InlineData("##  ")]
+    [InlineData(SegmentHeaderCode + Space)]
+    [InlineData(Space + FileHeaderCode)]
+    [InlineData(FileHeaderCode + "6")]
+    [InlineData(CommentCode + Space)]
+    [InlineData(NoControlCode + Space)]
+    [InlineData(Normal + Absolute + "1 ")]
+    [InlineData(Normal + RelativeLeftChar + "3 ")]
+    [InlineData(Normal + RelativeRightChar + "5 ")]
+    [InlineData(OneTime + Absolute + "7 ")]
+    [InlineData(OneTime + RelativeLeftChar + "9 ")]
+    [InlineData(OneTime + RelativeRightChar + "4 ")]
+    public void MatchOnFileHeaderCode_ShouldReturnFalseIfTextDoesNotBeginWithFileHeaderCode(string prefix)
+    {
+        // Arrange
+        string text = $"{prefix}{_testString}";
+
+        // Act
+        bool actual = IsFileHeader(text);
+
+        // Assert
+        prefix.Length
+            .Should()
+            .Be(PrefixLength);
+        actual
+            .Should()
+            .BeFalse();
+    }
+
+    [Fact]
+    public void MatchOnFileHeaderCode_ShouldReturnTrueIfTextBeginsWithFileHeaderCode()
+    {
+        // Arrange
+        string text = $"{FileHeaderCode} {_testString}";
+
+        // Act
+        bool actual = IsFileHeader(text);
+
+        // Assert
+        actual
+            .Should()
+            .BeTrue();
+    }
+
+    [Theory]
+    [InlineData(FileHeaderCode + Space)]
     [InlineData(SegmentHeaderCode + Space)]
     [InlineData(CommentCode + Space)]
     [InlineData(Normal + Absolute + "9 ")]
@@ -315,6 +366,7 @@ public class RegexHelperTests
     [InlineData(Normal + RelativeLeftChar + "3 ")]
     [InlineData(OneTime + Absolute + Spaces)]
     [InlineData(Absolute + "8  ")]
+    [InlineData(FileHeaderCode + Space)]
     [InlineData(SegmentHeaderCode + Space)]
     [InlineData(CommentCode + Space)]
     [InlineData(NoControlCode + Space)]
@@ -366,6 +418,7 @@ public class RegexHelperTests
     [InlineData(OneTime + " 7 ")]
     [InlineData(OneTime + Absolute + "10")]
     [InlineData(OneTime + Absolute + "6x")]
+    [InlineData(FileHeaderCode + Space)]
     [InlineData(SegmentHeaderCode + Space)]
     [InlineData(CommentCode + Space)]
     [InlineData(NoControlCode + Space)]
@@ -416,6 +469,7 @@ public class RegexHelperTests
     [InlineData(OneTime + Space + RelativeLeftChar + "2")]
     [InlineData(OneTime + RelativeLeftChar + "04")]
     [InlineData(NoControlCode + Space)]
+    [InlineData(FileHeaderCode + Space)]
     [InlineData(SegmentHeaderCode + Space)]
     [InlineData(CommentCode + Space)]
     [InlineData(Space + OneTime + RelativeLeftChar + "6")]
@@ -460,6 +514,7 @@ public class RegexHelperTests
     [InlineData(OneTime + Space + RelativeRightChar + "2")]
     [InlineData(OneTime + RelativeRightChar + "04")]
     [InlineData(NoControlCode + Space)]
+    [InlineData(FileHeaderCode + Space)]
     [InlineData(SegmentHeaderCode + Space)]
     [InlineData(CommentCode + Space)]
     [InlineData(Space + OneTime + RelativeRightChar + "6")]
@@ -509,6 +564,7 @@ public class RegexHelperTests
     [InlineData("X" + RelativeRightChar + "6 ")]
     [InlineData(OneTime + RelativeRightChar + Spaces)]
     [InlineData(OneTime + RelativeLeftChar + Spaces)]
+    [InlineData(FileHeaderCode + Space)]
     [InlineData(SegmentHeaderCode + Space)]
     [InlineData(CommentCode + Space)]
     [InlineData(NoControlCode + Space)]
@@ -561,6 +617,7 @@ public class RegexHelperTests
     [InlineData(Normal + RelativeLeftChar + "08")]
     [InlineData(Normal + RelativeLeftChar + " 9")]
     [InlineData(Space + Normal + RelativeLeftChar + "7")]
+    [InlineData(FileHeaderCode + Space)]
     [InlineData(SegmentHeaderCode + Space)]
     [InlineData(CommentCode + Space)]
     [InlineData(NoControlCode + Space)]
@@ -606,6 +663,7 @@ public class RegexHelperTests
     [InlineData(Normal + RelativeRightChar + "08")]
     [InlineData(OneTime + RelativeRightChar + " 9")]
     [InlineData(Space + OneTime + RelativeRightChar + "7")]
+    [InlineData(FileHeaderCode + Space)]
     [InlineData(SegmentHeaderCode + Space)]
     [InlineData(CommentCode + Space)]
     [InlineData(NoControlCode + Space)]
@@ -644,6 +702,7 @@ public class RegexHelperTests
     [Theory]
     [InlineData("#   ")]
     [InlineData("##  ")]
+    [InlineData(FileHeaderCode + Space)]
     [InlineData(Space + SegmentHeaderCode)]
     [InlineData(SegmentHeaderCode + "6")]
     [InlineData(CommentCode + Space)]
@@ -687,6 +746,7 @@ public class RegexHelperTests
     }
 
     [Theory]
+    [InlineData(Space + FileHeaderCode)]
     [InlineData(Space + SegmentHeaderCode)]
     [InlineData(Space + CommentCode)]
     [InlineData(Space + Normal + Absolute + "0")]
@@ -743,6 +803,7 @@ public class RegexHelperTests
 
     [Theory]
     [InlineData(NoControlCode + Space)]
+    [InlineData(FileHeaderCode + Space)]
     [InlineData(SegmentHeaderCode + Space)]
     [InlineData(CommentCode + Space)]
     [InlineData(Normal + Absolute + "9 ")]
