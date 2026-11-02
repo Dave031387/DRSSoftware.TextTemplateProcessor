@@ -6,9 +6,8 @@
 /// </summary>
 internal static class MessageService
 {
-    // internal const string MsgAttemptingToReadFile = "Attempting to read text template file: {0}";
+    internal const string MsgAttemptingToReadFile = "Attempting to read text template file: {0}";
     // internal const string MsgAttemptToGenerateSegmentBeforeItWasLoaded = "An attempt was made to generate segment {0} before the template was loaded.";
-    // internal const string MsgAttemptToLoadMoreThanOnce = "Attempted to load template file \"{0}\" more than once. Repeat loads will be ignored.";
     // internal const string MsgClearTheOutputDirectory = "\nCONFIRM: Do you want to clear the contents of the following directory? {0}";
     internal const string MsgCombinePathsArgument1IsNull = "The first argument passed to {0} must not be null.";
     internal const string MsgCombinePathsArgument2IsNull = "The second argument passed to {0} must not be null.";
@@ -23,11 +22,11 @@ internal static class MessageService
     // internal const string MsgErrorWhenCreatingOutputDirectory = "An unexpected error occurred when creating the output directory. {0}";
     // internal const string MsgErrorWhenLocatingSolutionDirectory = "An unexpected error occurred while trying to locate the solution directory. {0}";
     // internal const string MsgErrorWhileConstructingFilePath = "An error occurred when trying to construct the output file path. {0}";
-    // internal const string MsgErrorWhileReadingTemplateFile = "An error occurred while reading the template file. {0}";
+    internal const string MsgFileAlreadyLoaded = "Template file \"{0}\" has already been loaded. Repeat loads will be ignored.";
     internal const string MsgFileHeaderHasNoOptions = "The file header has no options specified and will therefore be ignored.";
     internal const string MsgFileNotFound = "The specified file was not found. Full file path: {0}";
     internal const string MsgFilePathIsEmptyOrWhitespace = "The file path must not be empty or contain only whitespace.";
-    // internal const string MsgFileSuccessfullyRead = "The text template file has been successfully read.";
+    internal const string MsgFileSuccessfullyRead = "The text template file has been successfully read. Total line count: {0}";
     internal const string MsgFirstTimeIndentHasBeenTruncated = "The calculated first time indent for segment {0} went negative. It will be set to zero.";
     internal const string MsgFirstTimeIndentIsInvalid = $"The {FirstTimeIndentOption} option value specified on the {{0}} segment header must be a number between {MinIndentValueString} and {MaxIndentValueString} but the specified value was {{1}}.";
     internal const string MsgFirstTimeIndentSetToZero = $"A {FirstTimeIndentOption} option value of zero was specified on the {{0}} segment header. This value disables the first time indent processing for the segment.";
@@ -83,6 +82,7 @@ internal static class MessageService
     internal const string MsgTabSizeTooSmall = "The requested tab size {0} is too small. The minimum value {1} will be used.";
     internal const string MsgTabSizeValueMustBeValidNumber = "The specified tab size value \"{0}\" is not a valid integer value.";
     internal const string MsgTabSizeValueOutOfRange = $"The tab size must be an integer between {MinTabSizeString} and {MaxTabSizeString}, but the specified value was {{0}}.";
+    internal const string MsgTemplateFileCouldNotBeRead = "The template file could not be read. Reason: {0}";
     // internal const string MsgTemplateFileIsEmpty = "This template file is empty: {0}";
     // internal const string MsgTemplateFilePathNotSet = "Unable to load the template file because a valid file path has not been set.";
     // internal const string MsgTemplateHasBeenReset = "The environment for template file \"{0}\" has been reset.";
@@ -120,7 +120,7 @@ internal static class MessageService
     // internal const string MsgUnableToResetGeneratedText = "Unable to reset the generated text buffer. Reason: {0}";
     // internal const string MsgUnableToResetSegment = "Unable to reset segment {0}. Reason: {1}";
     // internal const string MsgUnableToResetUnknownSegment = "Unable to reset segment {0} because of a null, empty or unknown segment name.";
-    // internal const string MsgUnableToSetTemplateFilePath = "Unable to set the template file path \"{0}\". Reason: {1}";
+    internal const string MsgUnableToSetTemplateFilePath = "Unable to set the template file path \"{0}\". Reason: {1}";
     // internal const string MsgUnableToWriteFile = "Unable to write to output file. {0}";
     // internal const string MsgUnableToWriteGeneratedTextToFile = "Unable to write generated text to file. Reason: {0}";
     internal const string MsgUnableToWriteToTextFile = "An unexpected exception occurred while attempting to write to text file: \"{0}\"";
