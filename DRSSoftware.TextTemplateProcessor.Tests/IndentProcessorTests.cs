@@ -13,13 +13,10 @@ public class IndentProcessorTests : MoqUnitTestBase
         string expected = GetNullDependencyMessage(nameof(IndentProcessor), nameof(ILocater), nameof(locater));
 
         // Act
-        Action action = () => _ = new IndentProcessor(locater, GetMock<ILogger>().Object);
+        void action() => _ = new IndentProcessor(locater, GetMock<ILogger>().Object);
 
         // Assert
-        action
-            .Should()
-            .ThrowExactly<ArgumentNullException>()
-            .WithMessage(expected);
+        AssertException<ArgumentNullException>(action, expected);
     }
 
     [Fact]
@@ -30,13 +27,10 @@ public class IndentProcessorTests : MoqUnitTestBase
         string expected = GetNullDependencyMessage(nameof(IndentProcessor), nameof(ILogger), nameof(logger));
 
         // Act
-        Action action = () => _ = new IndentProcessor(GetMock<ILocater>().Object, logger);
+        void action() => _ = new IndentProcessor(GetMock<ILocater>().Object, logger);
 
         // Assert
-        action
-            .Should()
-            .ThrowExactly<ArgumentNullException>()
-            .WithMessage(expected);
+        AssertException<ArgumentNullException>(action, expected);
     }
 
     [Fact]

@@ -11,13 +11,10 @@ public class FileHeaderParserTests : MoqUnitTestBase
         string expected = GetNullDependencyMessage(nameof(FileHeaderParser), nameof(IDelimiterService), nameof(delimiterService));
 
         // Act
-        Action action = () => _ = new FileHeaderParser(delimiterService, GetMock<IIndentProcessor>().Object, GetMock<ILogger>().Object, GetMock<IOptionParser>().Object);
+        void action() => _ = new FileHeaderParser(delimiterService, GetMock<IIndentProcessor>().Object, GetMock<ILogger>().Object, GetMock<IOptionParser>().Object);
 
         // Assert
-        action
-            .Should()
-            .Throw<ArgumentNullException>()
-            .WithMessage(expected);
+        AssertException<ArgumentNullException>(action, expected);
     }
 
     [Fact]
@@ -28,13 +25,10 @@ public class FileHeaderParserTests : MoqUnitTestBase
         string expected = GetNullDependencyMessage(nameof(FileHeaderParser), nameof(IIndentProcessor), nameof(indentProcessor));
 
         // Act
-        Action action = () => _ = new FileHeaderParser(GetMock<IDelimiterService>().Object, indentProcessor, GetMock<ILogger>().Object, GetMock<IOptionParser>().Object);
+        void action() => _ = new FileHeaderParser(GetMock<IDelimiterService>().Object, indentProcessor, GetMock<ILogger>().Object, GetMock<IOptionParser>().Object);
 
         // Assert
-        action
-            .Should()
-            .Throw<ArgumentNullException>()
-            .WithMessage(expected);
+        AssertException<ArgumentNullException>(action, expected);
     }
 
     [Fact]
@@ -45,13 +39,10 @@ public class FileHeaderParserTests : MoqUnitTestBase
         string expected = GetNullDependencyMessage(nameof(FileHeaderParser), nameof(ILogger), nameof(logger));
 
         // Act
-        Action action = () => _ = new FileHeaderParser(GetMock<IDelimiterService>().Object, GetMock<IIndentProcessor>().Object, logger, GetMock<IOptionParser>().Object);
+        void action() => _ = new FileHeaderParser(GetMock<IDelimiterService>().Object, GetMock<IIndentProcessor>().Object, logger, GetMock<IOptionParser>().Object);
 
         // Assert
-        action
-            .Should()
-            .Throw<ArgumentNullException>()
-            .WithMessage(expected);
+        AssertException<ArgumentNullException>(action, expected);
     }
 
     [Fact]
@@ -62,13 +53,10 @@ public class FileHeaderParserTests : MoqUnitTestBase
         string expected = GetNullDependencyMessage(nameof(FileHeaderParser), nameof(IOptionParser), nameof(optionParser));
 
         // Act
-        Action action = () => _ = new FileHeaderParser(GetMock<IDelimiterService>().Object, GetMock<IIndentProcessor>().Object, GetMock<ILogger>().Object, optionParser);
+        void action() => _ = new FileHeaderParser(GetMock<IDelimiterService>().Object, GetMock<IIndentProcessor>().Object, GetMock<ILogger>().Object, optionParser);
 
         // Assert
-        action
-            .Should()
-            .Throw<ArgumentNullException>()
-            .WithMessage(expected);
+        AssertException<ArgumentNullException>(action, expected);
     }
 
     [Fact]

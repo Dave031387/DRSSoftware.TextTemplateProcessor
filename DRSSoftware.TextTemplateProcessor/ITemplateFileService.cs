@@ -30,11 +30,11 @@ internal interface ITemplateFileService : IEnumerable<string>
     }
 
     /// <summary>
-    /// Gets an enumerator that iterates over the lines read from the text template file.
+    /// Reads the contents of the text template file at the specified <paramref name="filePath"/>
+    /// and retains the file contents for later processing.
     /// </summary>
-    /// <returns>
-    /// An <see cref="IEnumerator{T}"/> object that can be used to iterate over the text lines from
-    /// the text template file.
-    /// </returns>
+    /// <param name="filePath">
+    /// The file path of an existing text template file.
+    /// </param>
     void ReadTemplateFile(string filePath);
 }

@@ -1,5 +1,8 @@
 ﻿namespace DRSSoftware.TextTemplateProcessor.TestShared;
 
+/// <summary>
+/// This class contains theory test data that is used by several unit tests in this project.
+/// </summary>
 [ExcludeFromCodeCoverage]
 public static class TestData
 {

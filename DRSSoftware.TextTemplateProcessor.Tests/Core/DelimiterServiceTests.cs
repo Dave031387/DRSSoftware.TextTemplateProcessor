@@ -11,13 +11,10 @@ public class DelimiterServiceTests : MoqUnitTestBase
         string expected = GetNullDependencyMessage(nameof(DelimiterService), nameof(ILogger), nameof(logger));
 
         // Act
-        Action action = () => _ = new DelimiterService(logger!);
+        void action() => _ = new DelimiterService(logger!);
 
         // Assert
-        action
-            .Should()
-            .Throw<ArgumentNullException>()
-            .WithMessage(expected);
+        AssertException<ArgumentNullException>(action, expected);
     }
 
     [Fact]

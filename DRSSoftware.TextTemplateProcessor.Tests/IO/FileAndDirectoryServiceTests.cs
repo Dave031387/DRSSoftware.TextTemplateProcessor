@@ -6,6 +6,8 @@ namespace DRSSoftware.TextTemplateProcessor.IO;
 [ExcludeFromCodeCoverage]
 public class FileAndDirectoryServiceTests
 {
+    private static string[] SampleText => ["Line 1", "Line 2", "Line 3"];
+
     [Fact]
     public void ClearDirectoryWhenDirectoryDoesNotExist_ShouldNotThrowException()
     {

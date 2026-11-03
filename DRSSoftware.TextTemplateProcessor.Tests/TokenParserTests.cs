@@ -21,13 +21,10 @@ public class TokenParserTests : MoqUnitTestBase
         string expected = GetNullDependencyMessage(nameof(TokenParser), nameof(IDelimiterService), nameof(delimiterService));
 
         // Act
-        Action action = () => _ = new TokenParser(GetMock<ILogger>().Object, delimiterService!);
+        void action() => _ = new TokenParser(GetMock<ILogger>().Object, delimiterService!);
 
         // Assert
-        action
-            .Should()
-            .Throw<ArgumentNullException>()
-            .WithMessage(expected);
+        AssertException<ArgumentNullException>(action, expected);
     }
 
     [Fact]
@@ -38,13 +35,10 @@ public class TokenParserTests : MoqUnitTestBase
         string expected = GetNullDependencyMessage(nameof(TokenParser), nameof(ILogger), nameof(logger));
 
         // Act
-        Action action = () => _ = new TokenParser(logger!, GetMock<IDelimiterService>().Object);
+        void action() => _ = new TokenParser(logger!, GetMock<IDelimiterService>().Object);
 
         // Assert
-        action
-            .Should()
-            .Throw<ArgumentNullException>()
-            .WithMessage(expected);
+        AssertException<ArgumentNullException>(action, expected);
     }
 
     [Fact]

@@ -23,13 +23,10 @@ public class ConsoleLoggerTests : MoqUnitTestBase
         string expected = GetNullDependencyMessage(nameof(LoggerBase), nameof(ILocater), nameof(locater));
 
         // Act
-        Action action = () => _ = new ConsoleLogger(locater, GetMock<IMessageWriter>().Object);
+        void action() => _ = new ConsoleLogger(locater, GetMock<IMessageWriter>().Object);
 
         // Assert
-        action
-            .Should()
-            .ThrowExactly<ArgumentNullException>()
-            .WithMessage(expected);
+        AssertException<ArgumentNullException>(action, expected);
     }
 
     [Fact]
@@ -40,13 +37,10 @@ public class ConsoleLoggerTests : MoqUnitTestBase
         string expected = GetNullDependencyMessage(nameof(ConsoleLogger), nameof(IMessageWriter), nameof(messageWriter));
 
         // Act
-        Action action = () => _ = new ConsoleLogger(GetMock<ILocater>().Object, messageWriter);
+        void action() => _ = new ConsoleLogger(GetMock<ILocater>().Object, messageWriter);
 
         // Assert
-        action
-            .Should()
-            .ThrowExactly<ArgumentNullException>()
-            .WithMessage(expected);
+        AssertException<ArgumentNullException>(action, expected);
     }
 
     [Fact]

@@ -11,13 +11,10 @@ public class SegmentHeaderParserTests : MoqUnitTestBase
         string expected = GetNullDependencyMessage(nameof(SegmentHeaderParser), nameof(IControlItemBuilder), nameof(controlItemBuilder));
 
         // Act
-        Action action = () => _ = new SegmentHeaderParser(controlItemBuilder, GetMock<IIndentProcessor>().Object, GetMock<ILogger>().Object, GetMock<IOptionParser>().Object);
+        void action() => _ = new SegmentHeaderParser(controlItemBuilder, GetMock<IIndentProcessor>().Object, GetMock<ILogger>().Object, GetMock<IOptionParser>().Object);
 
         // Assert
-        action
-            .Should()
-            .Throw<ArgumentNullException>()
-            .WithMessage(expected);
+        AssertException<ArgumentNullException>(action, expected);
     }
 
     [Fact]
@@ -28,13 +25,10 @@ public class SegmentHeaderParserTests : MoqUnitTestBase
         string expected = GetNullDependencyMessage(nameof(SegmentHeaderParser), nameof(IIndentProcessor), nameof(indentProcessor));
 
         // Act
-        Action action = () => _ = new SegmentHeaderParser(GetMock<IControlItemBuilder>().Object, indentProcessor, GetMock<ILogger>().Object, GetMock<IOptionParser>().Object);
+        void action() => _ = new SegmentHeaderParser(GetMock<IControlItemBuilder>().Object, indentProcessor, GetMock<ILogger>().Object, GetMock<IOptionParser>().Object);
 
         // Assert
-        action
-            .Should()
-            .Throw<ArgumentNullException>()
-            .WithMessage(expected);
+        AssertException<ArgumentNullException>(action, expected);
     }
 
     [Fact]
@@ -45,13 +39,10 @@ public class SegmentHeaderParserTests : MoqUnitTestBase
         string expected = GetNullDependencyMessage(nameof(SegmentHeaderParser), nameof(ILogger), nameof(logger));
 
         // Act
-        Action action = () => _ = new SegmentHeaderParser(GetMock<IControlItemBuilder>().Object, GetMock<IIndentProcessor>().Object, logger, GetMock<IOptionParser>().Object);
+        void action() => _ = new SegmentHeaderParser(GetMock<IControlItemBuilder>().Object, GetMock<IIndentProcessor>().Object, logger, GetMock<IOptionParser>().Object);
 
         // Assert
-        action
-            .Should()
-            .Throw<ArgumentNullException>()
-            .WithMessage(expected);
+        AssertException<ArgumentNullException>(action, expected);
     }
 
     [Fact]
@@ -62,13 +53,10 @@ public class SegmentHeaderParserTests : MoqUnitTestBase
         string expected = GetNullDependencyMessage(nameof(SegmentHeaderParser), nameof(IOptionParser), nameof(optionParser));
 
         // Act
-        Action action = () => _ = new SegmentHeaderParser(GetMock<IControlItemBuilder>().Object, GetMock<IIndentProcessor>().Object, GetMock<ILogger>().Object, optionParser);
+        void action() => _ = new SegmentHeaderParser(GetMock<IControlItemBuilder>().Object, GetMock<IIndentProcessor>().Object, GetMock<ILogger>().Object, optionParser);
 
         // Assert
-        action
-            .Should()
-            .Throw<ArgumentNullException>()
-            .WithMessage(expected);
+        AssertException<ArgumentNullException>(action, expected);
     }
 
     [Fact]

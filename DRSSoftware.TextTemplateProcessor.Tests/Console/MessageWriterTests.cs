@@ -11,13 +11,10 @@ public class MessageWriterTests : MoqUnitTestBase
         string expected = GetNullDependencyMessage(nameof(MessageWriter), nameof(IConsoleWriter), nameof(consoleWriter));
 
         // Act
-        Action action = () => _ = new MessageWriter(consoleWriter);
+        void action() => _ = new MessageWriter(consoleWriter);
 
         // Assert
-        action
-            .Should()
-            .ThrowExactly<ArgumentNullException>()
-            .WithMessage(expected);
+        AssertException<ArgumentNullException>(action, expected);
     }
 
     [Fact]

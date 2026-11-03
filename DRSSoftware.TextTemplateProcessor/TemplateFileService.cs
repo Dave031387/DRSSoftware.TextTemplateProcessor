@@ -146,7 +146,7 @@ internal class TemplateFileService : DependencyCheckerBase, ITemplateFileService
         {
             try
             {
-                string message = GetMessage(MsgAttemptingToReadFile, TemplateFilePath);
+                string message = GetMessage(MsgAttemptingToReadFile, TemplateFileName);
                 Logger.Log(LogSeverity.Information, message);
                 TemplateLines = [.. FileAndDirectoryService.ReadTextFile(TemplateFilePath)];
                 message = GetMessage(MsgFileSuccessfullyRead, TemplateLines.Count.ToString());

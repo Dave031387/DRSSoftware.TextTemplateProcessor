@@ -28,13 +28,10 @@ public class TokenProcessorTests : MoqUnitTestBase
         string expected = GetNullDependencyMessage(nameof(TokenProcessor), nameof(IDelimiterService), nameof(delimiterService));
 
         // Act
-        Action action = () => _ = new TokenProcessor(GetMock<ILocater>().Object, GetMock<ILogger>().Object, delimiterService!, GetMock<ITokenParser>().Object);
+        void action() => _ = new TokenProcessor(GetMock<ILocater>().Object, GetMock<ILogger>().Object, delimiterService!, GetMock<ITokenParser>().Object);
 
         // Assert
-        action
-            .Should()
-            .Throw<ArgumentNullException>()
-            .WithMessage(expected);
+        AssertException<ArgumentNullException>(action, expected);
     }
 
     [Fact]
@@ -45,13 +42,10 @@ public class TokenProcessorTests : MoqUnitTestBase
         string expected = GetNullDependencyMessage(nameof(TokenProcessor), nameof(ILocater), nameof(locater));
 
         // Act
-        Action action = () => _ = new TokenProcessor(locater!, GetMock<ILogger>().Object, GetMock<IDelimiterService>().Object, GetMock<ITokenParser>().Object);
+        void action() => _ = new TokenProcessor(locater!, GetMock<ILogger>().Object, GetMock<IDelimiterService>().Object, GetMock<ITokenParser>().Object);
 
         // Assert
-        action
-            .Should()
-            .Throw<ArgumentNullException>()
-            .WithMessage(expected);
+        AssertException<ArgumentNullException>(action, expected);
     }
 
     [Fact]
@@ -62,13 +56,10 @@ public class TokenProcessorTests : MoqUnitTestBase
         string expected = GetNullDependencyMessage(nameof(TokenProcessor), nameof(ILogger), nameof(logger));
 
         // Act
-        Action action = () => _ = new TokenProcessor(GetMock<ILocater>().Object, logger!, GetMock<IDelimiterService>().Object, GetMock<ITokenParser>().Object);
+        void action() => _ = new TokenProcessor(GetMock<ILocater>().Object, logger!, GetMock<IDelimiterService>().Object, GetMock<ITokenParser>().Object);
 
         // Assert
-        action
-            .Should()
-            .Throw<ArgumentNullException>()
-            .WithMessage(expected);
+        AssertException<ArgumentNullException>(action, expected);
     }
 
     [Fact]
@@ -79,13 +70,10 @@ public class TokenProcessorTests : MoqUnitTestBase
         string expected = GetNullDependencyMessage(nameof(TokenProcessor), nameof(ITokenParser), nameof(tokenParser));
 
         // Act
-        Action action = () => _ = new TokenProcessor(GetMock<ILocater>().Object, GetMock<ILogger>().Object, GetMock<IDelimiterService>().Object, tokenParser!);
+        void action() => _ = new TokenProcessor(GetMock<ILocater>().Object, GetMock<ILogger>().Object, GetMock<IDelimiterService>().Object, tokenParser!);
 
         // Assert
-        action
-            .Should()
-            .Throw<ArgumentNullException>()
-            .WithMessage(expected);
+        AssertException<ArgumentNullException>(action, expected);
     }
 
     [Fact]

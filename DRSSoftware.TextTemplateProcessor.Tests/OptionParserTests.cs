@@ -14,13 +14,10 @@ public class OptionParserTests : MoqUnitTestBase
         string expected = GetNullDependencyMessage(nameof(OptionParser), nameof(ILogger), nameof(logger));
 
         // Act
-        Action action = () => _ = new OptionParser(logger);
+        void action() => _ = new OptionParser(logger);
 
         // Assert
-        action
-            .Should()
-            .Throw<ArgumentNullException>()
-            .WithMessage(expected);
+        AssertException<ArgumentNullException>(action, expected);
     }
 
     [Fact]
