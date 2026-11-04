@@ -18,6 +18,7 @@ internal static class ServiceLocater
         .AddSingleton<IFileAndDirectoryService, FileAndDirectoryService>()
         .AddSingleton<IFileHeaderParser, FileHeaderParser>()
         .AddSingleton<IIndentProcessor, IndentProcessor>()
+        .AddSingleton<IGeneratedFileService, GeneratedFileService>()
         .AddSingleton<ILocater, Locater>()
         .AddSingleton<ILogger, ConsoleLogger>()
         .AddSingleton<IMessageWriter, MessageWriter>()

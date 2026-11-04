@@ -1,4 +1,7 @@
-﻿namespace DRSSoftware.TextTemplateProcessor.TestShared;
+﻿using DRSSoftware.TextTemplateProcessor.Parsers;
+using DRSSoftware.TextTemplateProcessor.Services;
+
+namespace DRSSoftware.TextTemplateProcessor.TestShared;
 
 /// <summary>
 /// This class contains theory test data that is used by several unit tests in this project.
