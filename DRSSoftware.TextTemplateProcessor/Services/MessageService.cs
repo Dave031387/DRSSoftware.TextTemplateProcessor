@@ -37,7 +37,7 @@ internal static class MessageService
     // internal const string MsgFourthCharacterMustBeBlank = "The fourth character of each template line should be blank. Template line was: \"{0}\"";
     // internal const string MsgFullPathCannotBeDetermined = "The full path can't be determined because the solution directory path is unknown.";
     // internal const string MsgGeneratedTextHasBeenReset = "The generated text cache for template file \"{0}\" has been reset.";
-    // internal const string MsgGeneratedTextIsEmpty = "The generated text is empty. Unable to write to output file \"{0}\"";
+    internal const string MsgGeneratedTextIsEmpty = "The generated text is empty. The output file will not be written to.";
     // internal const string MsgGeneratedTextIsNull = "Unable to write to the output file because the generated text is null.";
     internal const string MsgIndentValueMustBeValidNumber = "The specified indent value \"{0}\" is not a valid integer value.";
     internal const string MsgIndentValueOutOfRange = $"The indent value must be a number between {MinIndentValueString} and {MaxIndentValueString} but the specified value was {{0}}.";
@@ -67,6 +67,8 @@ internal static class MessageService
     internal const string MsgOptionValueMustFollowEqualsSign = "The value for the {1} option must appear immediately after the equals sign with no intervening spaces on the {0}.";
     // internal const string MsgOutputDirectoryCleared = "The output directory has been cleared.";
     // internal const string MsgOutputDirectoryNotSet = "The output file can't be written because the output directory hasn't been set.";
+    internal const string MsgOutputFileSuccessfullyCreated = "{0} generated text lines were successfully written to the output file.";
+    internal const string MsgOutputFileWillBeOverwritten = "The output file already exists and will be overwritten.";
     // internal const string MsgPadSegmentMustBeDefinedEarlier = "The pad segment name {1} referenced by segment {0} must be defined earlier in the template file. The pad segment will be ignored.";
     // internal const string MsgPadSegmentNameSameAsSegmentHeaderName = "The pad segment name and segment header name for segment {0} are identical. The pad segment name will be ignored.";
     // internal const string MsgPathIsNotRooted = "Expected a rooted path, but found \"{0}\"";
@@ -110,6 +112,7 @@ internal static class MessageService
     internal const string MsgUnableToCombineFilePaths = "An unexpected exception occurred while attempting to combine file paths \"{0}\" and \"{1}\"";
     internal const string MsgUnableToCreateDirectory = "An unexpected exception occurred while attempting to create directory: \"{0}\"";
     // internal const string MsgUnableToCreateOutputDirectory = "Encountered an error when trying to create the output directory path: {0}";
+    internal const string MsgUnableToCreateOutputFile = "Unable to create output file. Reason: {0}";
     // internal const string MsgUnableToGenerateSegment = "Unable to generate segment {0}. Reason: {1}";
     internal const string MsgUnableToGetFullPathString = "An unexpected exception occurred while trying to determine the full path string for path: \"{0}\"";
     // internal const string MsgUnableToGetUserResponse = "Unable to get the user response. Reason: {0}";
@@ -121,7 +124,6 @@ internal static class MessageService
     // internal const string MsgUnableToResetSegment = "Unable to reset segment {0}. Reason: {1}";
     // internal const string MsgUnableToResetUnknownSegment = "Unable to reset segment {0} because of a null, empty or unknown segment name.";
     internal const string MsgUnableToSetTemplateFilePath = "Unable to set the template file path \"{0}\". Reason: {1}";
-    // internal const string MsgUnableToWriteFile = "Unable to write to output file. {0}";
     // internal const string MsgUnableToWriteGeneratedTextToFile = "Unable to write generated text to file. Reason: {0}";
     internal const string MsgUnableToWriteToTextFile = "An unexpected exception occurred while attempting to write to text file: \"{0}\"";
     internal const string MsgUncPathIsNotSupported = "UNC paths are not supported in this version of the Text Template Processor. The specified path was \"{0}\"";
@@ -129,7 +131,7 @@ internal static class MessageService
     internal const string MsgUnknownHeaderOptionFound = "An unknown option \"{1}\" was found on the {0}. It will be ignored.";
     internal const string MsgUnknownTokenName = "Invalid attempt to assign a replacement value to unknown token name \"{1}\" in segment {0}. The token will be ignored.";
     internal const string MsgWarningCount = "  Warnings: {0}";
-    // internal const string MsgWritingTextFile = "Writing generated text to file: \"{0}\"";
+    internal const string MsgWritingGeneratedTextFile = "Writing generated text to file: \"{0}\"";
     // internal const string MsgYesNoPrompt = "Enter Y (yes) or N (no)...";
 
     /// <summary>

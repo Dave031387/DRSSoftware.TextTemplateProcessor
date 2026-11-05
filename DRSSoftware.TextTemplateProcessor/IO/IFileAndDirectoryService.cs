@@ -59,7 +59,18 @@ internal interface IFileAndDirectoryService
     /// <exception cref="FileAndDirectoryServiceException">
     /// Thrown if any issues are encountered while attempting to create the given directory.
     /// </exception>
-    string CreateDirectory(string directoryPath, string rootDirectory);
+    string CreateDirectory(string directoryPath, string? rootDirectory = null);
+
+    /// <summary>
+    /// Determines whether or not the given <paramref name="filePath"/> represents an existing file.
+    /// </summary>
+    /// <param name="filePath">
+    /// The file path to be checked.
+    /// </param>
+    /// <returns>
+    /// <see langword="true"/> if the file exists; otherwise <see langword="false"/>
+    /// </returns>
+    bool FileExists(string filePath);
 
     /// <summary>
     /// Gets the directory name from the given <paramref name="path" /> string.
@@ -146,12 +157,12 @@ internal interface IFileAndDirectoryService
     /// The full file path of the text file to be read.
     /// </param>
     /// <returns>
-    /// A collection of text strings read in from the text file.
+    /// A <see cref="List{T}"/> of text strings read in from the text file.
     /// </returns>
     /// <exception cref="FileAndDirectoryServiceException">
     /// Thrown if any issues are encountered while trying to read from the text file.
     /// </exception>
-    IEnumerable<string> ReadTextFile(string fullFilePath);
+    List<string> ReadTextFile(string fullFilePath);
 
     /// <summary>
     /// Writes a collection of <paramref name="textLines" /> to the file that is located at the
