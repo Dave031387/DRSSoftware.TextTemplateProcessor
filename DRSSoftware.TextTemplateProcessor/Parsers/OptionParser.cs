@@ -12,10 +12,7 @@ internal class OptionParser : DependencyCheckerBase, IOptionParser
     /// <param name="logger">
     /// A reference to the logger service.
     /// </param>
-    internal OptionParser(ILogger logger) => Logger = NullDependencyCheck(logger,
-                                                                          nameof(OptionParser),
-                                                                          nameof(ILogger),
-                                                                          nameof(logger));
+    internal OptionParser(ILogger logger) => Logger = NullDependencyCheck(logger, nameof(logger));
 
     /// <summary>
     /// A delegate that validates that the given <paramref name="optionName"/> is a valid option name.

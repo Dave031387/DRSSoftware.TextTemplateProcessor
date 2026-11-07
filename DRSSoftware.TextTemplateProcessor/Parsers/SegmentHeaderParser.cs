@@ -31,22 +31,10 @@ internal class SegmentHeaderParser : DependencyCheckerBase, ISegmentHeaderParser
                                  ILogger logger,
                                  IOptionParser optionParser)
     {
-        ControlItemBuilder = NullDependencyCheck(controlItemBuilder,
-                                                 nameof(SegmentHeaderParser),
-                                                 nameof(IControlItemBuilder),
-                                                 nameof(controlItemBuilder));
-        IndentProcessor = NullDependencyCheck(indentProcessor,
-                                              nameof(SegmentHeaderParser),
-                                              nameof(IIndentProcessor),
-                                              nameof(indentProcessor));
-        Logger = NullDependencyCheck(logger,
-                                     nameof(SegmentHeaderParser),
-                                     nameof(ILogger),
-                                     nameof(logger));
-        OptionParser = NullDependencyCheck(optionParser,
-                                           nameof(SegmentHeaderParser),
-                                           nameof(IOptionParser),
-                                           nameof(optionParser));
+        ControlItemBuilder = NullDependencyCheck(controlItemBuilder, nameof(controlItemBuilder));
+        IndentProcessor = NullDependencyCheck(indentProcessor, nameof(indentProcessor));
+        Logger = NullDependencyCheck(logger, nameof(logger));
+        OptionParser = NullDependencyCheck(optionParser, nameof(optionParser));
     }
 
     /// <summary>

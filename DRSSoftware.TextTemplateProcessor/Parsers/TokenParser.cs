@@ -19,14 +19,8 @@ internal class TokenParser : DependencyCheckerBase, ITokenParser
     /// </param>
     public TokenParser(ILogger logger, IDelimiterService delimiterService)
     {
-        Logger = NullDependencyCheck(logger,
-                                     nameof(TokenParser),
-                                     nameof(ILogger),
-                                     nameof(logger));
-        DelimiterService = NullDependencyCheck(delimiterService,
-                                               nameof(TokenParser),
-                                               nameof(IDelimiterService),
-                                               nameof(delimiterService));
+        Logger = NullDependencyCheck(logger, nameof(logger));
+        DelimiterService = NullDependencyCheck(delimiterService, nameof(delimiterService));
         FoundDelimiters = [DelimiterType.NotFound, DelimiterType.NotFound, DelimiterType.NotFound];
         FoundTokenInfo = TokenInfo.Empty;
         ModifiedText = new(200, 1000);

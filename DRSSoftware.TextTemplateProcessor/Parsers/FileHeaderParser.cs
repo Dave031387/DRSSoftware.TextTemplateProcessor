@@ -23,22 +23,10 @@ internal class FileHeaderParser : DependencyCheckerBase, IFileHeaderParser
     /// </param>
     internal FileHeaderParser(IDelimiterService delimiterService, IIndentProcessor indentProcessor, ILogger logger, IOptionParser optionParser)
     {
-        DelimiterService = NullDependencyCheck(delimiterService,
-                                               nameof(FileHeaderParser),
-                                               nameof(IDelimiterService),
-                                               nameof(delimiterService));
-        IndentProcessor = NullDependencyCheck(indentProcessor,
-                                              nameof(FileHeaderParser),
-                                              nameof(IIndentProcessor),
-                                              nameof(indentProcessor));
-        Logger = NullDependencyCheck(logger,
-                                     nameof(FileHeaderParser),
-                                     nameof(ILogger),
-                                     nameof(logger));
-        OptionParser = NullDependencyCheck(optionParser,
-                                           nameof(FileHeaderParser),
-                                           nameof(IOptionParser),
-                                           nameof(optionParser));
+        DelimiterService = NullDependencyCheck(delimiterService, nameof(delimiterService));
+        IndentProcessor = NullDependencyCheck(indentProcessor, nameof(indentProcessor));
+        Logger = NullDependencyCheck(logger, nameof(logger));
+        OptionParser = NullDependencyCheck(optionParser, nameof(optionParser));
     }
 
     /// <summary>

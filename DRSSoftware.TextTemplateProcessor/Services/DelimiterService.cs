@@ -17,10 +17,7 @@ internal class DelimiterService : DependencyCheckerBase, IDelimiterService
     /// </param>
     internal DelimiterService(ILogger logger)
     {
-        Logger = NullDependencyCheck(logger,
-                                     nameof(DelimiterService),
-                                     nameof(ILogger),
-                                     nameof(logger));
+        Logger = NullDependencyCheck(logger, nameof(logger));
         ResetTokenDelimiters();
     }
 

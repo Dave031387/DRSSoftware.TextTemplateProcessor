@@ -2,10 +2,14 @@
 global using System.Collections.Generic;
 global using System.Diagnostics.CodeAnalysis;
 global using System.Linq;
+global using DRSSoftware.TextTemplateProcessor.Console;
 global using DRSSoftware.TextTemplateProcessor.Core;
 global using static DRSSoftware.TextTemplateProcessor.Core.GlobalConstants;
 global using static DRSSoftware.TextTemplateProcessor.Core.RegexHelper;
+global using DRSSoftware.TextTemplateProcessor.IO;
 global using DRSSoftware.TextTemplateProcessor.Logger;
+global using DRSSoftware.TextTemplateProcessor.Parsers;
+global using DRSSoftware.TextTemplateProcessor.Services;
 global using static DRSSoftware.TextTemplateProcessor.Services.MessageService;
 global using DRSSoftware.TextTemplateProcessor.TestShared;
 global using static DRSSoftware.TextTemplateProcessor.TestShared.TestHelper;

@@ -30,22 +30,10 @@ internal class TokenProcessor : DependencyCheckerBase, ITokenExtractor, ITokenTr
     /// </exception>
     internal TokenProcessor(ILocater locater, ILogger logger, IDelimiterService delimiterService, ITokenParser tokenParser)
     {
-        Locater = NullDependencyCheck(locater,
-                                      nameof(TokenProcessor),
-                                      nameof(ILocater),
-                                      nameof(locater));
-        Logger = NullDependencyCheck(logger,
-                                     nameof(TokenProcessor),
-                                     nameof(ILogger),
-                                     nameof(logger));
-        DelimiterService = NullDependencyCheck(delimiterService,
-                                               nameof(TokenProcessor),
-                                               nameof(IDelimiterService),
-                                               nameof(delimiterService));
-        TokenParser = NullDependencyCheck(tokenParser,
-                                          nameof(TokenProcessor),
-                                          nameof(ITokenParser),
-                                          nameof(tokenParser));
+        Locater = NullDependencyCheck(locater, nameof(locater));
+        Logger = NullDependencyCheck(logger, nameof(logger));
+        DelimiterService = NullDependencyCheck(delimiterService, nameof(delimiterService));
+        TokenParser = NullDependencyCheck(tokenParser, nameof(tokenParser));
         ModifiedText = new(200, 1000);
         TokenDictionary = [];
     }

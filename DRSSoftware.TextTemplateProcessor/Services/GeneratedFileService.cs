@@ -18,21 +18,13 @@ internal class GeneratedFileService : DependencyCheckerBase, IGeneratedFileServi
     /// <param name="pathValidator">
     /// A reference to the path validator service.
     /// </param>
-    internal GeneratedFileService(IFileAndDirectoryService fileAndDirectoryService, ILogger logger, IPathValidator pathValidator)
+    internal GeneratedFileService(IFileAndDirectoryService fileAndDirectoryService,
+                                  ILogger logger,
+                                  IPathValidator pathValidator)
     {
-        FileAndDirectoryService = NullDependencyCheck(fileAndDirectoryService,
-                                                      nameof(TemplateFileService),
-                                                      nameof(IFileAndDirectoryService),
-                                                      nameof(fileAndDirectoryService));
-        Logger = NullDependencyCheck(logger,
-                                     nameof(TemplateFileService),
-                                     nameof(ILogger),
-                                     nameof(logger));
-        PathValidator = NullDependencyCheck(pathValidator,
-                                            nameof(TemplateFileService),
-                                            nameof(IPathValidator),
-                                            nameof(pathValidator));
-
+        FileAndDirectoryService = NullDependencyCheck(fileAndDirectoryService, nameof(fileAndDirectoryService));
+        Logger = NullDependencyCheck(logger, nameof(logger));
+        PathValidator = NullDependencyCheck(pathValidator, nameof(pathValidator));
         OutputFileName = string.Empty;
         OutputFilePath = string.Empty;
         OutputDirectoryPath = string.Empty;

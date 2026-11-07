@@ -1,6 +1,4 @@
-﻿using DRSSoftware.TextTemplateProcessor.Console;
-
-namespace DRSSoftware.TextTemplateProcessor.Logger;
+﻿namespace DRSSoftware.TextTemplateProcessor.Logger;
 
 [ExcludeFromCodeCoverage]
 public class ConsoleLoggerTests : MoqUnitTestBase
@@ -12,7 +10,7 @@ public class ConsoleLoggerTests : MoqUnitTestBase
     {
         // Arrange
         ILocater locater = null!;
-        string expected = GetNullDependencyMessage(nameof(LoggerBase), nameof(ILocater), nameof(locater));
+        string expected = GetNullDependencyMessage(nameof(ConsoleLogger), nameof(ILocater), nameof(locater));
 
         // Act
         void action() => _ = new ConsoleLogger(locater, GetMock<IMessageWriter>().Object);

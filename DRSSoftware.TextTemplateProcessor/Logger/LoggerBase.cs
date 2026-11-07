@@ -7,26 +7,19 @@
 internal abstract class LoggerBase : DependencyCheckerBase, ILogger
 {
     /// <summary>
-    /// Creates a new instance of the <see cref="LoggerBase" /> class.
+    /// Creates a new instance of the <see cref="LoggerBase"/> class.
     /// </summary>
     /// <param name="locater">
-    /// An <see cref="ILocater" /> object that is used to locate the current position in the text
+    /// An <see cref="ILocater"/> object that is used to locate the current position in the text
     /// template file.
     /// </param>
-    internal LoggerBase(ILocater locater)
-    {
-        Locater = NullDependencyCheck(locater,
-                                      nameof(LoggerBase),
-                                      nameof(ILocater),
-                                      nameof(locater));
-    }
+    internal LoggerBase(ILocater locater) => Locater = NullDependencyCheck(locater, nameof(locater));
 
     /// <summary>
     /// Gets or sets the type of operation currently being performed against the text template file.
     /// </summary>
     /// <remarks>
-    /// This property is initialized to <see cref="OperationType.Setup" /> when the logger object is
-    /// created.
+    /// This property is initialized to <see cref="OperationType.Setup"/> when the logger object is created.
     /// </remarks>
     public OperationType CurrentOperationType
     {
@@ -53,7 +46,7 @@ internal abstract class LoggerBase : DependencyCheckerBase, ILogger
     }
 
     /// <summary>
-    /// An <see cref="ILocater" /> object that is used to locate the current position in the text
+    /// An <see cref="ILocater"/> object that is used to locate the current position in the text
     /// template file.
     /// </summary>
     private ILocater Locater
@@ -63,11 +56,11 @@ internal abstract class LoggerBase : DependencyCheckerBase, ILogger
     }
 
     /// <summary>
-    /// Creates a new <see cref="LogEntry" /> object and writes it to the log.
+    /// Creates a new <see cref="LogEntry"/> object and writes it to the log.
     /// </summary>
     /// <remarks>
-    /// This version of the Log method uses the current operation type when constructing the
-    /// <see cref="LogEntry" /> object.
+    /// This version of the Log method uses the current operation type when constructing the <see
+    /// cref="LogEntry"/> object.
     /// </remarks>
     /// <param name="logSeverity">
     /// The severity level of the log message.
@@ -84,11 +77,11 @@ internal abstract class LoggerBase : DependencyCheckerBase, ILogger
     }
 
     /// <summary>
-    /// Creates a new <see cref="LogEntry" /> object and writes it to the log.
+    /// Creates a new <see cref="LogEntry"/> object and writes it to the log.
     /// </summary>
     /// <remarks>
-    /// This version of the Log method uses the given <paramref name="operationType" /> instead of
-    /// the current operation type when constructing the <see cref="LogEntry" /> object. <br /> The
+    /// This version of the Log method uses the given <paramref name="operationType"/> instead of
+    /// the current operation type when constructing the <see cref="LogEntry"/> object. <br/> The
     /// current operation type remains unchanged.
     /// </remarks>
     /// <param name="logSeverity">
@@ -141,15 +134,15 @@ internal abstract class LoggerBase : DependencyCheckerBase, ILogger
     }
 
     /// <summary>
-    /// Write the given <paramref name="logEntry" /> to the log.
+    /// Write the given <paramref name="logEntry"/> to the log.
     /// </summary>
     /// <param name="logEntry">
-    /// The <see cref="LogEntry" /> instance that is to be written out to the log.
+    /// The <see cref="LogEntry"/> instance that is to be written out to the log.
     /// </param>
     protected abstract void WriteLogEntry(LogEntry logEntry);
 
     /// <summary>
-    /// Creates a <see cref="LogEntry" /> instance to be written to the log.
+    /// Creates a <see cref="LogEntry"/> instance to be written to the log.
     /// </summary>
     /// <param name="logSeverity">
     /// The severity level of the log message.
@@ -162,8 +155,7 @@ internal abstract class LoggerBase : DependencyCheckerBase, ILogger
     /// The log message that is being written to the log.
     /// </param>
     /// <returns>
-    /// A <see cref="LogEntry" /> object representing the log message that is to be written to the
-    /// log.
+    /// A <see cref="LogEntry"/> object representing the log message that is to be written to the log.
     /// </returns>
     private LogEntry CreateLogEntry(LogSeverity logSeverity, OperationType operationType, string message)
     {
@@ -180,7 +172,7 @@ internal abstract class LoggerBase : DependencyCheckerBase, ILogger
     }
 
     /// <summary>
-    /// Update the error and warning counters based on the given <paramref name="logSeverity" />.
+    /// Update the error and warning counters based on the given <paramref name="logSeverity"/>.
     /// </summary>
     /// <param name="logSeverity">
     /// The severity level of the log message.

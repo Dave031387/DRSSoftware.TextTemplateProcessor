@@ -22,12 +22,7 @@ internal class ConsoleLogger : LoggerBase
     /// <see langword="null" />.
     /// </exception>
     internal ConsoleLogger(ILocater locater, IMessageWriter messageWriter) : base(locater)
-    {
-        MessageWriter = NullDependencyCheck(messageWriter,
-                                            nameof(ConsoleLogger),
-                                            nameof(IMessageWriter),
-                                            nameof(messageWriter));
-    }
+        => MessageWriter = NullDependencyCheck(messageWriter, nameof(messageWriter));
 
     /// <summary>
     /// An <see cref="IMessageWriter" /> object that is used to write messages to the console.

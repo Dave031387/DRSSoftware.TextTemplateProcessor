@@ -26,19 +26,9 @@ internal class TemplateFileService : DependencyCheckerBase, ITemplateFileService
     /// </param>
     internal TemplateFileService(IFileAndDirectoryService fileAndDirectoryService, ILogger logger, IPathValidator pathValidator)
     {
-        FileAndDirectoryService = NullDependencyCheck(fileAndDirectoryService,
-                                                      nameof(TemplateFileService),
-                                                      nameof(IFileAndDirectoryService),
-                                                      nameof(fileAndDirectoryService));
-        Logger = NullDependencyCheck(logger,
-                                     nameof(TemplateFileService),
-                                     nameof(ILogger),
-                                     nameof(logger));
-        PathValidator = NullDependencyCheck(pathValidator,
-                                            nameof(TemplateFileService),
-                                            nameof(IPathValidator),
-                                            nameof(pathValidator));
-
+        FileAndDirectoryService = NullDependencyCheck(fileAndDirectoryService, nameof(fileAndDirectoryService));
+        Logger = NullDependencyCheck(logger, nameof(logger));
+        PathValidator = NullDependencyCheck(pathValidator, nameof(pathValidator));
         _previousFilePath = string.Empty;
         TemplateFileName = string.Empty;
         TemplateFilePath = string.Empty;

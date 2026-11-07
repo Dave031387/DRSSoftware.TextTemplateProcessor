@@ -17,12 +17,7 @@ internal class MessageWriter : DependencyCheckerBase, IMessageWriter
     /// Thrown if the <paramref name="consoleWriter" /> parameter is <see langword="null" />.
     /// </exception>
     internal MessageWriter(IConsoleWriter consoleWriter)
-    {
-        ConsoleWriter = NullDependencyCheck(consoleWriter,
-                                            nameof(MessageWriter),
-                                            nameof(IConsoleWriter),
-                                            nameof(consoleWriter));
-    }
+        => ConsoleWriter = NullDependencyCheck(consoleWriter, nameof(consoleWriter));
 
     /// <summary>
     /// Gets the <see cref="IConsoleWriter" /> instance used for writing text to the console.

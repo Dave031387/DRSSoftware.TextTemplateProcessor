@@ -1,6 +1,4 @@
-﻿using DRSSoftware.TextTemplateProcessor.Parsers;
-
-namespace DRSSoftware.TextTemplateProcessor.Services;
+﻿namespace DRSSoftware.TextTemplateProcessor.Services;
 
 [ExcludeFromCodeCoverage]
 public class TokenProcessorTests : MoqUnitTestBase

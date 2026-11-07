@@ -1,6 +1,4 @@
-﻿using DRSSoftware.TextTemplateProcessor.Services;
-
-namespace DRSSoftware.TextTemplateProcessor.Parsers;
+﻿namespace DRSSoftware.TextTemplateProcessor.Parsers;
 
 [ExcludeFromCodeCoverage]
 public class FileHeaderParserTests : MoqUnitTestBase

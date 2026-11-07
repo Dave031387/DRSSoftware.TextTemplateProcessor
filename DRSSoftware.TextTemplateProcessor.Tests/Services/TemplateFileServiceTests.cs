@@ -1,6 +1,4 @@
-﻿using DRSSoftware.TextTemplateProcessor.IO;
-
-namespace DRSSoftware.TextTemplateProcessor.Services;
+﻿namespace DRSSoftware.TextTemplateProcessor.Services;
 
 [ExcludeFromCodeCoverage]
 public class TemplateFileServiceTests : MoqUnitTestBase
