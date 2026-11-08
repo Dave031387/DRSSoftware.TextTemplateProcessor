@@ -15,6 +15,14 @@ internal interface IGeneratedFileService
     }
 
     /// <summary>
+    /// Gets the number of generated text lines that have been added thus far.
+    /// </summary>
+    int LineCount
+    {
+        get;
+    }
+
+    /// <summary>
     /// Gets the directory path where the generated text file will be written to.
     /// </summary>
     string OutputDirectoryPath

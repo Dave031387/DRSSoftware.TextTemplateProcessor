@@ -37,6 +37,11 @@ internal class GeneratedFileService : DependencyCheckerBase, IGeneratedFileServi
     public bool IsEmptyFile => GeneratedTextLines.Count is 0;
 
     /// <summary>
+    /// Gets the number of generated text lines that have been added thus far.
+    /// </summary>
+    public int LineCount => GeneratedTextLines.Count;
+
+    /// <summary>
     /// Gets the directory path where the generated text file will be written to.
     /// </summary>
     public string OutputDirectoryPath
@@ -131,7 +136,7 @@ internal class GeneratedFileService : DependencyCheckerBase, IGeneratedFileServi
     public bool WriteGeneratedText(string filePath)
     {
         bool isValid = false;
-        string message = GetMessage(MsgWritingGeneratedTextFile, OutputFilePath);
+        string message = GetMessage(MsgWritingGeneratedTextFile, filePath);
 
         Logger.Log(LogSeverity.Information, message);
 
