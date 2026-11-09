@@ -50,21 +50,21 @@ public class RegexHelperTests
     }
 
     [Theory]
-    [InlineData(Normal + Absolute + "10")]
-    [InlineData(Space + Normal + Absolute + "1")]
-    [InlineData(Normal + Absolute + "a ")]
-    [InlineData(Normal + Absolute + "  ")]
-    [InlineData(Normal + RelativeRightChar + "3 ")]
-    [InlineData(Normal + " 3 ")]
-    [InlineData(Normal + RelativeLeftChar + "7 ")]
-    [InlineData(OneTime + Absolute + "21")]
-    [InlineData(Space + OneTime + Absolute + "1")]
-    [InlineData(OneTime + Absolute + "x ")]
-    [InlineData(OneTime + Absolute + Spaces)]
-    [InlineData(OneTime + RelativeRightChar + "5 ")]
-    [InlineData(OneTime + RelativeLeftChar + "2 ")]
-    [InlineData("D" + Absolute + "1 ")]
-    [InlineData(Absolute + "1  ")]
+    [InlineData(NormalIndentString + AbsoluteIndexString + "10")]
+    [InlineData(Space + NormalIndentString + AbsoluteIndexString + "1")]
+    [InlineData(NormalIndentString + AbsoluteIndexString + "a ")]
+    [InlineData(NormalIndentString + AbsoluteIndexString + "  ")]
+    [InlineData(NormalIndentString + RelativeRightIndentString + "3 ")]
+    [InlineData(NormalIndentString + " 3 ")]
+    [InlineData(NormalIndentString + RelativeLeftIndentString + "7 ")]
+    [InlineData(OneTimeIndentString + AbsoluteIndexString + "21")]
+    [InlineData(Space + OneTimeIndentString + AbsoluteIndexString + "1")]
+    [InlineData(OneTimeIndentString + AbsoluteIndexString + "x ")]
+    [InlineData(OneTimeIndentString + AbsoluteIndexString + Spaces)]
+    [InlineData(OneTimeIndentString + RelativeRightIndentString + "5 ")]
+    [InlineData(OneTimeIndentString + RelativeLeftIndentString + "2 ")]
+    [InlineData("D" + AbsoluteIndexString + "1 ")]
+    [InlineData(AbsoluteIndexString + "1  ")]
     [InlineData(FileHeaderCode + Space)]
     [InlineData(SegmentHeaderCode + Space)]
     [InlineData(CommentCode + Space)]
@@ -87,12 +87,12 @@ public class RegexHelperTests
     }
 
     [Theory]
-    [InlineData(Normal + Absolute + "0 ")]
-    [InlineData(OneTime + Absolute + "0 ")]
-    [InlineData(Normal + Absolute + "1 ")]
-    [InlineData(OneTime + Absolute + "1 ")]
-    [InlineData(Normal + Absolute + "9 ")]
-    [InlineData(OneTime + Absolute + "9 ")]
+    [InlineData(NormalIndentString + AbsoluteIndexString + "0 ")]
+    [InlineData(OneTimeIndentString + AbsoluteIndexString + "0 ")]
+    [InlineData(NormalIndentString + AbsoluteIndexString + "1 ")]
+    [InlineData(OneTimeIndentString + AbsoluteIndexString + "1 ")]
+    [InlineData(NormalIndentString + AbsoluteIndexString + "9 ")]
+    [InlineData(OneTimeIndentString + AbsoluteIndexString + "9 ")]
     public void MatchOnAbsoluteIndent_ShouldReturnTrueIfTextBeginsWithAbsoluteIndentIndicator(string prefix)
     {
         // Arrange
@@ -111,15 +111,15 @@ public class RegexHelperTests
     }
 
     [Theory]
-    [InlineData(Normal + RelativeRightChar + "4 ")]
-    [InlineData(Normal + RelativeLeftChar + "8 ")]
-    [InlineData(Normal + Absolute + "13")]
-    [InlineData(Space + Normal + Absolute + "6")]
-    [InlineData(OneTime + Absolute + "1 ")]
-    [InlineData(OneTime + RelativeRightChar + "2 ")]
-    [InlineData(OneTime + RelativeLeftChar + "3 ")]
-    [InlineData(Normal + Absolute + Spaces)]
-    [InlineData(Absolute + "8  ")]
+    [InlineData(NormalIndentString + RelativeRightIndentString + "4 ")]
+    [InlineData(NormalIndentString + RelativeLeftIndentString + "8 ")]
+    [InlineData(NormalIndentString + AbsoluteIndexString + "13")]
+    [InlineData(Space + NormalIndentString + AbsoluteIndexString + "6")]
+    [InlineData(OneTimeIndentString + AbsoluteIndexString + "1 ")]
+    [InlineData(OneTimeIndentString + RelativeRightIndentString + "2 ")]
+    [InlineData(OneTimeIndentString + RelativeLeftIndentString + "3 ")]
+    [InlineData(NormalIndentString + AbsoluteIndexString + Spaces)]
+    [InlineData(AbsoluteIndexString + "8  ")]
     [InlineData(FileHeaderCode + Space)]
     [InlineData(SegmentHeaderCode + Space)]
     [InlineData(CommentCode + Space)]
@@ -142,9 +142,9 @@ public class RegexHelperTests
     }
 
     [Theory]
-    [InlineData(Normal + Absolute + "0 ")]
-    [InlineData(Normal + Absolute + "5 ")]
-    [InlineData(Normal + Absolute + "9 ")]
+    [InlineData(NormalIndentString + AbsoluteIndexString + "0 ")]
+    [InlineData(NormalIndentString + AbsoluteIndexString + "5 ")]
+    [InlineData(NormalIndentString + AbsoluteIndexString + "9 ")]
     public void MatchOnAbsoluteIndentCode_ShouldReturnTrueIfTextBeginsWithAbsoluteIndentIndicator(string prefix)
     {
         // Arrange
@@ -163,18 +163,18 @@ public class RegexHelperTests
     }
 
     [Theory]
-    [InlineData(Normal + Absolute + "10")]
-    [InlineData(OneTime + Absolute + "1x")]
-    [InlineData("o" + Absolute + "2 ")]
-    [InlineData(Space + Normal + Absolute + "1")]
-    [InlineData(Space + RelativeLeftChar + "5 ")]
-    [InlineData(Space + RelativeRightChar + "6 ")]
-    [InlineData(Space + Absolute + "7 ")]
-    [InlineData(Normal + ".3 ")]
-    [InlineData("X" + RelativeRightChar + "4 ")]
-    [InlineData(Normal + Absolute + Spaces)]
-    [InlineData(OneTime + RelativeLeftChar + Spaces)]
-    [InlineData(OneTime + RelativeRightChar + Spaces)]
+    [InlineData(NormalIndentString + AbsoluteIndexString + "10")]
+    [InlineData(OneTimeIndentString + AbsoluteIndexString + "1x")]
+    [InlineData("o" + AbsoluteIndexString + "2 ")]
+    [InlineData(Space + NormalIndentString + AbsoluteIndexString + "1")]
+    [InlineData(Space + RelativeLeftIndentString + "5 ")]
+    [InlineData(Space + RelativeRightIndentString + "6 ")]
+    [InlineData(Space + AbsoluteIndexString + "7 ")]
+    [InlineData(NormalIndentString + ".3 ")]
+    [InlineData("X" + RelativeRightIndentString + "4 ")]
+    [InlineData(NormalIndentString + AbsoluteIndexString + Spaces)]
+    [InlineData(OneTimeIndentString + RelativeLeftIndentString + Spaces)]
+    [InlineData(OneTimeIndentString + RelativeRightIndentString + Spaces)]
     [InlineData(FileHeaderCode + Space)]
     [InlineData(SegmentHeaderCode + Space)]
     [InlineData(CommentCode + Space)]
@@ -197,12 +197,12 @@ public class RegexHelperTests
     }
 
     [Theory]
-    [InlineData(Normal + Absolute + "0 ")]
-    [InlineData(Normal + RelativeLeftChar + "1 ")]
-    [InlineData(Normal + RelativeRightChar + "2 ")]
-    [InlineData(OneTime + Absolute + "3 ")]
-    [InlineData(OneTime + RelativeLeftChar + "4 ")]
-    [InlineData(OneTime + RelativeRightChar + "5 ")]
+    [InlineData(NormalIndentString + AbsoluteIndexString + "0 ")]
+    [InlineData(NormalIndentString + RelativeLeftIndentString + "1 ")]
+    [InlineData(NormalIndentString + RelativeRightIndentString + "2 ")]
+    [InlineData(OneTimeIndentString + AbsoluteIndexString + "3 ")]
+    [InlineData(OneTimeIndentString + RelativeLeftIndentString + "4 ")]
+    [InlineData(OneTimeIndentString + RelativeRightIndentString + "5 ")]
     public void MatchOnAnyIndentCode_ShouldReturnTrueIfTextBeginsWithAnyIndentCode(string prefix)
     {
         // Arrange
@@ -228,12 +228,12 @@ public class RegexHelperTests
     [InlineData(FileHeaderCode + Space)]
     [InlineData(SegmentHeaderCode + Space)]
     [InlineData(NoControlCode + Space)]
-    [InlineData(Normal + Absolute + "1 ")]
-    [InlineData(Normal + RelativeLeftChar + "3 ")]
-    [InlineData(Normal + RelativeRightChar + "5 ")]
-    [InlineData(OneTime + Absolute + "7 ")]
-    [InlineData(OneTime + RelativeLeftChar + "9 ")]
-    [InlineData(OneTime + RelativeRightChar + "4 ")]
+    [InlineData(NormalIndentString + AbsoluteIndexString + "1 ")]
+    [InlineData(NormalIndentString + RelativeLeftIndentString + "3 ")]
+    [InlineData(NormalIndentString + RelativeRightIndentString + "5 ")]
+    [InlineData(OneTimeIndentString + AbsoluteIndexString + "7 ")]
+    [InlineData(OneTimeIndentString + RelativeLeftIndentString + "9 ")]
+    [InlineData(OneTimeIndentString + RelativeRightIndentString + "4 ")]
     public void MatchOnCommentCode_ShouldReturnFalseIfTextDoesNotBeginWithCommentCode(string prefix)
     {
         // Arrange
@@ -274,12 +274,12 @@ public class RegexHelperTests
     [InlineData(FileHeaderCode + "6")]
     [InlineData(CommentCode + Space)]
     [InlineData(NoControlCode + Space)]
-    [InlineData(Normal + Absolute + "1 ")]
-    [InlineData(Normal + RelativeLeftChar + "3 ")]
-    [InlineData(Normal + RelativeRightChar + "5 ")]
-    [InlineData(OneTime + Absolute + "7 ")]
-    [InlineData(OneTime + RelativeLeftChar + "9 ")]
-    [InlineData(OneTime + RelativeRightChar + "4 ")]
+    [InlineData(NormalIndentString + AbsoluteIndexString + "1 ")]
+    [InlineData(NormalIndentString + RelativeLeftIndentString + "3 ")]
+    [InlineData(NormalIndentString + RelativeRightIndentString + "5 ")]
+    [InlineData(OneTimeIndentString + AbsoluteIndexString + "7 ")]
+    [InlineData(OneTimeIndentString + RelativeLeftIndentString + "9 ")]
+    [InlineData(OneTimeIndentString + RelativeRightIndentString + "4 ")]
     public void MatchOnFileHeaderCode_ShouldReturnFalseIfTextDoesNotBeginWithFileHeaderCode(string prefix)
     {
         // Arrange
@@ -316,12 +316,12 @@ public class RegexHelperTests
     [InlineData(FileHeaderCode + Space)]
     [InlineData(SegmentHeaderCode + Space)]
     [InlineData(CommentCode + Space)]
-    [InlineData(Normal + Absolute + "9 ")]
-    [InlineData(Normal + RelativeLeftChar + "8 ")]
-    [InlineData(Normal + RelativeRightChar + "7 ")]
-    [InlineData(OneTime + Absolute + "6 ")]
-    [InlineData(OneTime + RelativeLeftChar + "5 ")]
-    [InlineData(OneTime + RelativeRightChar + "4 ")]
+    [InlineData(NormalIndentString + AbsoluteIndexString + "9 ")]
+    [InlineData(NormalIndentString + RelativeLeftIndentString + "8 ")]
+    [InlineData(NormalIndentString + RelativeRightIndentString + "7 ")]
+    [InlineData(OneTimeIndentString + AbsoluteIndexString + "6 ")]
+    [InlineData(OneTimeIndentString + RelativeLeftIndentString + "5 ")]
+    [InlineData(OneTimeIndentString + RelativeRightIndentString + "4 ")]
     [InlineData("ABC ")]
     [InlineData(NoControlCode + "X")]
     public void MatchOnNoControlCode_ShouldReturnFalseIfTextBeginsWithAnyControlCode(string prefix)
@@ -357,15 +357,15 @@ public class RegexHelperTests
     }
 
     [Theory]
-    [InlineData(OneTime + RelativeRightChar + "4 ")]
-    [InlineData(OneTime + RelativeLeftChar + "8 ")]
-    [InlineData(OneTime + Absolute + "13")]
-    [InlineData(Space + OneTime + Absolute + "6")]
-    [InlineData(Normal + Absolute + "1 ")]
-    [InlineData(Normal + RelativeRightChar + "2 ")]
-    [InlineData(Normal + RelativeLeftChar + "3 ")]
-    [InlineData(OneTime + Absolute + Spaces)]
-    [InlineData(Absolute + "8  ")]
+    [InlineData(OneTimeIndentString + RelativeRightIndentString + "4 ")]
+    [InlineData(OneTimeIndentString + RelativeLeftIndentString + "8 ")]
+    [InlineData(OneTimeIndentString + AbsoluteIndexString + "13")]
+    [InlineData(Space + OneTimeIndentString + AbsoluteIndexString + "6")]
+    [InlineData(NormalIndentString + AbsoluteIndexString + "1 ")]
+    [InlineData(NormalIndentString + RelativeRightIndentString + "2 ")]
+    [InlineData(NormalIndentString + RelativeLeftIndentString + "3 ")]
+    [InlineData(OneTimeIndentString + AbsoluteIndexString + Spaces)]
+    [InlineData(AbsoluteIndexString + "8  ")]
     [InlineData(FileHeaderCode + Space)]
     [InlineData(SegmentHeaderCode + Space)]
     [InlineData(CommentCode + Space)]
@@ -388,9 +388,9 @@ public class RegexHelperTests
     }
 
     [Theory]
-    [InlineData(OneTime + Absolute + "0 ")]
-    [InlineData(OneTime + Absolute + "5 ")]
-    [InlineData(OneTime + Absolute + "9 ")]
+    [InlineData(OneTimeIndentString + AbsoluteIndexString + "0 ")]
+    [InlineData(OneTimeIndentString + AbsoluteIndexString + "5 ")]
+    [InlineData(OneTimeIndentString + AbsoluteIndexString + "9 ")]
     public void MatchOnOneTimeAbsoluteIndentCode_ShouldReturnTrueIfTextBeginsWithOneTimeAbsoluteIndentIndicator(string prefix)
     {
         // Arrange
@@ -409,15 +409,15 @@ public class RegexHelperTests
     }
 
     [Theory]
-    [InlineData(Normal + Absolute + "1 ")]
-    [InlineData(Normal + RelativeRightChar + "3 ")]
-    [InlineData(Normal + RelativeLeftChar + "5 ")]
-    [InlineData(OneTime + Absolute + Spaces)]
-    [InlineData(OneTime + Absolute + "K ")]
-    [InlineData(Space + OneTime + RelativeRightChar + "1")]
-    [InlineData(OneTime + " 7 ")]
-    [InlineData(OneTime + Absolute + "10")]
-    [InlineData(OneTime + Absolute + "6x")]
+    [InlineData(NormalIndentString + AbsoluteIndexString + "1 ")]
+    [InlineData(NormalIndentString + RelativeRightIndentString + "3 ")]
+    [InlineData(NormalIndentString + RelativeLeftIndentString + "5 ")]
+    [InlineData(OneTimeIndentString + AbsoluteIndexString + Spaces)]
+    [InlineData(OneTimeIndentString + AbsoluteIndexString + "K ")]
+    [InlineData(Space + OneTimeIndentString + RelativeRightIndentString + "1")]
+    [InlineData(OneTimeIndentString + " 7 ")]
+    [InlineData(OneTimeIndentString + AbsoluteIndexString + "10")]
+    [InlineData(OneTimeIndentString + AbsoluteIndexString + "6x")]
     [InlineData(FileHeaderCode + Space)]
     [InlineData(SegmentHeaderCode + Space)]
     [InlineData(CommentCode + Space)]
@@ -440,9 +440,9 @@ public class RegexHelperTests
     }
 
     [Theory]
-    [InlineData(OneTime + Absolute + "9 ")]
-    [InlineData(OneTime + RelativeLeftChar + "8 ")]
-    [InlineData(OneTime + RelativeRightChar + "7 ")]
+    [InlineData(OneTimeIndentString + AbsoluteIndexString + "9 ")]
+    [InlineData(OneTimeIndentString + RelativeLeftIndentString + "8 ")]
+    [InlineData(OneTimeIndentString + RelativeRightIndentString + "7 ")]
     public void MatchOnOneTimeIndentCode_ShouldReturnTrueIfTextBeginsWithOneTimeIndentCode(string prefix)
     {
         // Arrange
@@ -461,18 +461,18 @@ public class RegexHelperTests
     }
 
     [Theory]
-    [InlineData(Normal + Absolute + "1 ")]
-    [InlineData(Normal + RelativeLeftChar + "3 ")]
-    [InlineData(Normal + RelativeRightChar + "5 ")]
-    [InlineData(OneTime + Absolute + "7 ")]
-    [InlineData(OneTime + Absolute + "9 ")]
-    [InlineData(OneTime + Space + RelativeLeftChar + "2")]
-    [InlineData(OneTime + RelativeLeftChar + "04")]
+    [InlineData(NormalIndentString + AbsoluteIndexString + "1 ")]
+    [InlineData(NormalIndentString + RelativeLeftIndentString + "3 ")]
+    [InlineData(NormalIndentString + RelativeRightIndentString + "5 ")]
+    [InlineData(OneTimeIndentString + AbsoluteIndexString + "7 ")]
+    [InlineData(OneTimeIndentString + AbsoluteIndexString + "9 ")]
+    [InlineData(OneTimeIndentString + Space + RelativeLeftIndentString + "2")]
+    [InlineData(OneTimeIndentString + RelativeLeftIndentString + "04")]
     [InlineData(NoControlCode + Space)]
     [InlineData(FileHeaderCode + Space)]
     [InlineData(SegmentHeaderCode + Space)]
     [InlineData(CommentCode + Space)]
-    [InlineData(Space + OneTime + RelativeLeftChar + "6")]
+    [InlineData(Space + OneTimeIndentString + RelativeLeftIndentString + "6")]
     public void MatchOnOneTimeRelativeLeftIndentCode_ShouldReturnFalseIfTextDoesNotBeginWithOneTimeRelativeLeftIndentCode(string prefix)
     {
         // Arrange
@@ -494,7 +494,7 @@ public class RegexHelperTests
     public void MatchOnOneTimeRelativeLeftIndentCode_ShouldReturnTrueIfTextBeginsWithOneTimeRelativeLeftIndentCode()
     {
         // Arrange
-        string text = $"{OneTime}{RelativeLeftChar}9 {_testString}";
+        string text = $"{OneTimeIndentString}{RelativeLeftIndentString}9 {_testString}";
 
         // Act
         bool actual = HasOneTimeRelativeLeftIndentCode(text);
@@ -506,18 +506,18 @@ public class RegexHelperTests
     }
 
     [Theory]
-    [InlineData(Normal + Absolute + "1 ")]
-    [InlineData(Normal + RelativeLeftChar + "3 ")]
-    [InlineData(Normal + RelativeRightChar + "5 ")]
-    [InlineData(OneTime + Absolute + "7 ")]
-    [InlineData(OneTime + Absolute + "9 ")]
-    [InlineData(OneTime + Space + RelativeRightChar + "2")]
-    [InlineData(OneTime + RelativeRightChar + "04")]
+    [InlineData(NormalIndentString + AbsoluteIndexString + "1 ")]
+    [InlineData(NormalIndentString + RelativeLeftIndentString + "3 ")]
+    [InlineData(NormalIndentString + RelativeRightIndentString + "5 ")]
+    [InlineData(OneTimeIndentString + AbsoluteIndexString + "7 ")]
+    [InlineData(OneTimeIndentString + AbsoluteIndexString + "9 ")]
+    [InlineData(OneTimeIndentString + Space + RelativeRightIndentString + "2")]
+    [InlineData(OneTimeIndentString + RelativeRightIndentString + "04")]
     [InlineData(NoControlCode + Space)]
     [InlineData(FileHeaderCode + Space)]
     [InlineData(SegmentHeaderCode + Space)]
     [InlineData(CommentCode + Space)]
-    [InlineData(Space + OneTime + RelativeRightChar + "6")]
+    [InlineData(Space + OneTimeIndentString + RelativeRightIndentString + "6")]
     public void MatchOnOneTimeRelativeRightIndentCode_ShouldReturnFalseIfTextDoesNotBeginWithOneTimeRelativeRightIndentCode(string prefix)
     {
         // Arrange
@@ -539,7 +539,7 @@ public class RegexHelperTests
     public void MatchOnOneTimeRelativeRightIndentCode_ShouldReturnTrueIfTextBeginsWithOneTimeRelativeRightIndentCode()
     {
         // Arrange
-        string text = $"{OneTime}{RelativeRightChar}9 {_testString}";
+        string text = $"{OneTimeIndentString}{RelativeRightIndentString}9 {_testString}";
 
         // Act
         bool actual = HasOneTimeRelativeRightIndentCode(text);
@@ -551,19 +551,19 @@ public class RegexHelperTests
     }
 
     [Theory]
-    [InlineData(Normal + Absolute + "6 ")]
-    [InlineData(OneTime + Absolute + "4 ")]
-    [InlineData(Normal + RelativeLeftChar + "30")]
-    [InlineData(Normal + RelativeRightChar + "1r")]
-    [InlineData(OneTime + Space + RelativeLeftChar + "2")]
-    [InlineData(OneTime + Space + RelativeRightChar + "5")]
-    [InlineData(OneTime + RelativeLeftChar + "0G")]
-    [InlineData(OneTime + RelativeRightChar + "11")]
-    [InlineData(Space + RelativeLeftChar + "5 ")]
-    [InlineData(Space + RelativeRightChar + "8 ")]
-    [InlineData("X" + RelativeRightChar + "6 ")]
-    [InlineData(OneTime + RelativeRightChar + Spaces)]
-    [InlineData(OneTime + RelativeLeftChar + Spaces)]
+    [InlineData(NormalIndentString + AbsoluteIndexString + "6 ")]
+    [InlineData(OneTimeIndentString + AbsoluteIndexString + "4 ")]
+    [InlineData(NormalIndentString + RelativeLeftIndentString + "30")]
+    [InlineData(NormalIndentString + RelativeRightIndentString + "1r")]
+    [InlineData(OneTimeIndentString + Space + RelativeLeftIndentString + "2")]
+    [InlineData(OneTimeIndentString + Space + RelativeRightIndentString + "5")]
+    [InlineData(OneTimeIndentString + RelativeLeftIndentString + "0G")]
+    [InlineData(OneTimeIndentString + RelativeRightIndentString + "11")]
+    [InlineData(Space + RelativeLeftIndentString + "5 ")]
+    [InlineData(Space + RelativeRightIndentString + "8 ")]
+    [InlineData("X" + RelativeRightIndentString + "6 ")]
+    [InlineData(OneTimeIndentString + RelativeRightIndentString + Spaces)]
+    [InlineData(OneTimeIndentString + RelativeLeftIndentString + Spaces)]
     [InlineData(FileHeaderCode + Space)]
     [InlineData(SegmentHeaderCode + Space)]
     [InlineData(CommentCode + Space)]
@@ -586,10 +586,10 @@ public class RegexHelperTests
     }
 
     [Theory]
-    [InlineData(Normal + RelativeRightChar + "2 ")]
-    [InlineData(Normal + RelativeLeftChar + "4 ")]
-    [InlineData(OneTime + RelativeRightChar + "6 ")]
-    [InlineData(OneTime + RelativeLeftChar + "8 ")]
+    [InlineData(NormalIndentString + RelativeRightIndentString + "2 ")]
+    [InlineData(NormalIndentString + RelativeLeftIndentString + "4 ")]
+    [InlineData(OneTimeIndentString + RelativeRightIndentString + "6 ")]
+    [InlineData(OneTimeIndentString + RelativeLeftIndentString + "8 ")]
     public void MatchOnRelativeIndentCode_ShouldReturnTrueIfTextBeginsWithRelativeIndentCode(string prefix)
     {
         // Arrange
@@ -608,15 +608,15 @@ public class RegexHelperTests
     }
 
     [Theory]
-    [InlineData(OneTime + RelativeLeftChar + "1 ")]
-    [InlineData(OneTime + RelativeRightChar + "5 ")]
-    [InlineData(OneTime + Absolute + "0 ")]
-    [InlineData(Normal + Absolute + "2 ")]
-    [InlineData(Normal + RelativeRightChar + "3 ")]
-    [InlineData(Space + RelativeLeftChar + "4 ")]
-    [InlineData(Normal + RelativeLeftChar + "08")]
-    [InlineData(Normal + RelativeLeftChar + " 9")]
-    [InlineData(Space + Normal + RelativeLeftChar + "7")]
+    [InlineData(OneTimeIndentString + RelativeLeftIndentString + "1 ")]
+    [InlineData(OneTimeIndentString + RelativeRightIndentString + "5 ")]
+    [InlineData(OneTimeIndentString + AbsoluteIndexString + "0 ")]
+    [InlineData(NormalIndentString + AbsoluteIndexString + "2 ")]
+    [InlineData(NormalIndentString + RelativeRightIndentString + "3 ")]
+    [InlineData(Space + RelativeLeftIndentString + "4 ")]
+    [InlineData(NormalIndentString + RelativeLeftIndentString + "08")]
+    [InlineData(NormalIndentString + RelativeLeftIndentString + " 9")]
+    [InlineData(Space + NormalIndentString + RelativeLeftIndentString + "7")]
     [InlineData(FileHeaderCode + Space)]
     [InlineData(SegmentHeaderCode + Space)]
     [InlineData(CommentCode + Space)]
@@ -642,7 +642,7 @@ public class RegexHelperTests
     public void MatchOnRelativeLeftIndentCode_ShouldReturnTrueIfTextBeginsWithRelativeLeftIndentCode()
     {
         // Arrange
-        string text = $"{Normal}{RelativeLeftChar}3 {_testString}";
+        string text = $"{NormalIndentString}{RelativeLeftIndentString}3 {_testString}";
 
         // Act
         bool actual = HasRelativeLeftIndentCode(text);
@@ -654,15 +654,15 @@ public class RegexHelperTests
     }
 
     [Theory]
-    [InlineData(OneTime + RelativeLeftChar + "1 ")]
-    [InlineData(OneTime + RelativeRightChar + "5 ")]
-    [InlineData(OneTime + Absolute + "0 ")]
-    [InlineData(Normal + Absolute + "2 ")]
-    [InlineData(Normal + RelativeLeftChar + "3 ")]
-    [InlineData(Space + RelativeRightChar + "4 ")]
-    [InlineData(Normal + RelativeRightChar + "08")]
-    [InlineData(OneTime + RelativeRightChar + " 9")]
-    [InlineData(Space + OneTime + RelativeRightChar + "7")]
+    [InlineData(OneTimeIndentString + RelativeLeftIndentString + "1 ")]
+    [InlineData(OneTimeIndentString + RelativeRightIndentString + "5 ")]
+    [InlineData(OneTimeIndentString + AbsoluteIndexString + "0 ")]
+    [InlineData(NormalIndentString + AbsoluteIndexString + "2 ")]
+    [InlineData(NormalIndentString + RelativeLeftIndentString + "3 ")]
+    [InlineData(Space + RelativeRightIndentString + "4 ")]
+    [InlineData(NormalIndentString + RelativeRightIndentString + "08")]
+    [InlineData(OneTimeIndentString + RelativeRightIndentString + " 9")]
+    [InlineData(Space + OneTimeIndentString + RelativeRightIndentString + "7")]
     [InlineData(FileHeaderCode + Space)]
     [InlineData(SegmentHeaderCode + Space)]
     [InlineData(CommentCode + Space)]
@@ -688,7 +688,7 @@ public class RegexHelperTests
     public void MatchOnRelativeRightIndentCode_ShouldReturnTrueIfTextBeginsWithRelativeRightIndentCode()
     {
         // Arrange
-        string text = $"{Normal}{RelativeRightChar}1 {_testString}";
+        string text = $"{NormalIndentString}{RelativeRightIndentString}1 {_testString}";
 
         // Act
         bool actual = HasRelativeRightIndentCode(text);
@@ -707,12 +707,12 @@ public class RegexHelperTests
     [InlineData(SegmentHeaderCode + "6")]
     [InlineData(CommentCode + Space)]
     [InlineData(NoControlCode + Space)]
-    [InlineData(Normal + Absolute + "1 ")]
-    [InlineData(Normal + RelativeLeftChar + "3 ")]
-    [InlineData(Normal + RelativeRightChar + "5 ")]
-    [InlineData(OneTime + Absolute + "7 ")]
-    [InlineData(OneTime + RelativeLeftChar + "9 ")]
-    [InlineData(OneTime + RelativeRightChar + "4 ")]
+    [InlineData(NormalIndentString + AbsoluteIndexString + "1 ")]
+    [InlineData(NormalIndentString + RelativeLeftIndentString + "3 ")]
+    [InlineData(NormalIndentString + RelativeRightIndentString + "5 ")]
+    [InlineData(OneTimeIndentString + AbsoluteIndexString + "7 ")]
+    [InlineData(OneTimeIndentString + RelativeLeftIndentString + "9 ")]
+    [InlineData(OneTimeIndentString + RelativeRightIndentString + "4 ")]
     public void MatchOnSegmentHeaderCode_ShouldReturnFalseIfTextDoesNotBeginWithSegmentHeaderCode(string prefix)
     {
         // Arrange
@@ -749,41 +749,41 @@ public class RegexHelperTests
     [InlineData(Space + FileHeaderCode)]
     [InlineData(Space + SegmentHeaderCode)]
     [InlineData(Space + CommentCode)]
-    [InlineData(Space + Normal + Absolute + "0")]
-    [InlineData(Space + Normal + RelativeLeftChar + "1")]
-    [InlineData(Space + Normal + RelativeRightChar + "2")]
-    [InlineData(Space + OneTime + Absolute + "3")]
-    [InlineData(Space + OneTime + RelativeLeftChar + "4")]
-    [InlineData(Space + OneTime + RelativeRightChar + "5")]
-    [InlineData(Normal + Space + Absolute + "6")]
-    [InlineData(Normal + Space + RelativeLeftChar + "7")]
-    [InlineData(Normal + Space + RelativeRightChar + "8")]
-    [InlineData(OneTime + Space + Absolute + "9")]
-    [InlineData(OneTime + Space + RelativeLeftChar + "0")]
-    [InlineData(OneTime + Space + RelativeRightChar + "1")]
-    [InlineData(Normal + Absolute + " 2")]
-    [InlineData(Normal + RelativeLeftChar + " 3")]
-    [InlineData(Normal + RelativeRightChar + " 4")]
-    [InlineData(OneTime + Absolute + " 5")]
-    [InlineData(OneTime + RelativeLeftChar + " 6")]
-    [InlineData(OneTime + RelativeRightChar + " 7")]
-    [InlineData(Normal + Absolute + "81")]
-    [InlineData(Normal + RelativeLeftChar + "92")]
-    [InlineData(Normal + RelativeRightChar + "03")]
-    [InlineData(OneTime + Absolute + "14")]
-    [InlineData(OneTime + RelativeLeftChar + "25")]
-    [InlineData(OneTime + RelativeRightChar + "36")]
-    [InlineData(Space + Absolute + "4 ")]
-    [InlineData(Space + RelativeLeftChar + "5 ")]
-    [InlineData(Space + RelativeRightChar + "6 ")]
-    [InlineData(Normal + Absolute + Spaces)]
-    [InlineData(Normal + RelativeLeftChar + Spaces)]
-    [InlineData(Normal + RelativeRightChar + Spaces)]
-    [InlineData(OneTime + Absolute + Spaces)]
-    [InlineData(OneTime + RelativeLeftChar + Spaces)]
-    [InlineData(OneTime + RelativeRightChar + Spaces)]
-    [InlineData(Normal + " 7 ")]
-    [InlineData(OneTime + " 8 ")]
+    [InlineData(Space + NormalIndentString + AbsoluteIndexString + "0")]
+    [InlineData(Space + NormalIndentString + RelativeLeftIndentString + "1")]
+    [InlineData(Space + NormalIndentString + RelativeRightIndentString + "2")]
+    [InlineData(Space + OneTimeIndentString + AbsoluteIndexString + "3")]
+    [InlineData(Space + OneTimeIndentString + RelativeLeftIndentString + "4")]
+    [InlineData(Space + OneTimeIndentString + RelativeRightIndentString + "5")]
+    [InlineData(NormalIndentString + Space + AbsoluteIndexString + "6")]
+    [InlineData(NormalIndentString + Space + RelativeLeftIndentString + "7")]
+    [InlineData(NormalIndentString + Space + RelativeRightIndentString + "8")]
+    [InlineData(OneTimeIndentString + Space + AbsoluteIndexString + "9")]
+    [InlineData(OneTimeIndentString + Space + RelativeLeftIndentString + "0")]
+    [InlineData(OneTimeIndentString + Space + RelativeRightIndentString + "1")]
+    [InlineData(NormalIndentString + AbsoluteIndexString + " 2")]
+    [InlineData(NormalIndentString + RelativeLeftIndentString + " 3")]
+    [InlineData(NormalIndentString + RelativeRightIndentString + " 4")]
+    [InlineData(OneTimeIndentString + AbsoluteIndexString + " 5")]
+    [InlineData(OneTimeIndentString + RelativeLeftIndentString + " 6")]
+    [InlineData(OneTimeIndentString + RelativeRightIndentString + " 7")]
+    [InlineData(NormalIndentString + AbsoluteIndexString + "81")]
+    [InlineData(NormalIndentString + RelativeLeftIndentString + "92")]
+    [InlineData(NormalIndentString + RelativeRightIndentString + "03")]
+    [InlineData(OneTimeIndentString + AbsoluteIndexString + "14")]
+    [InlineData(OneTimeIndentString + RelativeLeftIndentString + "25")]
+    [InlineData(OneTimeIndentString + RelativeRightIndentString + "36")]
+    [InlineData(Space + AbsoluteIndexString + "4 ")]
+    [InlineData(Space + RelativeLeftIndentString + "5 ")]
+    [InlineData(Space + RelativeRightIndentString + "6 ")]
+    [InlineData(NormalIndentString + AbsoluteIndexString + Spaces)]
+    [InlineData(NormalIndentString + RelativeLeftIndentString + Spaces)]
+    [InlineData(NormalIndentString + RelativeRightIndentString + Spaces)]
+    [InlineData(OneTimeIndentString + AbsoluteIndexString + Spaces)]
+    [InlineData(OneTimeIndentString + RelativeLeftIndentString + Spaces)]
+    [InlineData(OneTimeIndentString + RelativeRightIndentString + Spaces)]
+    [InlineData(NormalIndentString + " 7 ")]
+    [InlineData(OneTimeIndentString + " 8 ")]
     public void MatchOnValidControlCode_ShouldReturnFalseIfTextDoesNotBeginWithValidControlCode(string prefix)
     {
         // Arrange
@@ -806,12 +806,12 @@ public class RegexHelperTests
     [InlineData(FileHeaderCode + Space)]
     [InlineData(SegmentHeaderCode + Space)]
     [InlineData(CommentCode + Space)]
-    [InlineData(Normal + Absolute + "9 ")]
-    [InlineData(Normal + RelativeLeftChar + "8 ")]
-    [InlineData(Normal + RelativeRightChar + "7 ")]
-    [InlineData(OneTime + Absolute + "6 ")]
-    [InlineData(OneTime + RelativeLeftChar + "5 ")]
-    [InlineData(OneTime + RelativeRightChar + "4 ")]
+    [InlineData(NormalIndentString + AbsoluteIndexString + "9 ")]
+    [InlineData(NormalIndentString + RelativeLeftIndentString + "8 ")]
+    [InlineData(NormalIndentString + RelativeRightIndentString + "7 ")]
+    [InlineData(OneTimeIndentString + AbsoluteIndexString + "6 ")]
+    [InlineData(OneTimeIndentString + RelativeLeftIndentString + "5 ")]
+    [InlineData(OneTimeIndentString + RelativeRightIndentString + "4 ")]
     public void MatchOnValidControlCode_ShouldReturnTrueIfTextBeginsWithValidControlCode(string prefix)
     {
         // Arrange

@@ -13,32 +13,25 @@ namespace DRSSoftware.TextTemplateProcessor.Core;
 internal static class GlobalConstants
 {
     /// <summary>
-    /// Character used to represent an absolute indent.
+    /// Character value used to represent an absolute indent.
     /// </summary>
-    public const string Absolute = "=";
+    public const char AbsoluteIndexChar = '=';
 
     /// <summary>
-    /// Pattern string for matching any digit in a Regex expression.
+    /// String value used to represent an absolute indent.
     /// </summary>
-    public const string AnyDigit = "[0-9]";
-
-    /// <summary>
-    /// Pattern string for matching any letter in a Regex expression.
-    /// </summary>
-    /// <remarks>
-    /// Assumes that the option <c>RegexOptions.IgnoreCase</c> is used when compiling the Regex expression.
-    /// </remarks>
-    public const string AnyLetter = "[a-z]";
-
-    /// <summary>
-    /// An integer value equal to the length of the control code field of the text template file. Therefore, the first file header option will be the second argument.
-    /// </summary>
-    public const int ControlCodeLength = 3;
+    public const string AbsoluteIndexString = "=";
 
     /// <summary>
     /// The string that is used to indicate the start of a comment line in a text template file.
     /// </summary>
     public const string CommentCode = "///";
+
+    /// <summary>
+    /// An integer value equal to the length of the control code field of the text template file.
+    /// Therefore, the first file header option will be the second argument.
+    /// </summary>
+    public const int ControlCodeLength = 3;
 
     /// <summary>
     /// The string that is used for denoting debug severity level in a log message.
@@ -62,25 +55,10 @@ internal static class GlobalConstants
     public const string DefaultDelimiterEscapeString = "\\";
 
     /// <summary>
-    /// The prefix string that appears at the start of any default file name.
-    /// </summary>
-    public const string DefaultFileNamePrefix = "File_";
-
-    /// <summary>
-    /// The suffix string that appears at the end of any default file name.
-    /// </summary>
-    public const string DefaultFileNameSuffix = ".txt";
-
-    /// <summary>
     /// The default <see cref="OperationType"/> that is used when creating a new instance of the
     /// <see cref="ConsoleLogger"/> class.
     /// </summary>
     public const OperationType DefaultOperationType = OperationType.Setup;
-
-    /// <summary>
-    /// The prefix string that appears at the start of any default segment name.
-    /// </summary>
-    public const string DefaultSegmentNamePrefix = "DefaultSegment";
 
     /// <summary>
     /// The number of space characters making up the default tab size.
@@ -192,9 +170,9 @@ internal static class GlobalConstants
     public const string NoControlCode = "   ";
 
     /// <summary>
-    /// Character used to indicate a normal indent (as opposed to a one-time indent).
+    /// String value used to indicate a normal indent (as opposed to a one-time indent).
     /// </summary>
-    public const string Normal = "@";
+    public const string NormalIndentString = "@";
 
     /// <summary>
     /// Represents the "not found" result of a search operation.
@@ -208,9 +186,9 @@ internal static class GlobalConstants
     public const string NullStringValue = "!!NULL!!";
 
     /// <summary>
-    /// Character used to indicate a one-time indent (as opposed to a normal indent).
+    /// String value used to indicate a one-time indent (as opposed to a normal indent).
     /// </summary>
-    public const string OneTime = "O";
+    public const string OneTimeIndentString = "O";
 
     /// <summary>
     /// Represents the character value used to separate an option name from its value in a segment
@@ -224,24 +202,42 @@ internal static class GlobalConstants
     public const string PadSegmentNameOption = "PAD";
 
     /// <summary>
-    /// Character used to indicate a relative left indent in Regex patterns.
+    /// Pattern string for matching any digit in a Regex expression.
     /// </summary>
-    public const string RelativeLeft = $@"\{RelativeLeftChar}";
+    public const string RegexAnyDigit = "[0-9]";
 
     /// <summary>
-    /// Character used to indicate a relative left indent.
+    /// Pattern string for matching any letter in a Regex expression.
     /// </summary>
-    public const string RelativeLeftChar = "-";
+    /// <remarks>
+    /// Assumes that the option <c>RegexOptions.IgnoreCase</c> is used when compiling the Regex expression.
+    /// </remarks>
+    public const string RegexAnyLetter = "[a-z]";
 
     /// <summary>
-    /// Character used to indicate a relative right indent in Regex patterns.
+    /// String used to indicate a relative left indent in Regex patterns.
     /// </summary>
-    public const string RelativeRight = $@"\{RelativeRightChar}";
+    public const string RegexRelativeLeftIndent = $@"\{RelativeLeftIndentString}";
 
     /// <summary>
-    /// Character used to indicate a relative right indent.
+    /// String used to indicate a relative right indent in Regex patterns.
     /// </summary>
-    public const string RelativeRightChar = "+";
+    public const string RegexRelativeRightIndent = $@"\{RelativeRightIndentString}";
+
+    /// <summary>
+    /// String value used to indicate a relative left indent.
+    /// </summary>
+    public const string RelativeLeftIndentString = "-";
+
+    /// <summary>
+    /// Character value used to indicate a relative right indent.
+    /// </summary>
+    public const char RelativeRightIndentChar = '+';
+
+    /// <summary>
+    /// String value used to indicate a relative right indent.
+    /// </summary>
+    public const string RelativeRightIndentString = "+";
 
     /// <summary>
     /// Used in a token to indicate that the first character of the token value should be left as-is
