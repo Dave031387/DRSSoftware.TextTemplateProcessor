@@ -161,7 +161,7 @@ internal abstract class LoggerBase : DependencyCheckerBase, ILogger
     {
         Location location = operationType switch
         {
-            OperationType.Loading => Locater.Location,
+            OperationType.Reading => Locater.Location,
             OperationType.Parsing => Locater.Location,
             OperationType.Generating => Locater.Location,
             OperationType.Writing => Locater.Location,

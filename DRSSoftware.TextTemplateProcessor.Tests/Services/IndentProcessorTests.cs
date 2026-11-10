@@ -958,9 +958,15 @@ public class IndentProcessorTests : MoqUnitTestBase
     public void Reset_ShouldResetCurrentIndentAndTabSize()
     {
         // Arrange
+        int expected = DefaultTabSize;
+        int newTabSize = DefaultTabSize + 2;
+        string message = GetMessage(MsgNewTabSizeValueSet, expected.ToString(), newTabSize.ToString());
+        GetMock<ILogger>()
+            .Setup(x => x.Log(LogSeverity.Information, OperationType.Setup, message))
+            .Verifiable(Times.Once);
         IndentProcessor indentProcessor = GetIndentProcessor();
         SetCurrentIndent(indentProcessor, 4);
-        indentProcessor.SetTabSize(DefaultTabSize + 2);
+        indentProcessor.SetTabSize(newTabSize);
 
         // Act
         indentProcessor.Reset();
@@ -971,16 +977,22 @@ public class IndentProcessorTests : MoqUnitTestBase
             .Be(0);
         indentProcessor.TabSize
             .Should()
-            .Be(DefaultTabSize);
+            .Be(expected);
+        VerifyMocks();
     }
 
     [Fact]
     public void RestoreCurrentState_ShouldDoNothingWhenNoStateIsSaved()
     {
         // Arrange
-        IndentProcessor indentProcessor = GetIndentProcessor();
+        int oldTabSize = DefaultTabSize;
         int expectedTabSize = DefaultTabSize + 1;
         int tabCount = 3;
+        string message = GetMessage(MsgNewTabSizeValueSet, oldTabSize.ToString(), expectedTabSize.ToString());
+        GetMock<ILogger>()
+            .Setup(x => x.Log(LogSeverity.Information, OperationType.Setup, message))
+            .Verifiable(Times.Once);
+        IndentProcessor indentProcessor = GetIndentProcessor();
         indentProcessor.SetTabSize(expectedTabSize);
         SetCurrentIndent(indentProcessor, tabCount);
         int expectedCurrentIndent = tabCount * expectedTabSize;
@@ -995,23 +1007,38 @@ public class IndentProcessorTests : MoqUnitTestBase
         indentProcessor.CurrentIndent
             .Should()
             .Be(expectedCurrentIndent);
+        VerifyMocks();
     }
 
     [Fact]
     public void RestoreCurrentState_ShouldRestoreSavedState()
     {
         // Arrange (part 1) - change tab size and current indent and save the current state
-        IndentProcessor indentProcessor = GetIndentProcessor();
+        int initialTabSize = DefaultTabSize;
         int expectedTabSize = DefaultTabSize + 1;
+        int newTabSize = DefaultTabSize - 1;
         int tabCount = 3;
+        int expectedCurrentIndent = tabCount * expectedTabSize;
+        string message1 = GetMessage(MsgNewTabSizeValueSet, initialTabSize.ToString(), expectedTabSize.ToString());
+        string message2 = GetMessage(MsgNewTabSizeValueSet, expectedTabSize.ToString(), newTabSize.ToString());
+        string message3 = GetMessage(MsgTabSizeHasBeenReset, newTabSize.ToString(), expectedTabSize.ToString());
+        GetMock<ILogger>()
+            .Setup(x => x.Log(LogSeverity.Information, OperationType.Setup, message1))
+            .Verifiable(Times.Once);
+        GetMock<ILogger>()
+            .Setup(x => x.Log(LogSeverity.Information, OperationType.Setup, message2))
+            .Verifiable(Times.Once);
+        GetMock<ILogger>()
+            .Setup(x => x.Log(LogSeverity.Information, OperationType.Setup, message3))
+            .Verifiable(Times.Once);
+        IndentProcessor indentProcessor = GetIndentProcessor();
         indentProcessor.SetTabSize(expectedTabSize);
         SetCurrentIndent(indentProcessor, tabCount);
         indentProcessor.SaveCurrentState();
 
         // Arrange (part 2) - change tab size and current indent to new values
         SetCurrentIndent(indentProcessor, tabCount + 2);
-        indentProcessor.SetTabSize(DefaultTabSize - 1);
-        int expectedCurrentIndent = tabCount * expectedTabSize;
+        indentProcessor.SetTabSize(newTabSize);
 
         // Act
         indentProcessor.RestoreCurrentState();
@@ -1023,6 +1050,7 @@ public class IndentProcessorTests : MoqUnitTestBase
         indentProcessor.CurrentIndent
             .Should()
             .Be(expectedCurrentIndent);
+        VerifyMocks();
     }
 
     [Theory]
@@ -1037,7 +1065,7 @@ public class IndentProcessorTests : MoqUnitTestBase
                                             tabSize.ToString(),
                                             expectedTabSize.ToString());
         GetMock<ILogger>()
-            .Setup(logger => logger.Log(LogSeverity.Warning, expectedMessage))
+            .Setup(logger => logger.Log(LogSeverity.Warning, OperationType.Setup, expectedMessage))
             .Verifiable(Times.Once);
         IndentProcessor indentProcessor = GetIndentProcessor();
 
@@ -1063,7 +1091,7 @@ public class IndentProcessorTests : MoqUnitTestBase
                                             tabSize.ToString(),
                                             expectedTabSize.ToString());
         GetMock<ILogger>()
-            .Setup(logger => logger.Log(LogSeverity.Warning, expectedMessage))
+            .Setup(logger => logger.Log(LogSeverity.Warning, OperationType.Setup, expectedMessage))
             .Verifiable(Times.Once);
         IndentProcessor indentProcessor = GetIndentProcessor();
 
@@ -1086,6 +1114,10 @@ public class IndentProcessorTests : MoqUnitTestBase
     public void SetTabSize_ShouldSetTabSizeToValueWhenValueIsWithinValidRange(int expectedTabSize)
     {
         // Arrange
+        string message = GetMessage(MsgNewTabSizeValueSet, DefaultTabSize.ToString(), expectedTabSize.ToString());
+        GetMock<ILogger>()
+            .Setup(x => x.Log(LogSeverity.Information, OperationType.Setup, message))
+            .Verifiable(Times.Once);
         IndentProcessor indentProcessor = GetIndentProcessor();
 
         // Act

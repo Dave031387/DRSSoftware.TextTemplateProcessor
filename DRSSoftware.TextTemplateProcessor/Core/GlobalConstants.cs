@@ -125,6 +125,11 @@ internal static class GlobalConstants
     public const char LowercaseFlag = '-';
 
     /// <summary>
+    /// The string representation of the lowercase flag.
+    /// </summary>
+    public const string LowercaseString = "-";
+
+    /// <summary>
     /// The maximum supported indent value.
     /// </summary>
     public const int MaxIndentValue = 9;
@@ -246,6 +251,11 @@ internal static class GlobalConstants
     public const char SameCaseFlag = '=';
 
     /// <summary>
+    /// The string representation of the same case flag.
+    /// </summary>
+    public const string SameCaseString = "=";
+
+    /// <summary>
     /// The string that is used to indicate the start of a segment header line in a text template file.
     /// </summary>
     public const string SegmentHeaderCode = "###";
@@ -285,6 +295,11 @@ internal static class GlobalConstants
     /// to uppercase when it is inserted into the output text.
     /// </summary>
     public const char UppercaseFlag = '+';
+
+    /// <summary>
+    /// The string representation of the uppercase flag.
+    /// </summary>
+    public const string UppercaseString = "+";
 
     /// <summary>
     /// The string that is used for denoting warning severity level in a log message.

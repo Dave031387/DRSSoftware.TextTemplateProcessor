@@ -45,6 +45,14 @@ public class DelimiterServiceTests : MoqUnitTestBase
         string altStartDelimiter = "{{";
         string altEndDelimiter = "}}";
         char altEscapeCharacter = '!';
+        string message1 = GetMessage(MsgNewTokenDelimiterValuesSet, altStartDelimiter, altEndDelimiter, altEscapeCharacter.ToString());
+        string message2 = GetMessage(MsgTokenDelimitersHaveBeenReset);
+        GetMock<ILogger>()
+            .Setup(x => x.Log(LogSeverity.Information, OperationType.Setup, message1))
+            .Verifiable(Times.Once);
+        GetMock<ILogger>()
+            .Setup(x => x.Log(LogSeverity.Information, OperationType.Reset, message2))
+            .Verifiable(Times.Once);
         DelimiterService delimiterService = GetDelimiterService();
         delimiterService.SetTokenDelimiters(altStartDelimiter, altEndDelimiter, altEscapeCharacter);
 
@@ -61,6 +69,7 @@ public class DelimiterServiceTests : MoqUnitTestBase
         delimiterService.DelimiterEscapeCharacter
             .Should()
             .Be(DefaultDelimiterEscapeCharacter);
+        VerifyMocks();
     }
 
     [Fact]
@@ -70,7 +79,8 @@ public class DelimiterServiceTests : MoqUnitTestBase
         string startDelimiter = "{{";
         string endDelimiter = "}}";
         char escapeCharacter = '!';
-        AssertSetTokenDelimiters(EmptyString, startDelimiter, endDelimiter, escapeCharacter, LogSeverity.Information);
+        string message = GetMessage(MsgNewTokenDelimiterValuesSet, startDelimiter, endDelimiter, escapeCharacter.ToString());
+        AssertSetTokenDelimiters(message, startDelimiter, endDelimiter, escapeCharacter, LogSeverity.Information);
     }
 
     [Fact]
@@ -81,7 +91,7 @@ public class DelimiterServiceTests : MoqUnitTestBase
         string endDelimiter = "!";
         char escapeCharacter = '!';
         string message = GetMessage(MsgTokenEndAndTokenEscapeAreSame, endDelimiter, escapeCharacter.ToString());
-        AssertSetTokenDelimiters(message, startDelimiter, endDelimiter, escapeCharacter);
+        AssertSetTokenDelimiters(message, startDelimiter, endDelimiter, escapeCharacter, LogSeverity.Error);
     }
 
     [Fact]
@@ -92,7 +102,7 @@ public class DelimiterServiceTests : MoqUnitTestBase
         string endDelimiter = EmptyString;
         char escapeCharacter = '!';
         string message = GetMessage(MsgTokenEndDelimiterIsEmpty);
-        AssertSetTokenDelimiters(message, startDelimiter, endDelimiter, escapeCharacter);
+        AssertSetTokenDelimiters(message, startDelimiter, endDelimiter, escapeCharacter, LogSeverity.Error);
     }
 
     [Fact]
@@ -103,7 +113,7 @@ public class DelimiterServiceTests : MoqUnitTestBase
         string endDelimiter = null!;
         char escapeCharacter = '!';
         string message = GetMessage(MsgTokenEndDelimiterIsNull);
-        AssertSetTokenDelimiters(message, startDelimiter, endDelimiter, escapeCharacter);
+        AssertSetTokenDelimiters(message, startDelimiter, endDelimiter, escapeCharacter, LogSeverity.Error);
     }
 
     [Fact]
@@ -114,7 +124,7 @@ public class DelimiterServiceTests : MoqUnitTestBase
         string endDelimiter = "}}";
         char escapeCharacter = '!';
         string message = GetMessage(MsgTokenStartAndTokenEndAreSame, startDelimiter, endDelimiter);
-        AssertSetTokenDelimiters(message, startDelimiter, endDelimiter, escapeCharacter);
+        AssertSetTokenDelimiters(message, startDelimiter, endDelimiter, escapeCharacter, LogSeverity.Error);
     }
 
     [Fact]
@@ -125,7 +135,7 @@ public class DelimiterServiceTests : MoqUnitTestBase
         string endDelimiter = "}}";
         char escapeCharacter = '!';
         string message = GetMessage(MsgTokenStartAndTokenEscapeAreSame, startDelimiter, escapeCharacter.ToString());
-        AssertSetTokenDelimiters(message, startDelimiter, endDelimiter, escapeCharacter);
+        AssertSetTokenDelimiters(message, startDelimiter, endDelimiter, escapeCharacter, LogSeverity.Error);
     }
 
     [Theory]
@@ -150,7 +160,7 @@ public class DelimiterServiceTests : MoqUnitTestBase
         string endDelimiter = "}}";
         char escapeCharacter = '!';
         string message = GetMessage(MsgTokenStartDelimiterIsEmpty);
-        AssertSetTokenDelimiters(message, startDelimiter, endDelimiter, escapeCharacter);
+        AssertSetTokenDelimiters(message, startDelimiter, endDelimiter, escapeCharacter, LogSeverity.Error);
     }
 
     [Fact]
@@ -161,16 +171,21 @@ public class DelimiterServiceTests : MoqUnitTestBase
         string endDelimiter = "}}";
         char escapeCharacter = '!';
         string message = GetMessage(MsgTokenStartDelimiterIsNull);
-        AssertSetTokenDelimiters(message, startDelimiter, endDelimiter, escapeCharacter);
+        AssertSetTokenDelimiters(message, startDelimiter, endDelimiter, escapeCharacter, LogSeverity.Error);
     }
 
-    private void AssertSetTokenDelimiters(string message, string startDelimiter, string endDelimiter, char escapeCharacter, LogSeverity logSeverity = LogSeverity.Error)
+    private void AssertSetTokenDelimiters(string message, string startDelimiter, string endDelimiter, char escapeCharacter, LogSeverity logSeverity)
     {
         // Arrange
-        if (!string.IsNullOrEmpty(message))
+        GetMock<ILogger>()
+            .Setup(x => x.Log(logSeverity, OperationType.Setup, message))
+            .Verifiable(Times.Once);
+
+        if (logSeverity is LogSeverity.Warning)
         {
+            string msg = GetMessage(MsgNewTokenDelimiterValuesSet, startDelimiter, endDelimiter, escapeCharacter.ToString());
             GetMock<ILogger>()
-                .Setup(x => x.Log(logSeverity, message))
+                .Setup(x => x.Log(LogSeverity.Information, OperationType.Setup, msg))
                 .Verifiable(Times.Once);
         }
 
@@ -211,10 +226,7 @@ public class DelimiterServiceTests : MoqUnitTestBase
                 .Be(escapeCharacter);
         }
 
-        if (!string.IsNullOrEmpty(message))
-        {
-            VerifyMocks();
-        }
+        VerifyMocks();
     }
 
     private DelimiterService GetDelimiterService() => new(GetMock<ILogger>().Object);

@@ -43,7 +43,7 @@ public class GeneratedFileServiceTests : MoqUnitTestBase
         string message1 = GetMessage(MsgWritingGeneratedTextFile, filePath);
         string message2 = GetMessage(MsgOutputFileSuccessfullyCreated, lineCount.ToString());
         GetMock<ILogger>()
-            .Setup(x => x.Log(LogSeverity.Information, message1))
+            .Setup(x => x.Log(LogSeverity.Information, OperationType.Writing, message1))
             .Verifiable(Times.Once);
         GetMock<IPathValidator>()
             .Setup(x => x.ValidatePath(filePath, true, false))
@@ -69,7 +69,7 @@ public class GeneratedFileServiceTests : MoqUnitTestBase
             .Setup(x => x.WriteTextFile(fullFilePath, textLines))
             .Verifiable(Times.Once);
         GetMock<ILogger>()
-            .Setup(x => x.Log(LogSeverity.Information, message2))
+            .Setup(x => x.Log(LogSeverity.Information, OperationType.Writing, message2))
             .Verifiable(Times.Once);
         GeneratedFileService generatedFileService = GetGeneratedFileService();
         generatedFileService.AddText(text);
@@ -175,14 +175,14 @@ public class GeneratedFileServiceTests : MoqUnitTestBase
         string message1 = GetMessage(MsgWritingGeneratedTextFile, invalidFilePath);
         string message2 = GetMessage(MsgUnableToCreateOutputFile, GetMoqExceptionString<PathValidatorException>());
         GetMock<ILogger>()
-            .Setup(x => x.Log(LogSeverity.Information, message1))
+            .Setup(x => x.Log(LogSeverity.Information, OperationType.Writing, message1))
             .Verifiable(Times.Once);
         GetMock<IPathValidator>()
             .Setup(x => x.ValidatePath(invalidFilePath, true, false))
             .Throws<PathValidatorException>()
             .Verifiable(Times.Once);
         GetMock<ILogger>()
-            .Setup(x => x.Log(LogSeverity.Error, message2))
+            .Setup(x => x.Log(LogSeverity.Error, OperationType.Writing, message2))
             .Verifiable(Times.Once);
         GeneratedFileService generatedFileService = GetGeneratedFileService();
 
@@ -216,7 +216,7 @@ public class GeneratedFileServiceTests : MoqUnitTestBase
         string message1 = GetMessage(MsgWritingGeneratedTextFile, filePath);
         string message2 = GetMessage(MsgGeneratedTextIsEmpty);
         GetMock<ILogger>()
-            .Setup(x => x.Log(LogSeverity.Information, message1))
+            .Setup(x => x.Log(LogSeverity.Information, OperationType.Writing, message1))
             .Verifiable(Times.Once);
         GetMock<IPathValidator>()
             .Setup(x => x.ValidatePath(filePath, true, false))
@@ -231,7 +231,7 @@ public class GeneratedFileServiceTests : MoqUnitTestBase
             .Returns(directoryPath)
             .Verifiable(Times.Once);
         GetMock<ILogger>()
-            .Setup(x => x.Log(LogSeverity.Error, message2))
+            .Setup(x => x.Log(LogSeverity.Error, OperationType.Writing, message2))
             .Verifiable(Times.Once);
         GeneratedFileService generatedFileService = GetGeneratedFileService();
 
@@ -269,7 +269,7 @@ public class GeneratedFileServiceTests : MoqUnitTestBase
         string message2 = GetMessage(MsgOutputFileWillBeOverwritten);
         string message3 = GetMessage(MsgOutputFileSuccessfullyCreated, lineCount.ToString());
         GetMock<ILogger>()
-            .Setup(x => x.Log(LogSeverity.Information, message1))
+            .Setup(x => x.Log(LogSeverity.Information, OperationType.Writing, message1))
             .Verifiable(Times.Once);
         GetMock<IPathValidator>()
             .Setup(x => x.ValidatePath(filePath, true, false))
@@ -288,13 +288,13 @@ public class GeneratedFileServiceTests : MoqUnitTestBase
             .Returns(true)
             .Verifiable(Times.Once);
         GetMock<ILogger>()
-            .Setup(x => x.Log(LogSeverity.Warning, message2))
+            .Setup(x => x.Log(LogSeverity.Warning, OperationType.Writing, message2))
             .Verifiable(Times.Once);
         GetMock<IFileAndDirectoryService>()
             .Setup(x => x.WriteTextFile(fullFilePath, textLines))
             .Verifiable(Times.Once);
         GetMock<ILogger>()
-            .Setup(x => x.Log(LogSeverity.Information, message3))
+            .Setup(x => x.Log(LogSeverity.Information, OperationType.Writing, message3))
             .Verifiable(Times.Once);
         GeneratedFileService generatedFileService = GetGeneratedFileService();
         generatedFileService.AddText(text);
@@ -336,7 +336,7 @@ public class GeneratedFileServiceTests : MoqUnitTestBase
         string message1 = GetMessage(MsgWritingGeneratedTextFile, filePath);
         string message2 = GetMessage(MsgOutputFileSuccessfullyCreated, lineCount.ToString());
         GetMock<ILogger>()
-            .Setup(x => x.Log(LogSeverity.Information, message1))
+            .Setup(x => x.Log(LogSeverity.Information, OperationType.Writing, message1))
             .Verifiable(Times.Once);
         GetMock<IPathValidator>()
             .Setup(x => x.ValidatePath(filePath, true, false))
@@ -362,7 +362,7 @@ public class GeneratedFileServiceTests : MoqUnitTestBase
             .Setup(x => x.WriteTextFile(fullFilePath, textLines))
             .Verifiable(Times.Once);
         GetMock<ILogger>()
-            .Setup(x => x.Log(LogSeverity.Information, message2))
+            .Setup(x => x.Log(LogSeverity.Information, OperationType.Writing, message2))
             .Verifiable(Times.Once);
         GeneratedFileService generatedFileService = GetGeneratedFileService();
         generatedFileService.AddText(text);

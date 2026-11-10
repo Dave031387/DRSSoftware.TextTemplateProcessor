@@ -90,17 +90,17 @@ public class TemplateFileServiceTests : MoqUnitTestBase
             .Returns(fileName)
             .Verifiable(Times.Once);
         GetMock<ILogger>()
-            .Setup(x => x.Log(LogSeverity.Information, message1))
+            .Setup(x => x.Log(LogSeverity.Information, OperationType.Reading, message1))
             .Verifiable(Times.Once);
         GetMock<IFileAndDirectoryService>()
             .Setup(x => x.ReadTextFile(fullFilePath))
             .Returns(expected)
             .Verifiable(Times.Once);
         GetMock<ILogger>()
-            .Setup(x => x.Log(LogSeverity.Information, message2))
+            .Setup(x => x.Log(LogSeverity.Information, OperationType.Reading, message2))
             .Verifiable(Times.Once);
         GetMock<ILogger>()
-            .Setup(x => x.Log(LogSeverity.Warning, message3))
+            .Setup(x => x.Log(LogSeverity.Warning, OperationType.Reading, message3))
             .Verifiable(Times.Once);
         TemplateFileService templateFileService = GetTemplateFileService();
         templateFileService.ReadTemplateFile(filePath);
@@ -146,14 +146,14 @@ public class TemplateFileServiceTests : MoqUnitTestBase
             .Returns(fileName)
             .Verifiable(Times.Once);
         GetMock<ILogger>()
-            .Setup(x => x.Log(LogSeverity.Information, message1))
+            .Setup(x => x.Log(LogSeverity.Information, OperationType.Reading, message1))
             .Verifiable(Times.Once);
         GetMock<IFileAndDirectoryService>()
             .Setup(x => x.ReadTextFile(fullFilePath))
             .Throws<FileAndDirectoryServiceException>()
             .Verifiable(Times.Once);
         GetMock<ILogger>()
-            .Setup(x => x.Log(LogSeverity.Error, message2))
+            .Setup(x => x.Log(LogSeverity.Error, OperationType.Reading, message2))
             .Verifiable(Times.Once);
         TemplateFileService templateFileService = GetTemplateFileService();
 
@@ -232,14 +232,14 @@ public class TemplateFileServiceTests : MoqUnitTestBase
             .Returns(fileName)
             .Verifiable(Times.Once);
         GetMock<ILogger>()
-            .Setup(x => x.Log(LogSeverity.Information, message1))
+            .Setup(x => x.Log(LogSeverity.Information, OperationType.Reading, message1))
             .Verifiable(Times.Once);
         GetMock<IFileAndDirectoryService>()
             .Setup(x => x.ReadTextFile(fullFilePath))
             .Returns(expected)
             .Verifiable(Times.Once);
         GetMock<ILogger>()
-            .Setup(x => x.Log(LogSeverity.Information, message2))
+            .Setup(x => x.Log(LogSeverity.Information, OperationType.Reading, message2))
             .Verifiable(Times.Once);
         TemplateFileService templateFileService = GetTemplateFileService();
 

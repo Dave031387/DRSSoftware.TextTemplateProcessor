@@ -138,7 +138,7 @@ internal class GeneratedFileService : DependencyCheckerBase, IGeneratedFileServi
         bool isValid = false;
         string message = GetMessage(MsgWritingGeneratedTextFile, filePath);
 
-        Logger.Log(LogSeverity.Information, message);
+        Logger.Log(LogSeverity.Information, OperationType.Writing, message);
 
         try
         {
@@ -147,21 +147,21 @@ internal class GeneratedFileService : DependencyCheckerBase, IGeneratedFileServi
             if (IsEmptyFile)
             {
                 message = GetMessage(MsgGeneratedTextIsEmpty);
-                Logger.Log(LogSeverity.Error, message);
+                Logger.Log(LogSeverity.Error, OperationType.Writing, message);
             }
             else
             {
                 CheckForExistingFile();
                 FileAndDirectoryService.WriteTextFile(OutputFilePath, GeneratedTextLines);
                 message = GetMessage(MsgOutputFileSuccessfullyCreated, GeneratedTextLines.Count.ToString());
-                Logger.Log(LogSeverity.Information, message);
+                Logger.Log(LogSeverity.Information, OperationType.Writing, message);
                 isValid = true;
             }
         }
         catch (Exception ex)
         {
             message = GetMessage(MsgUnableToCreateOutputFile, ex.Message);
-            Logger.Log(LogSeverity.Error, message);
+            Logger.Log(LogSeverity.Error, OperationType.Writing, message);
         }
 
         return isValid;
@@ -176,7 +176,7 @@ internal class GeneratedFileService : DependencyCheckerBase, IGeneratedFileServi
         if (FileAndDirectoryService.FileExists(OutputFilePath))
         {
             string message = GetMessage(MsgOutputFileWillBeOverwritten);
-            Logger.Log(LogSeverity.Warning, message);
+            Logger.Log(LogSeverity.Warning, OperationType.Writing, message);
         }
         else
         {

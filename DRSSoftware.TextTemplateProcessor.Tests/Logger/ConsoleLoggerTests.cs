@@ -129,32 +129,10 @@ public class ConsoleLoggerTests : MoqUnitTestBase
     {
         // Arrange
         LogSeverity logSeverity = LogSeverity.Debug;
-        OperationType currentOperationType = OperationType.Loading;
+        OperationType currentOperationType = OperationType.Reading;
         OperationType operationType = OperationType.Generating;
         string message = string.Format(SampleLogMessage, operationType.ToString());
         Location location = new("SampleSegment", 42);
-        SetupMocks(logSeverity, operationType, message, location);
-        ConsoleLogger consoleLogger = GetConsoleLogger(currentOperationType);
-
-        // Act
-        consoleLogger.Log(logSeverity, operationType, message);
-
-        // Assert
-        consoleLogger.CurrentOperationType
-            .Should()
-            .Be(currentOperationType);
-        VerifyMocks();
-    }
-
-    [Fact]
-    public void LogMessageForLoadingOperationType_ShouldWriteMessageToConsole()
-    {
-        // Arrange
-        LogSeverity logSeverity = LogSeverity.Warning;
-        OperationType currentOperationType = OperationType.Parsing;
-        OperationType operationType = OperationType.Loading;
-        string message = string.Format(SampleLogMessage, operationType.ToString());
-        Location location = new("TemplateFile", 42);
         SetupMocks(logSeverity, operationType, message, location);
         ConsoleLogger consoleLogger = GetConsoleLogger(currentOperationType);
 
@@ -177,6 +155,28 @@ public class ConsoleLoggerTests : MoqUnitTestBase
         OperationType operationType = OperationType.Parsing;
         string message = string.Format(SampleLogMessage, operationType.ToString());
         Location location = new("SampleSegment", 42);
+        SetupMocks(logSeverity, operationType, message, location);
+        ConsoleLogger consoleLogger = GetConsoleLogger(currentOperationType);
+
+        // Act
+        consoleLogger.Log(logSeverity, operationType, message);
+
+        // Assert
+        consoleLogger.CurrentOperationType
+            .Should()
+            .Be(currentOperationType);
+        VerifyMocks();
+    }
+
+    [Fact]
+    public void LogMessageForReadingOperationType_ShouldWriteMessageToConsole()
+    {
+        // Arrange
+        LogSeverity logSeverity = LogSeverity.Warning;
+        OperationType currentOperationType = OperationType.Parsing;
+        OperationType operationType = OperationType.Reading;
+        string message = string.Format(SampleLogMessage, operationType.ToString());
+        Location location = new("TemplateFile", 42);
         SetupMocks(logSeverity, operationType, message, location);
         ConsoleLogger consoleLogger = GetConsoleLogger(currentOperationType);
 
@@ -315,13 +315,13 @@ public class ConsoleLoggerTests : MoqUnitTestBase
     }
 
     [Fact]
-    public void LogMessageWhenLoadingOperationTypeIsCurrent_ShouldWriteMessageToConsole()
+    public void LogMessageWhenParsingOperationTypeIsCurrent_ShouldWriteMessageToConsole()
     {
         // Arrange
-        LogSeverity logSeverity = LogSeverity.Information;
-        OperationType operationType = OperationType.Loading;
+        LogSeverity logSeverity = LogSeverity.Debug;
+        OperationType operationType = OperationType.Parsing;
         string message = string.Format(SampleLogMessage, operationType.ToString());
-        Location location = new("TemplateFile", 42);
+        Location location = new("SampleSegment", 42);
         SetupMocks(logSeverity, operationType, message, location);
         ConsoleLogger consoleLogger = GetConsoleLogger(operationType);
 
@@ -333,13 +333,13 @@ public class ConsoleLoggerTests : MoqUnitTestBase
     }
 
     [Fact]
-    public void LogMessageWhenParsingOperationTypeIsCurrent_ShouldWriteMessageToConsole()
+    public void LogMessageWhenReadingOperationTypeIsCurrent_ShouldWriteMessageToConsole()
     {
         // Arrange
-        LogSeverity logSeverity = LogSeverity.Debug;
-        OperationType operationType = OperationType.Parsing;
+        LogSeverity logSeverity = LogSeverity.Information;
+        OperationType operationType = OperationType.Reading;
         string message = string.Format(SampleLogMessage, operationType.ToString());
-        Location location = new("SampleSegment", 42);
+        Location location = new("TemplateFile", 42);
         SetupMocks(logSeverity, operationType, message, location);
         ConsoleLogger consoleLogger = GetConsoleLogger(operationType);
 

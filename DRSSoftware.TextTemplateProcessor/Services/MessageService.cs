@@ -61,6 +61,8 @@ internal static class MessageService
     // internal const string MsgMultipleLevelsOfPadSegments = "Segment {1} specified as a pad segment for segment {0} also specifies a pad segment. Multiple levels of pad segments are not allowed.";
     // internal const string MsgNextLoadRequestBeforeFirstIsWritten = "Template file \"{0}\" is being loaded before any output was written for template file \"{1}\"";
     // internal const string MsgNoTextLinesFollowingSegmentHeader = "The header line for segment {0} must be followed by one or more valid text lines. The segment will be ignored.";
+    internal const string MsgNewTabSizeValueSet = "The tab size value has been changed from {0} to {1}.";
+    internal const string MsgNewTokenDelimiterValuesSet = "The token delimiters have been set to new values. Start delimiter: \"{0}\"; End delimiter: \"{1}\"; Escape character: \"{2}\"";
     internal const string MsgNullDirectoryPath = "The directory path must not be null.";
     internal const string MsgNullFilePath = "The file path must not be null.";
     internal const string MsgOptionNameMustPrecedeEqualsSign = "An option name must appear immediately before the equals sign with no intervening spaces on the {0}.";
@@ -80,6 +82,7 @@ internal static class MessageService
     // internal const string MsgSegmentHasNoTextLines = "Tried to generate segment {0} but the segment has no text lines.";
     internal const string MsgSegmentNameIsMissing = "The segment name is missing from the segment header line. The segment will be ignored.";
     // internal const string MsgSegmentNameIsNullOrWhitespace = "The segment name passed into the GenerateSegment method was null, empty or whitespace.";
+    internal const string MsgTabSizeHasBeenReset = "The tab size value has been reset from {0} back to {1}.";
     internal const string MsgTabSizeTooLarge = "The requested tab size {0} is too large. The maximum value {1} will be used.";
     internal const string MsgTabSizeTooSmall = "The requested tab size {0} is too small. The minimum value {1} will be used.";
     internal const string MsgTabSizeValueMustBeValidNumber = "The specified tab size value \"{0}\" is not a valid integer value.";
@@ -88,6 +91,7 @@ internal static class MessageService
     // internal const string MsgTemplateFileIsEmpty = "This template file is empty: {0}";
     // internal const string MsgTemplateFilePathNotSet = "Unable to load the template file because a valid file path has not been set.";
     // internal const string MsgTemplateHasBeenReset = "The environment for template file \"{0}\" has been reset.";
+    internal const string MsgTokenDelimitersHaveBeenReset = "The token delimiters and delimiter escape character have been reset back to their default values.";
     internal const string MsgTokenDictionaryContainsInvalidTokenName = "Attempted to assign a replacement value to a token having an invalid name \"{1}\" for segment {0}. The token will be ignored.";
     internal const string MsgTokenDictionaryIsEmpty = "An empty token dictionary was supplied for segment {0}.";
     internal const string MsgTokenDictionaryIsNull = "A null token dictionary was supplied for segment {0}.";
@@ -102,7 +106,7 @@ internal static class MessageService
     internal const string MsgTokenStartAndTokenEscapeAreSame = "The token start delimiter \"{0}\" must not be the same as the same as the token escape character '{1}'.";
     internal const string MsgTokenStartDelimiterIsEmpty = "The token start delimiter must not be empty or whitespace.";
     internal const string MsgTokenStartDelimiterIsNull = "The token start delimiter must not be null.";
-    internal const string MsgTokenStartDelimiterWarning = "Ending the token start delimiter with '-', '+' or '=' may cause confusion and lead to unexpected errors.";
+    internal const string MsgTokenStartDelimiterWarning = $"Ending the token start delimiter with '{LowercaseString}', '{UppercaseString}' or '{SameCaseString}' may cause confusion and lead to unexpected errors.";
     internal const string MsgTokenStartDelimiterWillBeEscaped = "An issue has been detected with a token start delimiter. The delimiter will be escaped.";
     internal const string MsgTokenValueIsEmpty = "Found token \"{1}\" with no assigned value while generating segment {0}.";
     internal const string MsgTokenWithEmptyValue = "Possibly unintended attempt to assign an empty string to token \"{1}\" in segment {0}.";

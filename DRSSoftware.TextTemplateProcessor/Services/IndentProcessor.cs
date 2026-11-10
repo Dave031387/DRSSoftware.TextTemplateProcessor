@@ -7,20 +7,14 @@
 internal class IndentProcessor : DependencyCheckerBase, IIndentProcessor
 {
     /// <summary>
-    /// Holds a value that indicates whether or not the current state of the indent processor has
-    /// been saved.
+    /// Holds saved indent values on a stack so that they can be restored later.
     /// </summary>
-    private bool _isCurrentStateSaved = false;
+    private readonly Stack<int> _currentIndentStack = new();
 
     /// <summary>
-    /// Holds the saved current indent value.
+    /// Holds saved tab size values on a stack so that they can be restored later.
     /// </summary>
-    private int _saveCurrentIndent = 0;
-
-    /// <summary>
-    /// Holds the saved tab size value.
-    /// </summary>
-    private int _saveTabSize = 0;
+    private readonly Stack<int> _tabSizeStack = new();
 
     /// <summary>
     /// A constructor that creates an instance of the <see cref="IndentProcessor"/> class and
@@ -250,39 +244,51 @@ internal class IndentProcessor : DependencyCheckerBase, IIndentProcessor
     }
 
     /// <summary>
-    /// Resets the current indent value to zero and sets the tab size to the default value.
+    /// Resets the current indent value to zero and sets the tab size to the default value. Also,
+    /// clears any saved indent and tab size values that haven't yet been restored.
     /// </summary>
     public void Reset()
     {
         CurrentIndent = 0;
         TabSize = DefaultTabSize;
+        _currentIndentStack.Clear();
+        _tabSizeStack.Clear();
     }
 
     /// <summary>
     /// Restores the current indent and tab size from the saved values.
     /// </summary>
     /// <remarks>
-    /// This method exits without doing anything if the current indent and tab size wasn't
-    /// previously saved.
+    /// This method exits without doing anything if no more saved indent or tab size values exist on
+    /// the stack.
     /// </remarks>
     public void RestoreCurrentState()
     {
-        if (_isCurrentStateSaved)
+        if (_currentIndentStack.Count > 0)
         {
-            CurrentIndent = _saveCurrentIndent;
-            TabSize = _saveTabSize;
-            _isCurrentStateSaved = false;
+            CurrentIndent = _currentIndentStack.Pop();
+        }
+
+        if (_tabSizeStack.Count > 0)
+        {
+            int tabSize = _tabSizeStack.Pop();
+
+            if (TabSize != tabSize)
+            {
+                string message = GetMessage(MsgTabSizeHasBeenReset, TabSize.ToString(), tabSize.ToString());
+                TabSize = tabSize;
+                Logger.Log(LogSeverity.Information, OperationType.Setup, message);
+            }
         }
     }
 
     /// <summary>
-    /// Save the current indent and tab size so that they can be restored later.
+    /// Save the current indent and tab size values to the stack so that they can be restored later.
     /// </summary>
     public void SaveCurrentState()
     {
-        _saveCurrentIndent = CurrentIndent;
-        _saveTabSize = TabSize;
-        _isCurrentStateSaved = true;
+        _currentIndentStack.Push(CurrentIndent);
+        _tabSizeStack.Push(TabSize);
     }
 
     /// <summary>
@@ -302,7 +308,7 @@ internal class IndentProcessor : DependencyCheckerBase, IIndentProcessor
             string message = GetMessage(MsgTabSizeTooSmall,
                                         tabSize.ToString(),
                                         MinTabSize.ToString());
-            Logger.Log(LogSeverity.Warning, message);
+            Logger.Log(LogSeverity.Warning, OperationType.Setup, message);
             TabSize = MinTabSize;
         }
         else if (tabSize > MaxTabSize)
@@ -310,12 +316,17 @@ internal class IndentProcessor : DependencyCheckerBase, IIndentProcessor
             string message = GetMessage(MsgTabSizeTooLarge,
                                         tabSize.ToString(),
                                         MaxTabSize.ToString());
-            Logger.Log(LogSeverity.Warning, message);
+            Logger.Log(LogSeverity.Warning, OperationType.Setup, message);
             TabSize = MaxTabSize;
         }
         else
         {
+            int oldValue = TabSize;
             TabSize = tabSize;
+            string message = GetMessage(MsgNewTabSizeValueSet,
+                                        oldValue.ToString(),
+                                        TabSize.ToString());
+            Logger.Log(LogSeverity.Information, OperationType.Setup, message);
         }
     }
 }

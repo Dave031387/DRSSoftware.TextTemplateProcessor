@@ -12,9 +12,9 @@ internal enum OperationType
     Setup,
 
     /// <summary>
-    /// Identifies operations pertaining to reading and loading text template files.
+    /// Identifies operations pertaining to reading text template files.
     /// </summary>
-    Loading,
+    Reading,
 
     /// <summary>
     /// Identifies operations pertaining to parsing of text template files.

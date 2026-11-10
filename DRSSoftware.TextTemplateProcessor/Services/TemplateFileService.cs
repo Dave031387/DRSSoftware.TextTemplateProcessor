@@ -125,7 +125,7 @@ internal class TemplateFileService : DependencyCheckerBase, ITemplateFileService
         if (filePath == _previousFilePath)
         {
             string message = GetMessage(MsgFileAlreadyLoaded, filePath);
-            Logger.Log(LogSeverity.Warning, message);
+            Logger.Log(LogSeverity.Warning, OperationType.Reading, message);
             return;
         }
 
@@ -137,15 +137,15 @@ internal class TemplateFileService : DependencyCheckerBase, ITemplateFileService
             try
             {
                 string message = GetMessage(MsgAttemptingToReadFile, TemplateFileName);
-                Logger.Log(LogSeverity.Information, message);
+                Logger.Log(LogSeverity.Information, OperationType.Reading, message);
                 TemplateLines = FileAndDirectoryService.ReadTextFile(TemplateFilePath);
                 message = GetMessage(MsgFileSuccessfullyRead, TemplateLines.Count.ToString());
-                Logger.Log(LogSeverity.Information, message);
+                Logger.Log(LogSeverity.Information, OperationType.Reading, message);
             }
             catch (Exception ex)
             {
                 string message = GetMessage(MsgTemplateFileCouldNotBeRead, ex.Message);
-                Logger.Log(LogSeverity.Error, message);
+                Logger.Log(LogSeverity.Error, OperationType.Reading, message);
                 TemplateLines.Clear();
             }
         }

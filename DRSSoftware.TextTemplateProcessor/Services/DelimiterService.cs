@@ -18,7 +18,7 @@ internal class DelimiterService : DependencyCheckerBase, IDelimiterService
     internal DelimiterService(ILogger logger)
     {
         Logger = NullDependencyCheck(logger, nameof(logger));
-        ResetTokenDelimiters();
+        SetTokenDelimitersToDefaultValues();
     }
 
     /// <summary>
@@ -64,12 +64,11 @@ internal class DelimiterService : DependencyCheckerBase, IDelimiterService
     /// <summary>
     /// Resets the token delimiters and delimiter escape character to their default values.
     /// </summary>
-    [MemberNotNull(nameof(EndDelimiter), nameof(StartDelimiter))]
     public void ResetTokenDelimiters()
     {
-        DelimiterEscapeCharacter = DefaultDelimiterEscapeCharacter;
-        EndDelimiter = DefaultTokenEndDelimiter;
-        StartDelimiter = DefaultTokenStartDelimiter;
+        SetTokenDelimitersToDefaultValues();
+        string message = GetMessage(MsgTokenDelimitersHaveBeenReset);
+        Logger.Log(LogSeverity.Information, OperationType.Reset, message);
     }
 
     /// <summary>
@@ -100,6 +99,8 @@ internal class DelimiterService : DependencyCheckerBase, IDelimiterService
             DelimiterEscapeCharacter = delimiterEscapeCharacter;
             EndDelimiter = endDelimiter;
             StartDelimiter = startDelimiter;
+            string message = GetMessage(MsgNewTokenDelimiterValuesSet, StartDelimiter, EndDelimiter, DelimiterEscapeCharacter.ToString());
+            Logger.Log(LogSeverity.Information, OperationType.Setup, message);
             return true;
         }
 
@@ -128,28 +129,28 @@ internal class DelimiterService : DependencyCheckerBase, IDelimiterService
         if (startDelimiter is null)
         {
             string message = GetMessage(MsgTokenStartDelimiterIsNull);
-            Logger.Log(LogSeverity.Error, message);
+            Logger.Log(LogSeverity.Error, OperationType.Setup, message);
             return false;
         }
 
         if (endDelimiter is null)
         {
             string message = GetMessage(MsgTokenEndDelimiterIsNull);
-            Logger.Log(LogSeverity.Error, message);
+            Logger.Log(LogSeverity.Error, OperationType.Setup, message);
             return false;
         }
 
         if (string.IsNullOrWhiteSpace(startDelimiter))
         {
             string message = GetMessage(MsgTokenStartDelimiterIsEmpty);
-            Logger.Log(LogSeverity.Error, message);
+            Logger.Log(LogSeverity.Error, OperationType.Setup, message);
             return false;
         }
 
         if (string.IsNullOrWhiteSpace(endDelimiter))
         {
             string message = GetMessage(MsgTokenEndDelimiterIsEmpty);
-            Logger.Log(LogSeverity.Error, message);
+            Logger.Log(LogSeverity.Error, OperationType.Setup, message);
             return false;
         }
 
@@ -158,7 +159,7 @@ internal class DelimiterService : DependencyCheckerBase, IDelimiterService
             string message = GetMessage(MsgTokenStartAndTokenEndAreSame,
                                         startDelimiter,
                                         endDelimiter);
-            Logger.Log(LogSeverity.Error, message);
+            Logger.Log(LogSeverity.Error, OperationType.Setup, message);
             return false;
         }
 
@@ -167,7 +168,7 @@ internal class DelimiterService : DependencyCheckerBase, IDelimiterService
             string message = GetMessage(MsgTokenStartAndTokenEscapeAreSame,
                                         startDelimiter,
                                         delimiterEscapeCharacter.ToString());
-            Logger.Log(LogSeverity.Error, message);
+            Logger.Log(LogSeverity.Error, OperationType.Setup, message);
             return false;
         }
 
@@ -176,16 +177,28 @@ internal class DelimiterService : DependencyCheckerBase, IDelimiterService
             string message = GetMessage(MsgTokenEndAndTokenEscapeAreSame,
                                         endDelimiter,
                                         delimiterEscapeCharacter.ToString());
-            Logger.Log(LogSeverity.Error, message);
+            Logger.Log(LogSeverity.Error, OperationType.Setup, message);
             return false;
         }
 
         if (startDelimiter[^1] is LowercaseFlag or UppercaseFlag or SameCaseFlag)
         {
             string message = GetMessage(MsgTokenStartDelimiterWarning);
-            Logger.Log(LogSeverity.Warning, message);
+            Logger.Log(LogSeverity.Warning, OperationType.Setup, message);
         }
 
         return true;
+    }
+
+    /// <summary>
+    /// Set the token start delimiter, token end delimiter, and delimiter escape character to their
+    /// default values.
+    /// </summary>
+    [MemberNotNull(nameof(EndDelimiter), nameof(StartDelimiter))]
+    private void SetTokenDelimitersToDefaultValues()
+    {
+        DelimiterEscapeCharacter = DefaultDelimiterEscapeCharacter;
+        EndDelimiter = DefaultTokenEndDelimiter;
+        StartDelimiter = DefaultTokenStartDelimiter;
     }
 }
