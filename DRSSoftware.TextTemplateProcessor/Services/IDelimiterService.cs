@@ -40,8 +40,8 @@ internal interface IDelimiterService
     /// specified values.
     /// </summary>
     /// <remarks>
-    /// The <see cref="ValidateTokenDelimiterValues(string, string, char)"/> method will be called
-    /// before updating the delimiter values. No changes will be made if the validation fails.
+    /// The delimiter values will be validated before making any changes. No changes will be made if
+    /// the validation fails.
     /// </remarks>
     /// <param name="startDelimiter">
     /// The new token start delimiter string.
@@ -57,23 +57,4 @@ internal interface IDelimiterService
     /// <see langword="false"/>.
     /// </returns>
     bool SetTokenDelimiters(string startDelimiter, string endDelimiter, char delimiterEscapeCharacter);
-
-    /// <summary>
-    /// Validate the given token start and token end delimiters and delimiter escape character
-    /// values to ensure they are valid and consistent.
-    /// </summary>
-    /// <param name="startDelimiter">
-    /// The value that will be assigned to the token start delimiter.
-    /// </param>
-    /// <param name="endDelimiter">
-    /// The value that will be assigned to the token end delimiter.
-    /// </param>
-    /// <param name="delimiterEscapeCharacter">
-    /// The value that will be assigned to the delimiter escape character.
-    /// </param>
-    /// <returns>
-    /// <see langword="true"/> if all given delimiter values are valid and consistent; otherwise
-    /// <see langword="false"/>
-    /// </returns>
-    bool ValidateTokenDelimiterValues(string startDelimiter, string endDelimiter, char delimiterEscapeCharacter);
 }

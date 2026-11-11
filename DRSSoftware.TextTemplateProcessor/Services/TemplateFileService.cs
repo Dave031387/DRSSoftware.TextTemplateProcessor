@@ -122,32 +122,40 @@ internal class TemplateFileService : DependencyCheckerBase, ITemplateFileService
     /// </param>
     public void ReadTemplateFile(string filePath)
     {
-        if (filePath == _previousFilePath)
-        {
-            string message = GetMessage(MsgFileAlreadyLoaded, filePath);
-            Logger.Log(LogSeverity.Warning, OperationType.Reading, message);
-            return;
-        }
+        string message;
 
-        TemplateLines.Clear();
-        _previousFilePath = filePath;
-
-        if (IsValidFilePath(filePath))
+        try
         {
-            try
+            Logger.PushOperationType(OperationType.Reading);
+
+            if (filePath == _previousFilePath)
             {
-                string message = GetMessage(MsgAttemptingToReadFile, TemplateFileName);
-                Logger.Log(LogSeverity.Information, OperationType.Reading, message);
+                message = GetMessage(MsgFileAlreadyLoaded, filePath);
+                Logger.Log(LogSeverity.Warning, message);
+                return;
+            }
+
+            TemplateLines.Clear();
+            _previousFilePath = filePath;
+
+            if (IsValidFilePath(filePath))
+            {
+                message = GetMessage(MsgAttemptingToReadFile, TemplateFileName);
+                Logger.Log(LogSeverity.Information, message);
                 TemplateLines = FileAndDirectoryService.ReadTextFile(TemplateFilePath);
                 message = GetMessage(MsgFileSuccessfullyRead, TemplateLines.Count.ToString());
-                Logger.Log(LogSeverity.Information, OperationType.Reading, message);
+                Logger.Log(LogSeverity.Information, message);
             }
-            catch (Exception ex)
-            {
-                string message = GetMessage(MsgTemplateFileCouldNotBeRead, ex.Message);
-                Logger.Log(LogSeverity.Error, OperationType.Reading, message);
-                TemplateLines.Clear();
-            }
+        }
+        catch (Exception ex)
+        {
+            message = GetMessage(MsgTemplateFileCouldNotBeRead, ex.Message);
+            Logger.Log(LogSeverity.Error, message);
+            TemplateLines.Clear();
+        }
+        finally
+        {
+            Logger.PopOperationType();
         }
     }
 

@@ -962,7 +962,13 @@ public class IndentProcessorTests : MoqUnitTestBase
         int newTabSize = DefaultTabSize + 2;
         string message = GetMessage(MsgNewTabSizeValueSet, expected.ToString(), newTabSize.ToString());
         GetMock<ILogger>()
-            .Setup(x => x.Log(LogSeverity.Information, OperationType.Setup, message))
+            .Setup(x => x.PushOperationType(OperationType.Setup))
+            .Verifiable(Times.Once);
+        GetMock<ILogger>()
+            .Setup(x => x.Log(LogSeverity.Information, message))
+            .Verifiable(Times.Once);
+        GetMock<ILogger>()
+            .Setup(x => x.PopOperationType())
             .Verifiable(Times.Once);
         IndentProcessor indentProcessor = GetIndentProcessor();
         SetCurrentIndent(indentProcessor, 4);
@@ -990,7 +996,13 @@ public class IndentProcessorTests : MoqUnitTestBase
         int tabCount = 3;
         string message = GetMessage(MsgNewTabSizeValueSet, oldTabSize.ToString(), expectedTabSize.ToString());
         GetMock<ILogger>()
-            .Setup(x => x.Log(LogSeverity.Information, OperationType.Setup, message))
+            .Setup(x => x.PushOperationType(OperationType.Setup))
+            .Verifiable(Times.Once);
+        GetMock<ILogger>()
+            .Setup(x => x.Log(LogSeverity.Information, message))
+            .Verifiable(Times.Once);
+        GetMock<ILogger>()
+            .Setup(x => x.PopOperationType())
             .Verifiable(Times.Once);
         IndentProcessor indentProcessor = GetIndentProcessor();
         indentProcessor.SetTabSize(expectedTabSize);
@@ -1023,11 +1035,17 @@ public class IndentProcessorTests : MoqUnitTestBase
         string message2 = GetMessage(MsgNewTabSizeValueSet, expectedTabSize.ToString(), newTabSize.ToString());
         string message3 = GetMessage(MsgTabSizeHasBeenReset, newTabSize.ToString(), expectedTabSize.ToString());
         GetMock<ILogger>()
-            .Setup(x => x.Log(LogSeverity.Information, OperationType.Setup, message1))
+            .Setup(x => x.PushOperationType(OperationType.Setup))
+            .Verifiable(Times.Exactly(2));
+        GetMock<ILogger>()
+            .Setup(x => x.Log(LogSeverity.Information, message1))
             .Verifiable(Times.Once);
         GetMock<ILogger>()
-            .Setup(x => x.Log(LogSeverity.Information, OperationType.Setup, message2))
+            .Setup(x => x.Log(LogSeverity.Information, message2))
             .Verifiable(Times.Once);
+        GetMock<ILogger>()
+            .Setup(x => x.PopOperationType())
+            .Verifiable(Times.Exactly(2));
         GetMock<ILogger>()
             .Setup(x => x.Log(LogSeverity.Information, OperationType.Setup, message3))
             .Verifiable(Times.Once);
@@ -1065,7 +1083,13 @@ public class IndentProcessorTests : MoqUnitTestBase
                                             tabSize.ToString(),
                                             expectedTabSize.ToString());
         GetMock<ILogger>()
-            .Setup(logger => logger.Log(LogSeverity.Warning, OperationType.Setup, expectedMessage))
+            .Setup(x => x.PushOperationType(OperationType.Setup))
+            .Verifiable(Times.Once);
+        GetMock<ILogger>()
+            .Setup(logger => logger.Log(LogSeverity.Warning, expectedMessage))
+            .Verifiable(Times.Once);
+        GetMock<ILogger>()
+            .Setup(x => x.PopOperationType())
             .Verifiable(Times.Once);
         IndentProcessor indentProcessor = GetIndentProcessor();
 
@@ -1091,7 +1115,13 @@ public class IndentProcessorTests : MoqUnitTestBase
                                             tabSize.ToString(),
                                             expectedTabSize.ToString());
         GetMock<ILogger>()
-            .Setup(logger => logger.Log(LogSeverity.Warning, OperationType.Setup, expectedMessage))
+            .Setup(x => x.PushOperationType(OperationType.Setup))
+            .Verifiable(Times.Once);
+        GetMock<ILogger>()
+            .Setup(logger => logger.Log(LogSeverity.Warning, expectedMessage))
+            .Verifiable(Times.Once);
+        GetMock<ILogger>()
+            .Setup(x => x.PopOperationType())
             .Verifiable(Times.Once);
         IndentProcessor indentProcessor = GetIndentProcessor();
 
@@ -1116,7 +1146,13 @@ public class IndentProcessorTests : MoqUnitTestBase
         // Arrange
         string message = GetMessage(MsgNewTabSizeValueSet, DefaultTabSize.ToString(), expectedTabSize.ToString());
         GetMock<ILogger>()
-            .Setup(x => x.Log(LogSeverity.Information, OperationType.Setup, message))
+            .Setup(x => x.PushOperationType(OperationType.Setup))
+            .Verifiable(Times.Once);
+        GetMock<ILogger>()
+            .Setup(x => x.Log(LogSeverity.Information, message))
+            .Verifiable(Times.Once);
+        GetMock<ILogger>()
+            .Setup(x => x.PopOperationType())
             .Verifiable(Times.Once);
         IndentProcessor indentProcessor = GetIndentProcessor();
 

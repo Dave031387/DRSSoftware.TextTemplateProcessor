@@ -76,8 +76,8 @@ internal class DelimiterService : DependencyCheckerBase, IDelimiterService
     /// specified values.
     /// </summary>
     /// <remarks>
-    /// The <see cref="ValidateTokenDelimiterValues(string, string, char)"/> method will be called
-    /// before updating the delimiter values. No changes will be made if the validation fails.
+    /// The delimiter values will be validated before making any changes. No changes will be made if
+    /// the validation fails.
     /// </remarks>
     /// <param name="startDelimiter">
     /// The new token start delimiter string.
@@ -94,17 +94,35 @@ internal class DelimiterService : DependencyCheckerBase, IDelimiterService
     /// </returns>
     public bool SetTokenDelimiters(string startDelimiter, string endDelimiter, char delimiterEscapeCharacter)
     {
+        bool isValid = false;
+
+        Logger.PushOperationType(OperationType.Setup);
+
         if (ValidateTokenDelimiterValues(startDelimiter, endDelimiter, delimiterEscapeCharacter))
         {
             DelimiterEscapeCharacter = delimiterEscapeCharacter;
             EndDelimiter = endDelimiter;
             StartDelimiter = startDelimiter;
             string message = GetMessage(MsgNewTokenDelimiterValuesSet, StartDelimiter, EndDelimiter, DelimiterEscapeCharacter.ToString());
-            Logger.Log(LogSeverity.Information, OperationType.Setup, message);
-            return true;
+            Logger.Log(LogSeverity.Information, message);
+            isValid = true;
         }
 
-        return false;
+        Logger.PopOperationType();
+
+        return isValid;
+    }
+
+    /// <summary>
+    /// Set the token start delimiter, token end delimiter, and delimiter escape character to their
+    /// default values.
+    /// </summary>
+    [MemberNotNull(nameof(EndDelimiter), nameof(StartDelimiter))]
+    private void SetTokenDelimitersToDefaultValues()
+    {
+        DelimiterEscapeCharacter = DefaultDelimiterEscapeCharacter;
+        EndDelimiter = DefaultTokenEndDelimiter;
+        StartDelimiter = DefaultTokenStartDelimiter;
     }
 
     /// <summary>
@@ -124,33 +142,33 @@ internal class DelimiterService : DependencyCheckerBase, IDelimiterService
     /// <see langword="true"/> if all given delimiter values are valid and consistent; otherwise
     /// <see langword="false"/>
     /// </returns>
-    public bool ValidateTokenDelimiterValues(string startDelimiter, string endDelimiter, char delimiterEscapeCharacter)
+    private bool ValidateTokenDelimiterValues(string startDelimiter, string endDelimiter, char delimiterEscapeCharacter)
     {
         if (startDelimiter is null)
         {
             string message = GetMessage(MsgTokenStartDelimiterIsNull);
-            Logger.Log(LogSeverity.Error, OperationType.Setup, message);
+            Logger.Log(LogSeverity.Error, message);
             return false;
         }
 
         if (endDelimiter is null)
         {
             string message = GetMessage(MsgTokenEndDelimiterIsNull);
-            Logger.Log(LogSeverity.Error, OperationType.Setup, message);
+            Logger.Log(LogSeverity.Error, message);
             return false;
         }
 
         if (string.IsNullOrWhiteSpace(startDelimiter))
         {
             string message = GetMessage(MsgTokenStartDelimiterIsEmpty);
-            Logger.Log(LogSeverity.Error, OperationType.Setup, message);
+            Logger.Log(LogSeverity.Error, message);
             return false;
         }
 
         if (string.IsNullOrWhiteSpace(endDelimiter))
         {
             string message = GetMessage(MsgTokenEndDelimiterIsEmpty);
-            Logger.Log(LogSeverity.Error, OperationType.Setup, message);
+            Logger.Log(LogSeverity.Error, message);
             return false;
         }
 
@@ -159,7 +177,7 @@ internal class DelimiterService : DependencyCheckerBase, IDelimiterService
             string message = GetMessage(MsgTokenStartAndTokenEndAreSame,
                                         startDelimiter,
                                         endDelimiter);
-            Logger.Log(LogSeverity.Error, OperationType.Setup, message);
+            Logger.Log(LogSeverity.Error, message);
             return false;
         }
 
@@ -168,7 +186,7 @@ internal class DelimiterService : DependencyCheckerBase, IDelimiterService
             string message = GetMessage(MsgTokenStartAndTokenEscapeAreSame,
                                         startDelimiter,
                                         delimiterEscapeCharacter.ToString());
-            Logger.Log(LogSeverity.Error, OperationType.Setup, message);
+            Logger.Log(LogSeverity.Error, message);
             return false;
         }
 
@@ -177,28 +195,16 @@ internal class DelimiterService : DependencyCheckerBase, IDelimiterService
             string message = GetMessage(MsgTokenEndAndTokenEscapeAreSame,
                                         endDelimiter,
                                         delimiterEscapeCharacter.ToString());
-            Logger.Log(LogSeverity.Error, OperationType.Setup, message);
+            Logger.Log(LogSeverity.Error, message);
             return false;
         }
 
         if (startDelimiter[^1] is LowercaseFlag or UppercaseFlag or SameCaseFlag)
         {
             string message = GetMessage(MsgTokenStartDelimiterWarning);
-            Logger.Log(LogSeverity.Warning, OperationType.Setup, message);
+            Logger.Log(LogSeverity.Warning, message);
         }
 
         return true;
-    }
-
-    /// <summary>
-    /// Set the token start delimiter, token end delimiter, and delimiter escape character to their
-    /// default values.
-    /// </summary>
-    [MemberNotNull(nameof(EndDelimiter), nameof(StartDelimiter))]
-    private void SetTokenDelimitersToDefaultValues()
-    {
-        DelimiterEscapeCharacter = DefaultDelimiterEscapeCharacter;
-        EndDelimiter = DefaultTokenEndDelimiter;
-        StartDelimiter = DefaultTokenStartDelimiter;
     }
 }

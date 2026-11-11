@@ -7,6 +7,11 @@
 internal abstract class LoggerBase : DependencyCheckerBase, ILogger
 {
     /// <summary>
+    /// Stack that holds <see cref="OperationType"/> entries.
+    /// </summary>
+    private readonly Stack<OperationType> _operationTypeStack = [];
+
+    /// <summary>
     /// Creates a new instance of the <see cref="LoggerBase"/> class.
     /// </summary>
     /// <param name="locater">
@@ -118,6 +123,30 @@ internal abstract class LoggerBase : DependencyCheckerBase, ILogger
         Log(LogSeverity.Information, msgSummaryLine1);
         Log(LogSeverity.Information, msgSummaryLine2);
         Log(LogSeverity.Information, msgSummaryLine3);
+    }
+
+    /// <summary>
+    /// Pops the previous operation type from the stack and makes it the current operation type.
+    /// </summary>
+    public void PopOperationType()
+    {
+        if (_operationTypeStack.Count > 0)
+        {
+            CurrentOperationType = _operationTypeStack.Pop();
+        }
+    }
+
+    /// <summary>
+    /// Pushes the current operation type onto the stack and sets the current operation type to the
+    /// specified value.
+    /// </summary>
+    /// <param name="operationType">
+    /// The value to be assigned to the current operation type.
+    /// </param>
+    public void PushOperationType(OperationType operationType)
+    {
+        _operationTypeStack.Push(CurrentOperationType);
+        CurrentOperationType = operationType;
     }
 
     /// <summary>

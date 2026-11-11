@@ -81,6 +81,9 @@ public class TemplateFileServiceTests : MoqUnitTestBase
         string message1 = GetMessage(MsgAttemptingToReadFile, fileName);
         string message2 = GetMessage(MsgFileSuccessfullyRead, expected.Count.ToString());
         string message3 = GetMessage(MsgFileAlreadyLoaded, filePath);
+        GetMock<ILogger>()
+            .Setup(x => x.PushOperationType(OperationType.Reading))
+            .Verifiable(Times.Exactly(2));
         GetMock<IPathValidator>()
             .Setup(x => x.ValidatePath(filePath, true, true))
             .Returns(fullFilePath)
@@ -90,18 +93,21 @@ public class TemplateFileServiceTests : MoqUnitTestBase
             .Returns(fileName)
             .Verifiable(Times.Once);
         GetMock<ILogger>()
-            .Setup(x => x.Log(LogSeverity.Information, OperationType.Reading, message1))
+            .Setup(x => x.Log(LogSeverity.Information, message1))
             .Verifiable(Times.Once);
         GetMock<IFileAndDirectoryService>()
             .Setup(x => x.ReadTextFile(fullFilePath))
             .Returns(expected)
             .Verifiable(Times.Once);
         GetMock<ILogger>()
-            .Setup(x => x.Log(LogSeverity.Information, OperationType.Reading, message2))
+            .Setup(x => x.Log(LogSeverity.Information, message2))
             .Verifiable(Times.Once);
         GetMock<ILogger>()
-            .Setup(x => x.Log(LogSeverity.Warning, OperationType.Reading, message3))
+            .Setup(x => x.Log(LogSeverity.Warning, message3))
             .Verifiable(Times.Once);
+        GetMock<ILogger>()
+            .Setup(x => x.PopOperationType())
+            .Verifiable(Times.Exactly(2));
         TemplateFileService templateFileService = GetTemplateFileService();
         templateFileService.ReadTemplateFile(filePath);
 
@@ -137,6 +143,9 @@ public class TemplateFileServiceTests : MoqUnitTestBase
         string fileName = "fileName";
         string message1 = GetMessage(MsgAttemptingToReadFile, fileName);
         string message2 = GetMessage(MsgTemplateFileCouldNotBeRead, GetMoqExceptionString<FileAndDirectoryServiceException>());
+        GetMock<ILogger>()
+            .Setup(x => x.PushOperationType(OperationType.Reading))
+            .Verifiable(Times.Once);
         GetMock<IPathValidator>()
             .Setup(x => x.ValidatePath(filePath, true, true))
             .Returns(fullFilePath)
@@ -146,14 +155,17 @@ public class TemplateFileServiceTests : MoqUnitTestBase
             .Returns(fileName)
             .Verifiable(Times.Once);
         GetMock<ILogger>()
-            .Setup(x => x.Log(LogSeverity.Information, OperationType.Reading, message1))
+            .Setup(x => x.Log(LogSeverity.Information, message1))
             .Verifiable(Times.Once);
         GetMock<IFileAndDirectoryService>()
             .Setup(x => x.ReadTextFile(fullFilePath))
             .Throws<FileAndDirectoryServiceException>()
             .Verifiable(Times.Once);
         GetMock<ILogger>()
-            .Setup(x => x.Log(LogSeverity.Error, OperationType.Reading, message2))
+            .Setup(x => x.Log(LogSeverity.Error, message2))
+            .Verifiable(Times.Once);
+        GetMock<ILogger>()
+            .Setup(x => x.PopOperationType())
             .Verifiable(Times.Once);
         TemplateFileService templateFileService = GetTemplateFileService();
 
@@ -184,6 +196,9 @@ public class TemplateFileServiceTests : MoqUnitTestBase
         string filePath = "filePath";
         string fullFilePath = "fullFilePath";
         string message = GetMessage(MsgUnableToSetTemplateFilePath, filePath, GetMoqExceptionString<FileAndDirectoryServiceException>());
+        GetMock<ILogger>()
+            .Setup(x => x.PushOperationType(OperationType.Reading))
+            .Verifiable(Times.Once);
         GetMock<IPathValidator>()
             .Setup(x => x.ValidatePath(filePath, true, true))
             .Returns(fullFilePath)
@@ -194,6 +209,9 @@ public class TemplateFileServiceTests : MoqUnitTestBase
             .Verifiable(Times.Once);
         GetMock<ILogger>()
             .Setup(x => x.Log(LogSeverity.Error, message))
+            .Verifiable(Times.Once);
+        GetMock<ILogger>()
+            .Setup(x => x.PopOperationType())
             .Verifiable(Times.Once);
         TemplateFileService templateFileService = GetTemplateFileService();
 
@@ -223,6 +241,9 @@ public class TemplateFileServiceTests : MoqUnitTestBase
         List<string> expected = ["Line 1", "Line 2", "Line 3"];
         string message1 = GetMessage(MsgAttemptingToReadFile, fileName);
         string message2 = GetMessage(MsgFileSuccessfullyRead, expected.Count.ToString());
+        GetMock<ILogger>()
+            .Setup(x => x.PushOperationType(OperationType.Reading))
+            .Verifiable(Times.Once);
         GetMock<IPathValidator>()
             .Setup(x => x.ValidatePath(filePath, true, true))
             .Returns(fullFilePath)
@@ -232,14 +253,17 @@ public class TemplateFileServiceTests : MoqUnitTestBase
             .Returns(fileName)
             .Verifiable(Times.Once);
         GetMock<ILogger>()
-            .Setup(x => x.Log(LogSeverity.Information, OperationType.Reading, message1))
+            .Setup(x => x.Log(LogSeverity.Information, message1))
             .Verifiable(Times.Once);
         GetMock<IFileAndDirectoryService>()
             .Setup(x => x.ReadTextFile(fullFilePath))
             .Returns(expected)
             .Verifiable(Times.Once);
         GetMock<ILogger>()
-            .Setup(x => x.Log(LogSeverity.Information, OperationType.Reading, message2))
+            .Setup(x => x.Log(LogSeverity.Information, message2))
+            .Verifiable(Times.Once);
+        GetMock<ILogger>()
+            .Setup(x => x.PopOperationType())
             .Verifiable(Times.Once);
         TemplateFileService templateFileService = GetTemplateFileService();
 
@@ -272,12 +296,18 @@ public class TemplateFileServiceTests : MoqUnitTestBase
         // Arrange
         string filePath = "filePath";
         string message = GetMessage(MsgUnableToSetTemplateFilePath, filePath, GetMoqExceptionString<PathValidatorException>());
+        GetMock<ILogger>()
+            .Setup(x => x.PushOperationType(OperationType.Reading))
+            .Verifiable(Times.Once);
         GetMock<IPathValidator>()
             .Setup(x => x.ValidatePath(filePath, true, true))
             .Throws<PathValidatorException>()
             .Verifiable(Times.Once);
         GetMock<ILogger>()
             .Setup(x => x.Log(LogSeverity.Error, message))
+            .Verifiable(Times.Once);
+        GetMock<ILogger>()
+            .Setup(x => x.PopOperationType())
             .Verifiable(Times.Once);
         TemplateFileService templateFileService = GetTemplateFileService();
 

@@ -48,7 +48,13 @@ public class DelimiterServiceTests : MoqUnitTestBase
         string message1 = GetMessage(MsgNewTokenDelimiterValuesSet, altStartDelimiter, altEndDelimiter, altEscapeCharacter.ToString());
         string message2 = GetMessage(MsgTokenDelimitersHaveBeenReset);
         GetMock<ILogger>()
-            .Setup(x => x.Log(LogSeverity.Information, OperationType.Setup, message1))
+            .Setup(x => x.PushOperationType(OperationType.Setup))
+            .Verifiable(Times.Once);
+        GetMock<ILogger>()
+            .Setup(x => x.Log(LogSeverity.Information, message1))
+            .Verifiable(Times.Once);
+        GetMock<ILogger>()
+            .Setup(x => x.PopOperationType())
             .Verifiable(Times.Once);
         GetMock<ILogger>()
             .Setup(x => x.Log(LogSeverity.Information, OperationType.Reset, message2))
@@ -178,14 +184,20 @@ public class DelimiterServiceTests : MoqUnitTestBase
     {
         // Arrange
         GetMock<ILogger>()
-            .Setup(x => x.Log(logSeverity, OperationType.Setup, message))
+            .Setup(x => x.PushOperationType(OperationType.Setup))
+            .Verifiable(Times.Once);
+        GetMock<ILogger>()
+            .Setup(x => x.Log(logSeverity, message))
+            .Verifiable(Times.Once);
+        GetMock<ILogger>()
+            .Setup(x => x.PopOperationType())
             .Verifiable(Times.Once);
 
         if (logSeverity is LogSeverity.Warning)
         {
             string msg = GetMessage(MsgNewTokenDelimiterValuesSet, startDelimiter, endDelimiter, escapeCharacter.ToString());
             GetMock<ILogger>()
-                .Setup(x => x.Log(LogSeverity.Information, OperationType.Setup, msg))
+                .Setup(x => x.Log(LogSeverity.Information, msg))
                 .Verifiable(Times.Once);
         }
 

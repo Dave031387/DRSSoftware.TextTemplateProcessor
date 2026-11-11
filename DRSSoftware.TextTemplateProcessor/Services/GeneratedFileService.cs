@@ -138,30 +138,35 @@ internal class GeneratedFileService : DependencyCheckerBase, IGeneratedFileServi
         bool isValid = false;
         string message = GetMessage(MsgWritingGeneratedTextFile, filePath);
 
-        Logger.Log(LogSeverity.Information, OperationType.Writing, message);
-
         try
         {
+            Logger.PushOperationType(OperationType.Writing);
+            Logger.Log(LogSeverity.Information, message);
+
             ValidateOutputFilePath(filePath);
 
             if (IsEmptyFile)
             {
                 message = GetMessage(MsgGeneratedTextIsEmpty);
-                Logger.Log(LogSeverity.Error, OperationType.Writing, message);
+                Logger.Log(LogSeverity.Error, message);
             }
             else
             {
                 CheckForExistingFile();
                 FileAndDirectoryService.WriteTextFile(OutputFilePath, GeneratedTextLines);
                 message = GetMessage(MsgOutputFileSuccessfullyCreated, GeneratedTextLines.Count.ToString());
-                Logger.Log(LogSeverity.Information, OperationType.Writing, message);
+                Logger.Log(LogSeverity.Information, message);
                 isValid = true;
             }
         }
         catch (Exception ex)
         {
             message = GetMessage(MsgUnableToCreateOutputFile, ex.Message);
-            Logger.Log(LogSeverity.Error, OperationType.Writing, message);
+            Logger.Log(LogSeverity.Error, message);
+        }
+        finally
+        {
+            Logger.PopOperationType();
         }
 
         return isValid;
@@ -176,7 +181,7 @@ internal class GeneratedFileService : DependencyCheckerBase, IGeneratedFileServi
         if (FileAndDirectoryService.FileExists(OutputFilePath))
         {
             string message = GetMessage(MsgOutputFileWillBeOverwritten);
-            Logger.Log(LogSeverity.Warning, OperationType.Writing, message);
+            Logger.Log(LogSeverity.Warning, message);
         }
         else
         {

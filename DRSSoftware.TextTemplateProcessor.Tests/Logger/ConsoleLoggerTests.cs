@@ -493,6 +493,68 @@ public class ConsoleLoggerTests : MoqUnitTestBase
     }
 
     [Fact]
+    public void PopOperationTypeWhenNothingIsOnTheStack_ShouldDoNothing()
+    {
+        // Arrange
+        OperationType expected = OperationType.User;
+        ConsoleLogger consoleLogger = GetConsoleLogger();
+        consoleLogger.CurrentOperationType = expected;
+
+        // Act
+        consoleLogger.PopOperationType();
+        OperationType actual = consoleLogger.CurrentOperationType;
+
+        // Assert
+        actual
+            .Should()
+            .Be(expected);
+    }
+
+    [Fact]
+    public void PushAndPopOperationTypes_ShouldWorkAsExpected()
+    {
+        // Arrange
+        OperationType first = OperationType.Reading;
+        OperationType second = OperationType.Parsing;
+        OperationType third = OperationType.Generating;
+        ConsoleLogger consoleLogger = GetConsoleLogger();
+
+        // Act
+        consoleLogger.PushOperationType(first);
+        OperationType afterFirstPush = consoleLogger.CurrentOperationType;
+        consoleLogger.PushOperationType(second);
+        OperationType afterSecondPush = consoleLogger.CurrentOperationType;
+        consoleLogger.PushOperationType(third);
+        OperationType afterThirdPush = consoleLogger.CurrentOperationType;
+        consoleLogger.PopOperationType();
+        OperationType afterFirstPop = consoleLogger.CurrentOperationType;
+        consoleLogger.PopOperationType();
+        OperationType afterSecondPop = consoleLogger.CurrentOperationType;
+        consoleLogger.PopOperationType();
+        OperationType afterThirdPop = consoleLogger.CurrentOperationType;
+
+        // Assert
+        afterFirstPush
+            .Should()
+            .Be(first);
+        afterSecondPush
+            .Should()
+            .Be(second);
+        afterThirdPush
+            .Should()
+            .Be(third);
+        afterFirstPop
+            .Should()
+            .Be(second);
+        afterSecondPop
+            .Should()
+            .Be(first);
+        afterThirdPop
+            .Should()
+            .Be(DefaultOperationType);
+    }
+
+    [Fact]
     public void ResetCounters_ShouldResetErrorAndWarningCountsToZero()
     {
         // Arrange

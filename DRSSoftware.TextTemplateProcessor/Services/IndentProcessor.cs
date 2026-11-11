@@ -303,12 +303,14 @@ internal class IndentProcessor : DependencyCheckerBase, IIndentProcessor
     /// </remarks>
     public void SetTabSize(int tabSize)
     {
+        Logger.PushOperationType(OperationType.Setup);
+
         if (tabSize < MinTabSize)
         {
             string message = GetMessage(MsgTabSizeTooSmall,
                                         tabSize.ToString(),
                                         MinTabSize.ToString());
-            Logger.Log(LogSeverity.Warning, OperationType.Setup, message);
+            Logger.Log(LogSeverity.Warning, message);
             TabSize = MinTabSize;
         }
         else if (tabSize > MaxTabSize)
@@ -316,7 +318,7 @@ internal class IndentProcessor : DependencyCheckerBase, IIndentProcessor
             string message = GetMessage(MsgTabSizeTooLarge,
                                         tabSize.ToString(),
                                         MaxTabSize.ToString());
-            Logger.Log(LogSeverity.Warning, OperationType.Setup, message);
+            Logger.Log(LogSeverity.Warning, message);
             TabSize = MaxTabSize;
         }
         else
@@ -326,7 +328,9 @@ internal class IndentProcessor : DependencyCheckerBase, IIndentProcessor
             string message = GetMessage(MsgNewTabSizeValueSet,
                                         oldValue.ToString(),
                                         TabSize.ToString());
-            Logger.Log(LogSeverity.Information, OperationType.Setup, message);
+            Logger.Log(LogSeverity.Information, message);
         }
+
+        Logger.PopOperationType();
     }
 }

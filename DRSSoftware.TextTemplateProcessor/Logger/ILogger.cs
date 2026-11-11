@@ -76,6 +76,20 @@ internal interface ILogger
     void LogProcessingSummary();
 
     /// <summary>
+    /// Pops the previous operation type from the stack and makes it the current operation type.
+    /// </summary>
+    void PopOperationType();
+
+    /// <summary>
+    /// Pushes the current operation type onto the stack and sets the current operation type to the
+    /// specified value.
+    /// </summary>
+    /// <param name="operationType">
+    /// The value to be assigned to the current operation type.
+    /// </param>
+    void PushOperationType(OperationType operationType);
+
+    /// <summary>
     /// Resets the error and warning counters to zero.
     /// </summary>
     /// <remarks>

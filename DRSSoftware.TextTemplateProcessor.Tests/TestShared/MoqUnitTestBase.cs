@@ -51,7 +51,7 @@ public abstract class MoqUnitTestBase
     {
         foreach (string key in _mocks.Keys)
         {
-            if (_mocks[key].Setups.Any())
+            if (_mocks[key].Setups.Count is not 0)
             {
                 _mocks[key].VerifyAll();
             }
