@@ -4,7 +4,7 @@
 /// This interface defines the contract for a segment manager service where a segment is a logical
 /// grouping of text lines in a text template file.
 /// </summary>
-internal interface ISegmentManagerService
+internal interface ISegmentManager
 {
     /// <summary>
     /// Adds the given control item to the control items dictionary.
@@ -69,7 +69,8 @@ internal interface ISegmentManagerService
     /// The name of the segment whose text items are to be retrieved.
     /// </param>
     /// <returns>
-    /// An <see cref="IEnumerable{T}"/> of text items belonging to the specified segment.
+    /// An <see cref="IEnumerable{T}"/> of text items belonging to the specified segment, or an
+    /// empty collection if the segment doesn't exist.
     /// </returns>
     IEnumerable<TextItem> GetTextItems(string segmentName);
 

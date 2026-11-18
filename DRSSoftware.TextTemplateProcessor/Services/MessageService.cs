@@ -7,16 +7,20 @@
 internal static class MessageService
 {
     internal const string MsgAllSegmentsHaveBeenReset = "All segments have been reset.";
+    internal const string MsgAllSegmentsHaveBeenCleared = "All segments have been cleared from the segment dictionary.";
     internal const string MsgAttemptingToReadFile = "Attempting to read text template file: {0}";
     internal const string MsgAttemptToAddDuplicateSegmentName = "An attempt was made to add segment {0} more than once. Only the first occurrence will be retained.";
     internal const string MsgAttemptToAddTextItemForNonExistingSegment = "An attempt was made to add a text item for segment {0}. That segment doesn't exist in the control dictionary.";
     // internal const string MsgAttemptToGenerateSegmentBeforeItWasLoaded = "An attempt was made to generate segment {0} before the template was loaded.";
     internal const string MsgAttemptToResetNonExistingSegment = "An attempt was made to reset segment {0} which doesn't exist.";
+    internal const string MsgAttemptToRetrieveControlItemForInvalidSegmentName = "The segment name used to retrieve the control item must not be null, empty, or whitespace.";
     internal const string MsgAttemptToRetrieveControlItemForNonExistingSegment = "An attempt was made to retrieve the control item for segment {0}, but that segment doesn't exist.";
+    internal const string MsgAttemptToRetrieveTextItemsForInvalidSegmentName = "The segment name used to retrieve the text items must not be null, empty, or whitespace.";
     internal const string MsgAttemptToRetrieveTextItemsForNonExistingSegment = "An attempt was made to retrieve the text items for segment {0}, but that segment wasn't found.";
     // internal const string MsgClearTheOutputDirectory = "\nCONFIRM: Do you want to clear the contents of the following directory? {0}";
     internal const string MsgCombinePathsArgument1IsNull = "The first argument passed to {0} must not be null.";
     internal const string MsgCombinePathsArgument2IsNull = "The second argument passed to {0} must not be null.";
+    internal const string MsgControlItemSegmentNameNullOrWhitespace = $"The SegmentName property of the {nameof(ControlItem)} object must not be null, empty, or whitespace.";
     // internal const string MsgContinuationPrompt = "Press [ENTER] to continue...";
     internal const string MsgDelimiterEscapeMustBeSingleCharacter = "The token delimiter escape value specified on the file header must be a single character.";
     internal const string MsgDependencyIsNull = "The {1} dependency object passed to the {0} class should not be null.";
@@ -98,6 +102,8 @@ internal static class MessageService
     // internal const string MsgTemplateFileIsEmpty = "This template file is empty: {0}";
     // internal const string MsgTemplateFilePathNotSet = "Unable to load the template file because a valid file path has not been set.";
     // internal const string MsgTemplateHasBeenReset = "The environment for template file \"{0}\" has been reset.";
+    internal const string MsgTextItemSegmentNameInvalid = $"The segment name associated with the {nameof(TextItem)} object must not be null, empty, or whitespace.";
+    internal const string MsgTextItemTextIsNull = $"The Text property of the {nameof(TextItem)} object must not be null.";
     internal const string MsgTokenDelimitersHaveBeenReset = "The token delimiters and delimiter escape character have been reset back to their default values.";
     internal const string MsgTokenDictionaryContainsInvalidTokenName = "Attempted to assign a replacement value to a token having an invalid name \"{1}\" for segment {0}. The token will be ignored.";
     internal const string MsgTokenDictionaryIsEmpty = "An empty token dictionary was supplied for segment {0}.";
@@ -118,8 +124,8 @@ internal static class MessageService
     internal const string MsgTokenValueIsEmpty = "Found token \"{1}\" with no assigned value while generating segment {0}.";
     internal const string MsgTokenWithEmptyValue = "Possibly unintended attempt to assign an empty string to token \"{1}\" in segment {0}.";
     internal const string MsgTokenWithNullValue = "Invalid attempt to assign a null replacement value to token \"{1}\" in segment {0}. The replacement value will be set to an empty string.";
-    internal const string MsgUnableToAddSegmentToControlDictionary = "Unable to add segment {0} to the control dictionary. Reason: {1}";
-    internal const string MsgUnableToAddTextItemForSegment = "Unable to add a text item for segment {0}. Reason: {1}";
+    internal const string MsgUnableToAddSegmentToControlDictionary = "Unable to add segment \"{0}\" to the control dictionary. Reason: {1}";
+    internal const string MsgUnableToAddTextItemForSegment = "Unable to add a text item for segment \"{0}\". Reason: {1}";
     internal const string MsgUnableToAddTokenToDictionary = "Failed to add token \"{0}\" to the token dictionary. The token will be ignored.";
     internal const string MsgUnableToClearDirectory = "An unexpected exception occurred while clearing directory: \"{0}\"";
     internal const string MsgUnableToCombineFilePaths = "An unexpected exception occurred while attempting to combine file paths \"{0}\" and \"{1}\"";

@@ -25,7 +25,7 @@ internal static class ServiceLocater
         .AddSingleton<IOptionParser, OptionParser>()
         .AddSingleton<IPathValidator, PathValidator>()
         .AddSingleton<ISegmentHeaderParser, SegmentHeaderParser>()
-        .AddSingleton<ISegmentManagerService, SegmentManagerService>()
+        .AddSingleton<ISegmentManager, SegmentManager>()
         .AddSingleton<ITemplateFileService, TemplateFileService>()
         .AddSingleton<ITextLineParser, TextLineParser>()
         .AddSingleton<ITokenExtractor, TokenProcessor>()

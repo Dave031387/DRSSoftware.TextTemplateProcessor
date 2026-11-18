@@ -1,10 +1,10 @@
 ﻿namespace DRSSoftware.TextTemplateProcessor.Services;
 
 /// <summary>
-/// The <see cref="SegmentManagerService"/> manages the segment control information and segment text
-/// lines that are parsed from the text template file.
+/// The <see cref="SegmentManager"/> manages the segment control information and segment text lines
+/// that are parsed from the text template file.
 /// </summary>
-internal class SegmentManagerService : DependencyCheckerBase, ISegmentManagerService
+internal class SegmentManager : DependencyCheckerBase, ISegmentManager
 {
     /// <summary>
     /// A dictionary of control items. The key is the segment name that each control item pertains to.
@@ -18,12 +18,12 @@ internal class SegmentManagerService : DependencyCheckerBase, ISegmentManagerSer
     private readonly Dictionary<string, List<TextItem>> _textItems = [];
 
     /// <summary>
-    /// Creates a new instance of the <see cref="SegmentManagerService"/> class.
+    /// Creates a new instance of the <see cref="SegmentManager"/> class.
     /// </summary>
     /// <param name="logger">
-    ///A reference to the logger service.
+    /// A reference to the logger service.
     /// </param>
-    internal SegmentManagerService(ILogger logger)
+    internal SegmentManager(ILogger logger)
         => Logger = NullDependencyCheck(logger, nameof(logger));
 
     /// <summary>
@@ -51,6 +51,8 @@ internal class SegmentManagerService : DependencyCheckerBase, ISegmentManagerSer
 
         try
         {
+            ValidateControlItem(controlItem);
+
             if (ContainsSegment(controlItem.SegmentName))
             {
                 message = GetMessage(MsgAttemptToAddDuplicateSegmentName, controlItem.SegmentName);
@@ -66,7 +68,8 @@ internal class SegmentManagerService : DependencyCheckerBase, ISegmentManagerSer
         }
         catch (Exception ex)
         {
-            message = GetMessage(MsgUnableToAddSegmentToControlDictionary, controlItem.SegmentName, ex.Message);
+            string segmentName = controlItem is null || controlItem.SegmentName is null ? NullStringValue : controlItem.SegmentName;
+            message = GetMessage(MsgUnableToAddSegmentToControlDictionary, segmentName, ex.Message);
             Logger.Log(LogSeverity.Error, message);
             return false;
         }
@@ -87,28 +90,36 @@ internal class SegmentManagerService : DependencyCheckerBase, ISegmentManagerSer
     /// </returns>
     public bool AddTextItem(string segmentName, TextItem textItem)
     {
-        if (ContainsSegment(segmentName))
+        try
         {
-            try
+            ValidateTextItem(segmentName, textItem);
+
+            if (ContainsSegment(segmentName))
             {
                 _textItems[segmentName].Add(textItem);
                 return true;
             }
-            catch (Exception ex)
+            else
             {
-                string message = GetMessage(MsgUnableToAddTextItemForSegment, segmentName, ex.Message);
+                string message = GetMessage(MsgAttemptToAddTextItemForNonExistingSegment, segmentName);
                 Logger.Log(LogSeverity.Error, message);
+                return false;
+            }
+        }
+        catch (Exception ex)
+        {
+            string segment = segmentName is null ? NullStringValue : segmentName;
+            string message = GetMessage(MsgUnableToAddTextItemForSegment, segment, ex.Message);
+            Logger.Log(LogSeverity.Error, message);
+
+            if (!string.IsNullOrWhiteSpace(segmentName))
+            {
                 message = GetMessage(MsgSegmentWillBeRemoved, segmentName);
                 Logger.Log(LogSeverity.Information, message);
                 _ = _textItems.Remove(segmentName);
                 _ = _controlItems.Remove(segmentName);
-                return false;
             }
-        }
-        else
-        {
-            string message = GetMessage(MsgAttemptToAddTextItemForNonExistingSegment, segmentName);
-            Logger.Log(LogSeverity.Error, message);
+
             return false;
         }
     }
@@ -120,6 +131,8 @@ internal class SegmentManagerService : DependencyCheckerBase, ISegmentManagerSer
     {
         _textItems.Clear();
         _controlItems.Clear();
+        string message = GetMessage(MsgAllSegmentsHaveBeenCleared);
+        Logger.Log(LogSeverity.Information, OperationType.Reset, message);
     }
 
     /// <summary>
@@ -132,7 +145,8 @@ internal class SegmentManagerService : DependencyCheckerBase, ISegmentManagerSer
     /// <see langword="true"/> if the given segment exists in the control items dictionary;
     /// otherwise, <see langword="false"/>
     /// </returns>
-    public bool ContainsSegment(string segmentName) => _controlItems.ContainsKey(segmentName);
+    public bool ContainsSegment(string segmentName)
+        => !string.IsNullOrWhiteSpace(segmentName) && _controlItems.ContainsKey(segmentName);
 
     /// <summary>
     /// Gets the control item for the given segment name.
@@ -146,12 +160,21 @@ internal class SegmentManagerService : DependencyCheckerBase, ISegmentManagerSer
     /// </returns>
     public ControlItem? GetControlItem(string segmentName)
     {
-        if (_controlItems.TryGetValue(segmentName, out ControlItem? controlItem))
+        string message;
+
+        if (string.IsNullOrWhiteSpace(segmentName))
+        {
+            message = GetMessage(MsgAttemptToRetrieveControlItemForInvalidSegmentName);
+        }
+        else if (_controlItems.TryGetValue(segmentName, out ControlItem? controlItem))
         {
             return controlItem;
         }
+        else
+        {
+            message = GetMessage(MsgAttemptToRetrieveControlItemForNonExistingSegment, segmentName);
+        }
 
-        string message = GetMessage(MsgAttemptToRetrieveControlItemForNonExistingSegment, segmentName);
         Logger.Log(LogSeverity.Error, message);
         return null;
     }
@@ -163,16 +186,26 @@ internal class SegmentManagerService : DependencyCheckerBase, ISegmentManagerSer
     /// The name of the segment whose text items are to be retrieved.
     /// </param>
     /// <returns>
-    /// An <see cref="IEnumerable{T}"/> of text items belonging to the specified segment.
+    /// An <see cref="IEnumerable{T}"/> of text items belonging to the specified segment, or an
+    /// empty collection if the segment doesn't exist.
     /// </returns>
     public IEnumerable<TextItem> GetTextItems(string segmentName)
     {
-        if (_textItems.TryGetValue(segmentName, out List<TextItem>? textItems))
+        string message;
+
+        if (string.IsNullOrWhiteSpace(segmentName))
+        {
+            message = GetMessage(MsgAttemptToRetrieveTextItemsForInvalidSegmentName);
+        }
+        else if (_textItems.TryGetValue(segmentName, out List<TextItem>? textItems))
         {
             return textItems;
         }
+        else
+        {
+            message = GetMessage(MsgAttemptToRetrieveTextItemsForNonExistingSegment, segmentName);
+        }
 
-        string message = GetMessage(MsgAttemptToRetrieveTextItemsForNonExistingSegment, segmentName);
         Logger.Log(LogSeverity.Error, message);
         return [];
     }
@@ -189,7 +222,7 @@ internal class SegmentManagerService : DependencyCheckerBase, ISegmentManagerSer
     /// </returns>
     public bool IsEmptySegment(string segmentName)
     {
-        if (ContainsSegment(segmentName))
+        if (!string.IsNullOrWhiteSpace(segmentName))
         {
             if (_textItems.TryGetValue(segmentName, out List<TextItem>? textItem))
             {
@@ -206,13 +239,16 @@ internal class SegmentManagerService : DependencyCheckerBase, ISegmentManagerSer
     /// </summary>
     public void ResetAllSegments()
     {
-        foreach (ControlItem controlItem in _controlItems.Values)
+        if (_controlItems.Count > 0)
         {
-            controlItem.IsFirstTime = true;
-        }
+            foreach (ControlItem controlItem in _controlItems.Values)
+            {
+                controlItem.IsFirstTime = true;
+            }
 
-        string message = GetMessage(MsgAllSegmentsHaveBeenReset);
-        Logger.Log(LogSeverity.Information, OperationType.Reset, message);
+            string message = GetMessage(MsgAllSegmentsHaveBeenReset);
+            Logger.Log(LogSeverity.Information, OperationType.Reset, message);
+        }
     }
 
     /// <summary>
@@ -224,7 +260,7 @@ internal class SegmentManagerService : DependencyCheckerBase, ISegmentManagerSer
     /// </param>
     public void ResetSegment(string segmentName)
     {
-        if (ContainsSegment(segmentName))
+        if (!string.IsNullOrWhiteSpace(segmentName) && ContainsSegment(segmentName))
         {
             _controlItems[segmentName].IsFirstTime = true;
             string message = GetMessage(MsgSegmentHasBeenReset, segmentName);
@@ -232,8 +268,75 @@ internal class SegmentManagerService : DependencyCheckerBase, ISegmentManagerSer
         }
         else
         {
-            string message = GetMessage(MsgAttemptToResetNonExistingSegment, segmentName);
+            string segment = segmentName is null ? NullStringValue : segmentName;
+            string message = GetMessage(MsgAttemptToResetNonExistingSegment, segment);
             Logger.Log(LogSeverity.Error, OperationType.Reset, message);
+        }
+    }
+
+    /// <summary>
+    /// Validates the given <see cref="ControlItem"/> object to ensure that it is not <see
+    /// langword="null"/> and its SegmentName property is not <see langword="null"/>, empty, or whitespace.
+    /// </summary>
+    /// <remarks>
+    /// An exception will be thrown if the <see cref="ControlItem"/> object fails validation.
+    /// </remarks>
+    /// <param name="controlItem">
+    /// The <see cref="ControlItem"/> object to be validated.
+    /// </param>
+    /// <exception cref="ArgumentNullException">
+    /// Thrown if the given <see cref="ControlItem"/> object is null.
+    /// </exception>
+    /// <exception cref="ArgumentException">
+    /// Thrown if the SegmentName property of the <see cref="ControlItem"/> object is <see
+    /// langword="null"/>, empty, or whitespace.
+    /// </exception>
+    private static void ValidateControlItem(ControlItem? controlItem)
+    {
+        ArgumentNullException.ThrowIfNull(controlItem, nameof(controlItem));
+
+        if (string.IsNullOrWhiteSpace(controlItem.SegmentName))
+        {
+            string message = GetMessage(MsgControlItemSegmentNameNullOrWhitespace);
+            throw new ArgumentException(message);
+        }
+    }
+
+    /// <summary>
+    /// Validates the given <see cref="TextItem"/> object to ensure that it is not <see
+    /// langword="null"/> and that its Text property is not <see langword="null"/>.
+    /// </summary>
+    /// <remarks>
+    /// An exception will be thrown if the <see cref="TextItem"/> object fails validation, or if the
+    /// given segment name is <see langword="null"/>, empty, or whitespace.
+    /// </remarks>
+    /// <param name="segmentName">
+    /// The segment name that the given <see cref="TextItem"/> object belongs to.
+    /// </param>
+    /// <param name="textItem">
+    /// The <see cref="TextItem"/> object to be validated.
+    /// </param>
+    /// <exception cref="ArgumentNullException">
+    /// Thrown if the given <see cref="TextItem"/> object is null.
+    /// </exception>
+    /// <exception cref="ArgumentException">
+    /// Thrown if the Text property of the <see cref="TextItem"/> object is <see langword="null"/>
+    /// or if the segment name is <see langword="null"/>, empty, or whitespace.
+    /// </exception>
+    private static void ValidateTextItem(string? segmentName, TextItem? textItem)
+    {
+        ArgumentNullException.ThrowIfNull(textItem, nameof(textItem));
+
+        if (textItem.Text is null)
+        {
+            string message = GetMessage(MsgTextItemTextIsNull);
+            throw new ArgumentException(message);
+        }
+
+        if (string.IsNullOrWhiteSpace(segmentName))
+        {
+            string message = GetMessage(MsgTextItemSegmentNameInvalid);
+            throw new ArgumentException(message);
         }
     }
 }
