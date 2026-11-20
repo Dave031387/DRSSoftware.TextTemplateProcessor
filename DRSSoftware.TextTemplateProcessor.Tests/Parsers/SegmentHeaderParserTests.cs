@@ -103,7 +103,39 @@ public class SegmentHeaderParserTests : MoqUnitTestBase
         // Assert
         actual
             .Should()
-            .BeEquivalentTo(expected);
+            .Be(expected);
+        VerifyMocks();
+    }
+
+    [Fact]
+    public void ParseSegmentHeaderWhenPadSegmentMatchesSegmentName_ShouldLogError()
+    {
+        // Arrange
+        string segmentName = "ABC123";
+        string segmentHeaderLine = $"{SegmentHeaderCode} {segmentName} {PadSegmentNameOption}={segmentName}";
+        ControlItem expected = new()
+        {
+            FirstTimeIndent = 0,
+            IsFirstTime = true,
+            PadSegment = EmptyString,
+            SegmentName = segmentName,
+            TabSize = 0
+        };
+        string expectedMessage = GetMessage(MsgPadSegmentNameSameAsSegmentName, segmentName);
+        SetupControlItemBuilderMock(expected);
+        SetupOptionParserMock(segmentName, PadSegmentNameOption, segmentName, true);
+        GetMock<ILogger>()
+            .Setup(x => x.Log(LogSeverity.Error, expectedMessage))
+            .Verifiable(Times.Once);
+        SegmentHeaderParser parser = GetSegmentHeaderParser();
+
+        // Act
+        ControlItem actual = parser.Parse(segmentHeaderLine);
+
+        // Assert
+        actual
+            .Should()
+            .Be(expected);
         VerifyMocks();
     }
 
@@ -135,7 +167,7 @@ public class SegmentHeaderParserTests : MoqUnitTestBase
         // Assert
         actual
             .Should()
-            .BeEquivalentTo(expected);
+            .Be(expected);
         VerifyMocks();
     }
 
@@ -166,7 +198,7 @@ public class SegmentHeaderParserTests : MoqUnitTestBase
         // Assert
         actual
             .Should()
-            .BeEquivalentTo(expected);
+            .Be(expected);
         VerifyMocks();
     }
 
@@ -193,7 +225,7 @@ public class SegmentHeaderParserTests : MoqUnitTestBase
         // Assert
         actual
             .Should()
-            .BeEquivalentTo(expected);
+            .Be(expected);
         VerifyMocks();
     }
 
@@ -231,7 +263,7 @@ public class SegmentHeaderParserTests : MoqUnitTestBase
         // Assert
         actual
             .Should()
-            .BeEquivalentTo(expected);
+            .Be(expected);
         VerifyMocks();
     }
 
@@ -269,7 +301,7 @@ public class SegmentHeaderParserTests : MoqUnitTestBase
         // Assert
         actual
             .Should()
-            .BeEquivalentTo(expected);
+            .Be(expected);
         VerifyMocks();
     }
 
@@ -299,7 +331,7 @@ public class SegmentHeaderParserTests : MoqUnitTestBase
         // Assert
         actual
             .Should()
-            .BeEquivalentTo(expected);
+            .Be(expected);
         VerifyMocks();
     }
 
@@ -332,7 +364,7 @@ public class SegmentHeaderParserTests : MoqUnitTestBase
         // Assert
         actual
             .Should()
-            .BeEquivalentTo(expected);
+            .Be(expected);
         VerifyMocks();
     }
 
@@ -370,7 +402,7 @@ public class SegmentHeaderParserTests : MoqUnitTestBase
         // Assert
         actual
             .Should()
-            .BeEquivalentTo(expected);
+            .Be(expected);
         VerifyMocks();
     }
 
@@ -411,7 +443,7 @@ public class SegmentHeaderParserTests : MoqUnitTestBase
         // Assert
         actual
             .Should()
-            .BeEquivalentTo(expected);
+            .Be(expected);
         VerifyMocks();
     }
 
@@ -446,7 +478,7 @@ public class SegmentHeaderParserTests : MoqUnitTestBase
         // Assert
         actual
             .Should()
-            .BeEquivalentTo(expected);
+            .Be(expected);
         VerifyMocks();
     }
 
@@ -487,7 +519,7 @@ public class SegmentHeaderParserTests : MoqUnitTestBase
         // Assert
         actual
             .Should()
-            .BeEquivalentTo(expected);
+            .Be(expected);
         VerifyMocks();
     }
 
@@ -521,7 +553,7 @@ public class SegmentHeaderParserTests : MoqUnitTestBase
         // Assert
         actual
             .Should()
-            .BeEquivalentTo(expected);
+            .Be(expected);
         VerifyMocks();
     }
 
@@ -550,7 +582,7 @@ public class SegmentHeaderParserTests : MoqUnitTestBase
         // Assert
         actual
             .Should()
-            .BeEquivalentTo(expected);
+            .Be(expected);
         VerifyMocks();
     }
 
@@ -584,7 +616,7 @@ public class SegmentHeaderParserTests : MoqUnitTestBase
         // Assert
         actual
             .Should()
-            .BeEquivalentTo(expected);
+            .Be(expected);
         VerifyMocks();
     }
 

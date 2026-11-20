@@ -10,7 +10,7 @@
 /// file. This segment is called the associated segment.
 /// </remarks>
 [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
-internal class ControlItem
+internal class ControlItem : IEquatable<ControlItem>
 {
     /// <summary>
     /// Creates a new instance of the <see cref="ControlItem"/> class with default values.
@@ -84,4 +84,44 @@ internal class ControlItem
         get;
         init;
     }
+
+    /// <summary>
+    /// Determines whether this <see cref="ControlItem"/> object is equivalent to another <see
+    /// cref="ControlItem"/> object.
+    /// </summary>
+    /// <param name="other">
+    /// The other <see cref="ControlItem"/> object to be compared to this <see cref="ControlItem"/> object.
+    /// </param>
+    /// <returns>
+    /// <see langword="true"/> if the other <see cref="ControlItem"/> object is not <see
+    /// langword="null"/> and has identical property values as this <see cref="ControlItem"/>
+    /// object; otherwise, returns <see langword="false"/>
+    /// </returns>
+    public bool Equals(ControlItem? other)
+        => other is not null
+        && other.SegmentName == SegmentName
+        && other.FirstTimeIndent == FirstTimeIndent
+        && other.IsFirstTime == IsFirstTime
+        && other.PadSegment == PadSegment
+        && other.TabSize == TabSize;
+
+    /// <summary>
+    /// Determines if the given object is equivalent to this <see cref="ControlItem"/> object.
+    /// </summary>
+    /// <param name="obj">
+    /// The object to be compared with this <see cref="ControlItem"/> object.
+    /// </param>
+    /// <returns>
+    /// <see langword="true"/> if the given object is a <see cref="ControlItem"/> object and has
+    /// identical property values as this <see cref="ControlItem"/> object; otherwise, returns <see langword="false"/>
+    /// </returns>
+    public override bool Equals(object? obj) => Equals(obj as ControlItem);
+
+    /// <summary>
+    /// Gets the hash code for this <see cref="ControlItem"/> object.
+    /// </summary>
+    /// <returns>
+    /// A 32-bit signed integer hash code.
+    /// </returns>
+    public override int GetHashCode() => SegmentName.GetHashCode();
 }

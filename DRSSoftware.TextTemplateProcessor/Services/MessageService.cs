@@ -9,7 +9,7 @@ internal static class MessageService
     internal const string MsgAllSegmentsHaveBeenReset = "All segments have been reset.";
     internal const string MsgAllSegmentsHaveBeenCleared = "All segments have been cleared from the segment dictionary.";
     internal const string MsgAttemptingToReadFile = "Attempting to read text template file: {0}";
-    internal const string MsgAttemptToAddDuplicateSegmentName = "An attempt was made to add segment {0} more than once. Only the first occurrence will be retained.";
+    internal const string MsgAttemptToAddDuplicateSegmentName = "Segment name {0} appears more than once in the template file. Only the first occurrence will be used.";
     internal const string MsgAttemptToAddTextItemForNonExistingSegment = "An attempt was made to add a text item for segment {0}. That segment doesn't exist in the control dictionary.";
     // internal const string MsgAttemptToGenerateSegmentBeforeItWasLoaded = "An attempt was made to generate segment {0} before the template was loaded.";
     internal const string MsgAttemptToResetNonExistingSegment = "An attempt was made to reset segment {0} which doesn't exist.";
@@ -48,6 +48,7 @@ internal static class MessageService
     // internal const string MsgFullPathCannotBeDetermined = "The full path can't be determined because the solution directory path is unknown.";
     // internal const string MsgGeneratedTextHasBeenReset = "The generated text cache for template file \"{0}\" has been reset.";
     internal const string MsgGeneratedTextIsEmpty = "The generated text is empty. The output file will not be written to.";
+    internal const string MsgGeneratedTextNotWritten = "A request has been made to clear the generated text before it has been written to an output file.";
     // internal const string MsgGeneratedTextIsNull = "Unable to write to the output file because the generated text is null.";
     internal const string MsgIndentValueMustBeValidNumber = "The specified indent value \"{0}\" is not a valid integer value.";
     internal const string MsgIndentValueOutOfRange = $"The indent value must be a number between {MinIndentValueString} and {MaxIndentValueString} but the specified value was {{0}}.";
@@ -68,6 +69,7 @@ internal static class MessageService
     internal const string MsgMissingTokenEndDelimiter = "A token start delimiter has been found but there are no more end delimiters. All remaining start delimiters will be escaped.";
     internal const string MsgMissingTokenName = "Found token start and end delimiters with no token name between them. The token will be ignored.";
     internal const string MsgMissingTokenStartDelimiter = "A token end delimiter has been found but there are no more start delimiters. All remaining end delimiters will be escaped.";
+    internal const string MsgMoreTextAddedAfterFileWasWritten = "More text has been added to the generated text after the output file has already been written.";
     // internal const string MsgMultipleLevelsOfPadSegments = "Segment {1} specified as a pad segment for segment {0} also specifies a pad segment. Multiple levels of pad segments are not allowed.";
     // internal const string MsgNextLoadRequestBeforeFirstIsWritten = "Template file \"{0}\" is being loaded before any output was written for template file \"{1}\"";
     // internal const string MsgNoTextLinesFollowingSegmentHeader = "The header line for segment {0} must be followed by one or more valid text lines. The segment will be ignored.";
@@ -81,8 +83,8 @@ internal static class MessageService
     // internal const string MsgOutputDirectoryNotSet = "The output file can't be written because the output directory hasn't been set.";
     internal const string MsgOutputFileSuccessfullyCreated = "{0} generated text lines were successfully written to the output file.";
     internal const string MsgOutputFileWillBeOverwritten = "The output file already exists and will be overwritten.";
-    // internal const string MsgPadSegmentMustBeDefinedEarlier = "The pad segment name {1} referenced by segment {0} must be defined earlier in the template file. The pad segment will be ignored.";
-    // internal const string MsgPadSegmentNameSameAsSegmentHeaderName = "The pad segment name and segment header name for segment {0} are identical. The pad segment name will be ignored.";
+    internal const string MsgPadSegmentMustBeDefinedEarlier = "The pad segment name {1} referenced by segment {0} must be defined earlier in the template file. The pad segment will be ignored.";
+    internal const string MsgPadSegmentNameSameAsSegmentName = "The pad segment name and segment header name for segment {0} are identical. The pad segment name will be ignored.";
     // internal const string MsgPathIsNotRooted = "Expected a rooted path, but found \"{0}\"";
     // internal const string MsgProcessingSegment = "Processing segment {0}...";
     internal const string MsgProcessingSummary = "Processing summary:";

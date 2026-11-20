@@ -25,6 +25,7 @@ internal class GeneratedFileService : DependencyCheckerBase, IGeneratedFileServi
         FileAndDirectoryService = NullDependencyCheck(fileAndDirectoryService, nameof(fileAndDirectoryService));
         Logger = NullDependencyCheck(logger, nameof(logger));
         PathValidator = NullDependencyCheck(pathValidator, nameof(pathValidator));
+        IsFileWritten = false;
         OutputFileName = string.Empty;
         OutputFilePath = string.Empty;
         OutputDirectoryPath = string.Empty;
@@ -35,6 +36,15 @@ internal class GeneratedFileService : DependencyCheckerBase, IGeneratedFileServi
     /// Gets a value indicating whether or not the generated text file is empty.
     /// </summary>
     public bool IsEmptyFile => GeneratedTextLines.Count is 0;
+
+    /// <summary>
+    /// Gets a value indicating whether or not the generated text has been written to a file.
+    /// </summary>
+    public bool IsFileWritten
+    {
+        get;
+        private set;
+    }
 
     /// <summary>
     /// Gets the number of generated text lines that have been added thus far.
@@ -111,14 +121,31 @@ internal class GeneratedFileService : DependencyCheckerBase, IGeneratedFileServi
     /// <param name="text">
     /// The text string to be added to the generated text.
     /// </param>
-    public void AddText(string text) => GeneratedTextLines.Add(text);
+    public void AddText(string text)
+    {
+        GeneratedTextLines.Add(text);
+
+        if (IsFileWritten)
+        {
+            string message = GetMessage(MsgMoreTextAddedAfterFileWasWritten);
+            Logger.Log(LogSeverity.Warning, message);
+            IsFileWritten = false;
+        }
+    }
 
     /// <summary>
     /// Clears the generated text and sets the output file path and file name to empty strings.
     /// </summary>
     public void Clear()
     {
+        if (!(IsEmptyFile || IsFileWritten))
+        {
+            string message = GetMessage(MsgGeneratedTextNotWritten);
+            Logger.Log(LogSeverity.Warning, OperationType.Reset, message);
+        }
+
         GeneratedTextLines.Clear();
+        IsFileWritten = false;
         OutputDirectoryPath = string.Empty;
         OutputFileName = string.Empty;
         OutputFilePath = string.Empty;
@@ -154,6 +181,7 @@ internal class GeneratedFileService : DependencyCheckerBase, IGeneratedFileServi
             {
                 CheckForExistingFile();
                 FileAndDirectoryService.WriteTextFile(OutputFilePath, GeneratedTextLines);
+                IsFileWritten = true;
                 message = GetMessage(MsgOutputFileSuccessfullyCreated, GeneratedTextLines.Count.ToString());
                 Logger.Log(LogSeverity.Information, message);
                 isValid = true;

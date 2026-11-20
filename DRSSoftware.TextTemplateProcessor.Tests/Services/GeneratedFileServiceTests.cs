@@ -3,12 +3,85 @@
 [ExcludeFromCodeCoverage]
 public class GeneratedFileServiceTests : MoqUnitTestBase
 {
+    [Fact]
+    public void AddTextWhenFileHasAlreadyBeenWritten_ShouldLogWarningMessageAndAddTextToGeneratedText()
+    {
+        // Arrange
+        string filePath = "filePath";
+        string fullFilePath = "fullFilePath";
+        string fileName = "fileName";
+        string directoryPath = "directoryPath";
+        string text = "text";
+        int initialLineCount = 1;
+        int expectedLineCount = 2;
+        List<string> textLines = [text];
+        string message1 = GetMessage(MsgWritingGeneratedTextFile, filePath);
+        string message2 = GetMessage(MsgOutputFileSuccessfullyCreated, initialLineCount.ToString());
+        string message3 = GetMessage(MsgMoreTextAddedAfterFileWasWritten);
+        GetMock<ILogger>()
+            .Setup(x => x.PushOperationType(OperationType.Writing))
+            .Verifiable(Times.Once);
+        GetMock<ILogger>()
+            .Setup(x => x.Log(LogSeverity.Information, message1))
+            .Verifiable(Times.Once);
+        GetMock<IPathValidator>()
+            .Setup(x => x.ValidatePath(filePath, true, false))
+            .Returns(fullFilePath)
+            .Verifiable(Times.Once);
+        GetMock<IFileAndDirectoryService>()
+            .Setup(x => x.GetFileName(fullFilePath))
+            .Returns(fileName)
+            .Verifiable(Times.Once);
+        GetMock<IFileAndDirectoryService>()
+            .Setup(x => x.GetDirectoryName(fullFilePath))
+            .Returns(directoryPath)
+            .Verifiable(Times.Once);
+        GetMock<IFileAndDirectoryService>()
+            .Setup(x => x.FileExists(fullFilePath))
+            .Returns(false)
+            .Verifiable(Times.Once);
+        GetMock<IFileAndDirectoryService>()
+            .Setup(x => x.CreateDirectory(directoryPath, null))
+            .Returns(It.IsAny<string>())
+            .Verifiable(Times.Once);
+        GetMock<IFileAndDirectoryService>()
+            .Setup(x => x.WriteTextFile(fullFilePath, textLines))
+            .Verifiable(Times.Once);
+        GetMock<ILogger>()
+            .Setup(x => x.Log(LogSeverity.Information, message2))
+            .Verifiable(Times.Once);
+        GetMock<ILogger>()
+            .Setup(x => x.PopOperationType())
+            .Verifiable(Times.Once);
+        GetMock<ILogger>()
+            .Setup(x => x.Log(LogSeverity.Warning, message3))
+            .Verifiable(Times.Once);
+        GeneratedFileService generatedFileService = GetGeneratedFileService();
+        generatedFileService.AddText(text);
+        _ = generatedFileService.WriteGeneratedText(filePath);
+
+        // Act
+        generatedFileService.AddText(text);
+
+        // Assert
+        generatedFileService.IsEmptyFile
+            .Should()
+            .BeFalse();
+        generatedFileService.IsFileWritten
+            .Should()
+            .BeFalse();
+        generatedFileService.LineCount
+            .Should()
+            .Be(expectedLineCount);
+        VerifyMocks();
+    }
+
     [Theory]
     [InlineData(1)]
     [InlineData(2)]
     [InlineData(3)]
     [InlineData(4)]
-    public void AddText_ShouldAddTextToGeneratedText(int expected)
+    public void AddTextWhenFileHasNotBeenWritten_ShouldAddTextToGeneratedText(int expected)
     {
         // Arrange
         GeneratedFileService generatedFileService = GetGeneratedFileService();
@@ -30,7 +103,7 @@ public class GeneratedFileServiceTests : MoqUnitTestBase
     }
 
     [Fact]
-    public void Clear_ShouldClearGeneratedTextLinesAndResetOutputFilePathInformation()
+    public void ClearWhenGeneratedTextContainsTextAndHasBeenWritten_ShouldClearGeneratedTextLinesAndResetOutputFilePathInformation()
     {
         // Arrange
         string filePath = "filePath";
@@ -98,6 +171,78 @@ public class GeneratedFileServiceTests : MoqUnitTestBase
         generatedFileService.IsEmptyFile
             .Should()
             .BeTrue();
+        generatedFileService.IsFileWritten
+            .Should()
+            .BeFalse();
+        generatedFileService.LineCount
+            .Should()
+            .Be(0);
+        VerifyMocks();
+    }
+
+    [Fact]
+    public void ClearWhenGeneratedTextHasNotBeenWritten_ShouldLogWarningMessageAndClearGeneratedTextLinesAndResetOutputFilePathInformation()
+    {
+        // Arrange
+        string text = "text";
+        string message = GetMessage(MsgGeneratedTextNotWritten);
+        GetMock<ILogger>()
+            .Setup(x => x.Log(LogSeverity.Warning, OperationType.Reset, message))
+            .Verifiable(Times.Once);
+        GeneratedFileService generatedFileService = GetGeneratedFileService();
+        generatedFileService.AddText(text);
+        generatedFileService.AddText(text);
+
+        // Act
+        generatedFileService.Clear();
+
+        // Assert
+        generatedFileService.OutputDirectoryPath
+            .Should()
+            .BeEmpty();
+        generatedFileService.OutputFileName
+            .Should()
+            .BeEmpty();
+        generatedFileService.OutputFilePath
+            .Should()
+            .BeEmpty();
+        generatedFileService.IsEmptyFile
+            .Should()
+            .BeTrue();
+        generatedFileService.IsFileWritten
+            .Should()
+            .BeFalse();
+        generatedFileService.LineCount
+            .Should()
+            .Be(0);
+        VerifyMocks();
+    }
+
+    [Fact]
+    public void ClearWhenGeneratedTextIsEmpty_ShouldResetOutputFilePathInformation()
+    {
+        // Arrange
+        GeneratedFileService generatedFileService = GetGeneratedFileService();
+
+        // Act
+        generatedFileService.Clear();
+
+        // Assert
+        generatedFileService.OutputDirectoryPath
+            .Should()
+            .BeEmpty();
+        generatedFileService.OutputFileName
+            .Should()
+            .BeEmpty();
+        generatedFileService.OutputFilePath
+            .Should()
+            .BeEmpty();
+        generatedFileService.IsEmptyFile
+            .Should()
+            .BeTrue();
+        generatedFileService.IsFileWritten
+            .Should()
+            .BeFalse();
         generatedFileService.LineCount
             .Should()
             .Be(0);
@@ -168,6 +313,9 @@ public class GeneratedFileServiceTests : MoqUnitTestBase
         generatedFileService.IsEmptyFile
             .Should()
             .BeTrue();
+        generatedFileService.IsFileWritten
+            .Should()
+            .BeFalse();
         generatedFileService.LineCount
             .Should()
             .Be(0);
@@ -214,6 +362,9 @@ public class GeneratedFileServiceTests : MoqUnitTestBase
         generatedFileService.OutputFilePath
             .Should()
             .BeEmpty();
+        generatedFileService.IsFileWritten
+            .Should()
+            .BeFalse();
         VerifyMocks();
     }
 
@@ -269,6 +420,9 @@ public class GeneratedFileServiceTests : MoqUnitTestBase
         generatedFileService.OutputFilePath
             .Should()
             .Be(fullFilePath);
+        generatedFileService.IsFileWritten
+            .Should()
+            .BeFalse();
         VerifyMocks();
     }
 
@@ -340,6 +494,9 @@ public class GeneratedFileServiceTests : MoqUnitTestBase
         generatedFileService.OutputFilePath
             .Should()
             .Be(fullFilePath);
+        generatedFileService.IsFileWritten
+            .Should()
+            .BeTrue();
         generatedFileService.LineCount
             .Should()
             .Be(lineCount);
@@ -414,6 +571,9 @@ public class GeneratedFileServiceTests : MoqUnitTestBase
         generatedFileService.OutputFilePath
             .Should()
             .Be(fullFilePath);
+        generatedFileService.IsFileWritten
+            .Should()
+            .BeTrue();
         generatedFileService.LineCount
             .Should()
             .Be(lineCount);

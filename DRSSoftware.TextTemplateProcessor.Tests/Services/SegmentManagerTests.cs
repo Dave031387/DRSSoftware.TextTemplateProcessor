@@ -35,6 +35,105 @@ public class SegmentManagerTests : MoqUnitTestBase
     }
 
     [Fact]
+    public void AddControlItemWhenPadSegmentIsDefinedEarlier_ShouldAddControlItemAndReturnTrue()
+    {
+        // Arrange
+        string segmentName = "segment1";
+        string padSegment = "padSegment";
+        ControlItem controlItem1 = new()
+        {
+            SegmentName = padSegment
+        };
+        ControlItem controlItem2 = new()
+        {
+            SegmentName = segmentName,
+            PadSegment = padSegment
+        };
+        ControlItem expected = new()
+        {
+            SegmentName = segmentName,
+            PadSegment = padSegment
+        };
+        string message1 = GetMessage(MsgSegmentHasBeenAdded, padSegment);
+        string message2 = GetMessage(MsgSegmentHasBeenAdded, segmentName);
+        GetMock<ILogger>()
+            .Setup(x => x.Log(LogSeverity.Information, message1))
+            .Verifiable(Times.Once);
+        GetMock<ILogger>()
+            .Setup(x => x.Log(LogSeverity.Information, message2))
+            .Verifiable(Times.Once);
+        SegmentManager manager = GetSegmentManager();
+        _ = manager.AddControlItem(controlItem1);
+
+        // Act
+        bool actual = manager.AddControlItem(controlItem2);
+
+        // Assert
+        actual
+            .Should()
+            .BeTrue();
+        manager.ContainsSegment(segmentName)
+            .Should()
+            .BeTrue();
+        manager.IsEmptySegment(segmentName)
+            .Should()
+            .BeTrue();
+        manager.GetControlItem(segmentName)
+            .Should()
+            .NotBeNull()
+            .And
+            .Be(expected);
+        VerifyMocks();
+    }
+
+    [Fact]
+    public void AddControlItemWhenPadSegmentNotDefinedEarlier_ShouldLogErrorAndChangePadSegmentToEmptyString()
+    {
+        // Arrange
+        string segmentName = "segment1";
+        string padSegment = "padSegment";
+        ControlItem controlItem = new()
+        {
+            SegmentName = segmentName,
+            PadSegment = padSegment
+        };
+        ControlItem expected = new()
+        {
+            SegmentName = segmentName,
+            PadSegment = EmptyString
+        };
+        string message1 = GetMessage(MsgPadSegmentMustBeDefinedEarlier, segmentName, padSegment);
+        string message2 = GetMessage(MsgSegmentHasBeenAdded, segmentName);
+        GetMock<ILogger>()
+            .Setup(x => x.Log(LogSeverity.Error, message1))
+            .Verifiable(Times.Once);
+        GetMock<ILogger>()
+            .Setup(x => x.Log(LogSeverity.Information, message2))
+            .Verifiable(Times.Once);
+        SegmentManager manager = GetSegmentManager();
+
+        // Act
+        bool actual = manager.AddControlItem(controlItem);
+
+        // Assert
+        actual
+            .Should()
+            .BeTrue();
+        manager.ContainsSegment(segmentName)
+            .Should()
+            .BeTrue();
+        manager.IsEmptySegment(segmentName)
+            .Should()
+            .BeTrue();
+        manager.GetControlItem(segmentName)
+            .Should()
+            .NotBeNull()
+            .And
+            .Be(expected);
+        VerifyMocks();
+    }
+
+    [Fact]
     public void AddControlItemWhenSegmentAlreadyExists_ShouldLogErrorMessageAndReturnFalse()
     {
         // Arrange
@@ -432,6 +531,10 @@ public class SegmentManagerTests : MoqUnitTestBase
     {
         // Arrange
         string segmentName = "segment1";
+        ControlItem newControlItem = new()
+        {
+            SegmentName = segmentName
+        };
         ControlItem expected = new()
         {
             SegmentName = segmentName
@@ -441,7 +544,7 @@ public class SegmentManagerTests : MoqUnitTestBase
             .Setup(x => x.Log(LogSeverity.Information, message))
             .Verifiable(Times.Once);
         SegmentManager manager = GetSegmentManager();
-        _ = manager.AddControlItem(expected);
+        _ = manager.AddControlItem(newControlItem);
 
         // Act
         ControlItem? actual = manager.GetControlItem(segmentName);

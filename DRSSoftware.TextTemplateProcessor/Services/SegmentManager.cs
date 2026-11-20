@@ -51,18 +51,18 @@ internal class SegmentManager : DependencyCheckerBase, ISegmentManager
 
         try
         {
-            ValidateControlItem(controlItem);
+            ControlItem validatedControlItem = ValidateControlItem(controlItem);
 
-            if (ContainsSegment(controlItem.SegmentName))
+            if (ContainsSegment(validatedControlItem.SegmentName))
             {
-                message = GetMessage(MsgAttemptToAddDuplicateSegmentName, controlItem.SegmentName);
+                message = GetMessage(MsgAttemptToAddDuplicateSegmentName, validatedControlItem.SegmentName);
                 Logger.Log(LogSeverity.Error, message);
                 return false;
             }
 
-            _controlItems.Add(controlItem.SegmentName, controlItem);
-            _textItems.Add(controlItem.SegmentName, []);
-            message = GetMessage(MsgSegmentHasBeenAdded, controlItem.SegmentName);
+            _controlItems.Add(validatedControlItem.SegmentName, validatedControlItem);
+            _textItems.Add(validatedControlItem.SegmentName, []);
+            message = GetMessage(MsgSegmentHasBeenAdded, validatedControlItem.SegmentName);
             Logger.Log(LogSeverity.Information, message);
             return true;
         }
@@ -275,34 +275,6 @@ internal class SegmentManager : DependencyCheckerBase, ISegmentManager
     }
 
     /// <summary>
-    /// Validates the given <see cref="ControlItem"/> object to ensure that it is not <see
-    /// langword="null"/> and its SegmentName property is not <see langword="null"/>, empty, or whitespace.
-    /// </summary>
-    /// <remarks>
-    /// An exception will be thrown if the <see cref="ControlItem"/> object fails validation.
-    /// </remarks>
-    /// <param name="controlItem">
-    /// The <see cref="ControlItem"/> object to be validated.
-    /// </param>
-    /// <exception cref="ArgumentNullException">
-    /// Thrown if the given <see cref="ControlItem"/> object is null.
-    /// </exception>
-    /// <exception cref="ArgumentException">
-    /// Thrown if the SegmentName property of the <see cref="ControlItem"/> object is <see
-    /// langword="null"/>, empty, or whitespace.
-    /// </exception>
-    private static void ValidateControlItem(ControlItem? controlItem)
-    {
-        ArgumentNullException.ThrowIfNull(controlItem, nameof(controlItem));
-
-        if (string.IsNullOrWhiteSpace(controlItem.SegmentName))
-        {
-            string message = GetMessage(MsgControlItemSegmentNameNullOrWhitespace);
-            throw new ArgumentException(message);
-        }
-    }
-
-    /// <summary>
     /// Validates the given <see cref="TextItem"/> object to ensure that it is not <see
     /// langword="null"/> and that its Text property is not <see langword="null"/>.
     /// </summary>
@@ -338,5 +310,57 @@ internal class SegmentManager : DependencyCheckerBase, ISegmentManager
             string message = GetMessage(MsgTextItemSegmentNameInvalid);
             throw new ArgumentException(message);
         }
+    }
+
+    /// <summary>
+    /// Validates the given <see cref="ControlItem"/> object to ensure that it is not <see
+    /// langword="null"/> and its SegmentName property is not <see langword="null"/>, empty, or whitespace.
+    /// </summary>
+    /// <remarks>
+    /// An exception will be thrown if the <see cref="ControlItem"/> object fails validation. Also,
+    /// the PadSegment property will be set to an empty string if the specified pad segment hasn't
+    /// already been added to the control item dictionary.
+    /// </remarks>
+    /// <param name="controlItem">
+    /// The <see cref="ControlItem"/> object to be validated.
+    /// </param>
+    /// <returns>
+    /// A validated <see cref="ControlItem"/> object.
+    /// </returns>
+    /// <exception cref="ArgumentNullException">
+    /// Thrown if the given <see cref="ControlItem"/> object is null.
+    /// </exception>
+    /// <exception cref="ArgumentException">
+    /// Thrown if the SegmentName property of the <see cref="ControlItem"/> object is <see
+    /// langword="null"/>, empty, or whitespace.
+    /// </exception>
+    private ControlItem ValidateControlItem(ControlItem? controlItem)
+    {
+        ArgumentNullException.ThrowIfNull(controlItem, nameof(controlItem));
+
+        if (string.IsNullOrWhiteSpace(controlItem.SegmentName))
+        {
+            string message = GetMessage(MsgControlItemSegmentNameNullOrWhitespace);
+            throw new ArgumentException(message);
+        }
+
+        if (!string.IsNullOrWhiteSpace(controlItem.PadSegment))
+        {
+            if (!_controlItems.ContainsKey(controlItem.PadSegment))
+            {
+                string message = GetMessage(MsgPadSegmentMustBeDefinedEarlier, controlItem.SegmentName, controlItem.PadSegment);
+                Logger.Log(LogSeverity.Error, message);
+                return new()
+                {
+                    SegmentName = controlItem.SegmentName,
+                    PadSegment = string.Empty,
+                    FirstTimeIndent = controlItem.FirstTimeIndent,
+                    TabSize = controlItem.TabSize,
+                    IsFirstTime = controlItem.IsFirstTime
+                };
+            }
+        }
+
+        return controlItem;
     }
 }

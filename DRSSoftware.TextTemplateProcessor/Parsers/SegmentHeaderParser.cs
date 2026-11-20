@@ -233,7 +233,15 @@ internal class SegmentHeaderParser : DependencyCheckerBase, ISegmentHeaderParser
     {
         if (IsValidName(optionValue))
         {
-            ControlItemBuilder.PadSegment = optionValue;
+            if (optionValue == segmentName)
+            {
+                string message = GetMessage(MsgPadSegmentNameSameAsSegmentName, segmentName);
+                Logger.Log(LogSeverity.Error, message);
+            }
+            else
+            {
+                ControlItemBuilder.PadSegment = optionValue;
+            }
         }
         else
         {

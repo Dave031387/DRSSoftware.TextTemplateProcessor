@@ -15,6 +15,14 @@ internal interface IGeneratedFileService
     }
 
     /// <summary>
+    /// Gets a value indicating whether or not the generated text has been written to a file.
+    /// </summary>
+    bool IsFileWritten
+    {
+        get;
+    }
+
+    /// <summary>
     /// Gets the number of generated text lines that have been added thus far.
     /// </summary>
     int LineCount
