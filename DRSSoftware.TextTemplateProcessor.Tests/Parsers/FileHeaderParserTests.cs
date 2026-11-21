@@ -1,4 +1,6 @@
-﻿namespace DRSSoftware.TextTemplateProcessor.Parsers;
+﻿using System.Text;
+
+namespace DRSSoftware.TextTemplateProcessor.Parsers;
 
 [ExcludeFromCodeCoverage]
 public class FileHeaderParserTests : MoqUnitTestBase
@@ -76,11 +78,11 @@ public class FileHeaderParserTests : MoqUnitTestBase
     {
         // Arrange
         string invalidValue = "xx";
-        string fileHeaderText = $"{FileHeaderCode} {DelimiterEscapeOption}={invalidValue}";
+        string fileHeaderText = SetupOptionParserGet((DelimiterEscapeOption, invalidValue));
         string message1 = GetMessage(MsgDelimiterEscapeMustBeSingleCharacter);
         string message2 = GetMessage(MsgInvalidTokenDelimitersSpecifiedOnFileHeader);
-        SetupDelimiterServiceMock();
-        SetupOptionParserMock(DelimiterEscapeOption, invalidValue, true);
+        SetupDelimiterService();
+        SetupOptionParserParse(DelimiterEscapeOption, invalidValue, true);
         GetMock<ILogger>()
             .Setup(x => x.Log(LogSeverity.Error, message1))
             .Verifiable(Times.Once);
@@ -102,10 +104,10 @@ public class FileHeaderParserTests : MoqUnitTestBase
         // Arrange
         string invalidValue = "x";
         char delimiterEscape = invalidValue[0];
-        string fileHeaderText = $"{FileHeaderCode} {DelimiterEscapeOption}={invalidValue}";
+        string fileHeaderText = SetupOptionParserGet((DelimiterEscapeOption, invalidValue));
         string message = GetMessage(MsgInvalidTokenDelimitersSpecifiedOnFileHeader);
-        SetupDelimiterServiceMock();
-        SetupOptionParserMock(DelimiterEscapeOption, invalidValue, true);
+        SetupDelimiterService();
+        SetupOptionParserParse(DelimiterEscapeOption, invalidValue, true);
         GetMock<IDelimiterService>()
             .Setup(x => x.SetTokenDelimiters(DefaultTokenStartDelimiter, DefaultTokenEndDelimiter, delimiterEscape))
             .Returns(false)
@@ -127,10 +129,10 @@ public class FileHeaderParserTests : MoqUnitTestBase
     {
         // Arrange
         string invalidValue = "x";
-        string fileHeaderText = $"{FileHeaderCode} {EndDelimiterOption}={invalidValue}";
+        string fileHeaderText = SetupOptionParserGet((EndDelimiterOption, invalidValue));
         string message = GetMessage(MsgInvalidTokenDelimitersSpecifiedOnFileHeader);
-        SetupDelimiterServiceMock();
-        SetupOptionParserMock(EndDelimiterOption, invalidValue, true);
+        SetupDelimiterService();
+        SetupOptionParserParse(EndDelimiterOption, invalidValue, true);
         GetMock<IDelimiterService>()
             .Setup(x => x.SetTokenDelimiters(DefaultTokenStartDelimiter, invalidValue, DefaultDelimiterEscapeCharacter))
             .Returns(false)
@@ -153,9 +155,9 @@ public class FileHeaderParserTests : MoqUnitTestBase
         // Arrange
         string optionName = "Invalid";
         string optionValue = "value";
-        string fileHeaderText = $"{FileHeaderCode} {optionName}={optionValue}";
-        SetupDelimiterServiceMock();
-        SetupOptionParserMock(optionName, optionValue);
+        string fileHeaderText = SetupOptionParserGet((optionName, optionValue));
+        SetupDelimiterService();
+        SetupOptionParserParse(optionName, optionValue);
         FileHeaderParser parser = GetFileHeaderParser();
 
         // Act
@@ -170,10 +172,10 @@ public class FileHeaderParserTests : MoqUnitTestBase
     {
         // Arrange
         string invalidValue = "x";
-        string fileHeaderText = $"{FileHeaderCode} {StartDelimiterOption}={invalidValue}";
+        string fileHeaderText = SetupOptionParserGet((StartDelimiterOption, invalidValue));
         string message = GetMessage(MsgInvalidTokenDelimitersSpecifiedOnFileHeader);
-        SetupDelimiterServiceMock();
-        SetupOptionParserMock(StartDelimiterOption, invalidValue, true);
+        SetupDelimiterService();
+        SetupOptionParserParse(StartDelimiterOption, invalidValue, true);
         GetMock<IDelimiterService>()
             .Setup(x => x.SetTokenDelimiters(invalidValue, DefaultTokenEndDelimiter, DefaultDelimiterEscapeCharacter))
             .Returns(false)
@@ -196,10 +198,10 @@ public class FileHeaderParserTests : MoqUnitTestBase
         // Arrange
         string invalidValue = "invalid";
         int intValue = It.IsAny<int>();
-        string fileHeaderText = $"{FileHeaderCode} {TabSizeOption}={invalidValue}";
+        string fileHeaderText = SetupOptionParserGet((TabSizeOption, invalidValue));
         string message = GetMessage(MsgInvalidFileHeaderTabSizeOption, invalidValue);
-        SetupDelimiterServiceMock();
-        SetupOptionParserMock(TabSizeOption, invalidValue, true);
+        SetupDelimiterService();
+        SetupOptionParserParse(TabSizeOption, invalidValue, true);
         GetMock<IIndentProcessor>()
             .Setup(x => x.IsValidTabSizeValue(invalidValue, out intValue))
             .Returns(false)
@@ -223,15 +225,15 @@ public class FileHeaderParserTests : MoqUnitTestBase
         string value1 = "!";
         string value2 = "^";
         char delimiterEscape = value1[0];
-        string fileHeaderText = $"{FileHeaderCode} {DelimiterEscapeOption}={value1} {DelimiterEscapeOption}={value2}";
+        string fileHeaderText = SetupOptionParserGet((DelimiterEscapeOption, value1), (DelimiterEscapeOption, value2));
         string message = GetMessage(MsgFoundDuplicateFileHeaderOption, DelimiterEscapeOption);
-        SetupDelimiterServiceMock();
-        SetupOptionParserMock(DelimiterEscapeOption, value1, true);
+        SetupDelimiterService();
+        SetupOptionParserParse(DelimiterEscapeOption, value1, true);
         GetMock<IDelimiterService>()
             .Setup(x => x.SetTokenDelimiters(DefaultTokenStartDelimiter, DefaultTokenEndDelimiter, delimiterEscape))
             .Returns(true)
             .Verifiable(Times.Once);
-        SetupOptionParserMock(DelimiterEscapeOption, value2, true);
+        SetupOptionParserParse(DelimiterEscapeOption, value2, true);
         GetMock<ILogger>()
             .Setup(x => x.Log(LogSeverity.Warning, message))
             .Verifiable(Times.Once);
@@ -250,15 +252,15 @@ public class FileHeaderParserTests : MoqUnitTestBase
         // Arrange
         string value1 = "=)";
         string value2 = ")]";
-        string fileHeaderText = $"{FileHeaderCode} {EndDelimiterOption}={value1} {EndDelimiterOption}={value2}";
+        string fileHeaderText = SetupOptionParserGet((EndDelimiterOption, value1), (EndDelimiterOption, value2));
         string message = GetMessage(MsgFoundDuplicateFileHeaderOption, EndDelimiterOption);
-        SetupDelimiterServiceMock();
-        SetupOptionParserMock(EndDelimiterOption, value1, true);
+        SetupDelimiterService();
+        SetupOptionParserParse(EndDelimiterOption, value1, true);
         GetMock<IDelimiterService>()
             .Setup(x => x.SetTokenDelimiters(DefaultTokenStartDelimiter, value1, DefaultDelimiterEscapeCharacter))
             .Returns(true)
             .Verifiable(Times.Once);
-        SetupOptionParserMock(EndDelimiterOption, value2, true);
+        SetupOptionParserParse(EndDelimiterOption, value2, true);
         GetMock<ILogger>()
             .Setup(x => x.Log(LogSeverity.Warning, message))
             .Verifiable(Times.Once);
@@ -277,15 +279,15 @@ public class FileHeaderParserTests : MoqUnitTestBase
         // Arrange
         string value1 = "(=";
         string value2 = "[(";
-        string fileHeaderText = $"{FileHeaderCode} {StartDelimiterOption}={value1} {StartDelimiterOption}={value2}";
+        string fileHeaderText = SetupOptionParserGet((StartDelimiterOption, value1), (StartDelimiterOption, value2));
         string message = GetMessage(MsgFoundDuplicateFileHeaderOption, StartDelimiterOption);
-        SetupDelimiterServiceMock();
-        SetupOptionParserMock(StartDelimiterOption, value1, true);
+        SetupDelimiterService();
+        SetupOptionParserParse(StartDelimiterOption, value1, true);
         GetMock<IDelimiterService>()
             .Setup(x => x.SetTokenDelimiters(value1, DefaultTokenEndDelimiter, DefaultDelimiterEscapeCharacter))
             .Returns(true)
             .Verifiable(Times.Once);
-        SetupOptionParserMock(StartDelimiterOption, value2, true);
+        SetupOptionParserParse(StartDelimiterOption, value2, true);
         GetMock<ILogger>()
             .Setup(x => x.Log(LogSeverity.Warning, message))
             .Verifiable(Times.Once);
@@ -306,10 +308,10 @@ public class FileHeaderParserTests : MoqUnitTestBase
         int intValue2 = 5;
         string stringValue1 = intValue1.ToString();
         string stringValue2 = intValue2.ToString();
-        string fileHeaderText = $"{FileHeaderCode} {TabSizeOption}={stringValue1} {TabSizeOption}={stringValue2}";
+        string fileHeaderText = SetupOptionParserGet((TabSizeOption, stringValue1), (TabSizeOption, stringValue2));
         string message = GetMessage(MsgFoundDuplicateFileHeaderOption, TabSizeOption);
-        SetupDelimiterServiceMock();
-        SetupOptionParserMock(TabSizeOption, stringValue1, true);
+        SetupDelimiterService();
+        SetupOptionParserParse(TabSizeOption, stringValue1, true);
         GetMock<IIndentProcessor>()
             .Setup(x => x.IsValidTabSizeValue(stringValue1, out intValue1))
             .Returns(true)
@@ -317,7 +319,7 @@ public class FileHeaderParserTests : MoqUnitTestBase
         GetMock<IIndentProcessor>()
             .Setup(x => x.SetTabSize(intValue1))
             .Verifiable(Times.Once);
-        SetupOptionParserMock(TabSizeOption, stringValue2, true);
+        SetupOptionParserParse(TabSizeOption, stringValue2, true);
         GetMock<ILogger>()
             .Setup(x => x.Log(LogSeverity.Warning, message))
             .Verifiable(Times.Once);
@@ -334,7 +336,7 @@ public class FileHeaderParserTests : MoqUnitTestBase
     public void ParseFileHeaderWithNoOptionsSpecified_ShouldLogWarningMessage()
     {
         // Arrange
-        string fileHeaderText = $"{FileHeaderCode}    ";
+        string fileHeaderText = SetupOptionParserGet();
         string message = GetMessage(MsgFileHeaderHasNoOptions);
         GetMock<ILogger>()
             .Setup(x => x.Log(LogSeverity.Warning, message))
@@ -354,9 +356,9 @@ public class FileHeaderParserTests : MoqUnitTestBase
         // Arrange
         string optionValue = "!";
         char delimiterEscape = optionValue[0];
-        string fileHeaderText = $"{FileHeaderCode} {DelimiterEscapeOption}={optionValue}";
-        SetupDelimiterServiceMock();
-        SetupOptionParserMock(DelimiterEscapeOption, optionValue, true);
+        string fileHeaderText = SetupOptionParserGet((DelimiterEscapeOption, optionValue));
+        SetupDelimiterService();
+        SetupOptionParserParse(DelimiterEscapeOption, optionValue, true);
         GetMock<IDelimiterService>()
             .Setup(x => x.SetTokenDelimiters(DefaultTokenStartDelimiter, DefaultTokenEndDelimiter, delimiterEscape))
             .Returns(true)
@@ -375,9 +377,9 @@ public class FileHeaderParserTests : MoqUnitTestBase
     {
         // Arrange
         string endDelimiter = "=]";
-        string fileHeaderText = $"{FileHeaderCode} {EndDelimiterOption}={endDelimiter}";
-        SetupDelimiterServiceMock();
-        SetupOptionParserMock(EndDelimiterOption, endDelimiter, true);
+        string fileHeaderText = SetupOptionParserGet((EndDelimiterOption, endDelimiter));
+        SetupDelimiterService();
+        SetupOptionParserParse(EndDelimiterOption, endDelimiter, true);
         GetMock<IDelimiterService>()
             .Setup(x => x.SetTokenDelimiters(DefaultTokenStartDelimiter, endDelimiter, DefaultDelimiterEscapeCharacter))
             .Returns(true)
@@ -396,9 +398,9 @@ public class FileHeaderParserTests : MoqUnitTestBase
     {
         // Arrange
         string startDelimiter = "[=";
-        string fileHeaderText = $"{FileHeaderCode} {StartDelimiterOption}={startDelimiter}";
-        SetupDelimiterServiceMock();
-        SetupOptionParserMock(StartDelimiterOption, startDelimiter, true);
+        string fileHeaderText = SetupOptionParserGet((StartDelimiterOption, startDelimiter));
+        SetupDelimiterService();
+        SetupOptionParserParse(StartDelimiterOption, startDelimiter, true);
         GetMock<IDelimiterService>()
             .Setup(x => x.SetTokenDelimiters(startDelimiter, DefaultTokenEndDelimiter, DefaultDelimiterEscapeCharacter))
             .Returns(true)
@@ -418,9 +420,9 @@ public class FileHeaderParserTests : MoqUnitTestBase
         // Arrange
         int intValue = 2;
         string stringValue = intValue.ToString();
-        string fileHeaderText = $"{FileHeaderCode} {TabSizeOption}={stringValue}";
-        SetupDelimiterServiceMock();
-        SetupOptionParserMock(TabSizeOption, stringValue, true);
+        string fileHeaderText = SetupOptionParserGet((TabSizeOption, stringValue));
+        SetupDelimiterService();
+        SetupOptionParserParse(TabSizeOption, stringValue, true);
         GetMock<IIndentProcessor>()
             .Setup(x => x.IsValidTabSizeValue(stringValue, out intValue))
             .Returns(true)
@@ -443,7 +445,7 @@ public class FileHeaderParserTests : MoqUnitTestBase
                GetMock<ILogger>().Object,
                GetMock<IOptionParser>().Object);
 
-    private void SetupDelimiterServiceMock()
+    private void SetupDelimiterService()
     {
         Mock<IDelimiterService> delimiterService = GetMock<IDelimiterService>();
         delimiterService
@@ -460,7 +462,37 @@ public class FileHeaderParserTests : MoqUnitTestBase
             .Verifiable(Times.Once);
     }
 
-    private void SetupOptionParserMock(string optionName, string optionValue, bool isValid = false)
+    private string SetupOptionParserGet(params (string optionName, string optionValue)[] options)
+    {
+        StringBuilder textBuffer = new($"{FileHeaderCode} ", 100);
+        List<string> optionStrings = [];
+
+        foreach ((string optionName, string optionValue) in options)
+        {
+            string optionString = $"{optionName}={optionValue}";
+
+            if (optionStrings.Count is 0)
+            {
+                textBuffer.Append($"{optionString}");
+            }
+            else
+            {
+                textBuffer.Append($", {optionString}");
+            }
+
+            optionStrings.Add(optionString);
+        }
+
+        string fileHeaderLine = textBuffer.ToString();
+        GetMock<IOptionParser>()
+            .Setup(x => x.GetOptionStrings(fileHeaderLine))
+            .Returns([.. optionStrings])
+            .Verifiable(Times.Once);
+
+        return fileHeaderLine;
+    }
+
+    private void SetupOptionParserParse(string optionName, string optionValue, bool isValid = false)
     {
         string optionString = $"{optionName}={optionValue}";
         Option expected = new();

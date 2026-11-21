@@ -266,6 +266,12 @@ internal static class GlobalConstants
     public const string SegmentHeaderOptionGroup = "segment header";
 
     /// <summary>
+    /// A string value representing the column position where the segment name must start on a
+    /// segment header line.
+    /// </summary>
+    public const string SegmentNameStartColumn = "5";
+
+    /// <summary>
     /// The search pattern that is used in locating the solution file with the ".sln" file extension.
     /// </summary>
     public const string SolutionFileSearchPattern1 = "*.sln";

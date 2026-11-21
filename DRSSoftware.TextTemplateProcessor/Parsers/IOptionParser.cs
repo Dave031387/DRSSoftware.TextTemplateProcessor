@@ -6,6 +6,17 @@
 internal interface IOptionParser
 {
     /// <summary>
+    /// Gets a string array of option strings that are contained in the given <paramref name="text"/>.
+    /// </summary>
+    /// <param name="text">
+    /// A string of text containing zero or more option strings of the form "OPTION=VALUE".
+    /// </param>
+    /// <returns>
+    /// An array of option strings.
+    /// </returns>
+    string[] GetOptionStrings(string text);
+
+    /// <summary>
     /// Parse the given option string and return the option name and value if they are valid.
     /// </summary>
     /// <param name="optionString">

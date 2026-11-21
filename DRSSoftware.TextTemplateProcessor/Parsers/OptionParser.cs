@@ -36,6 +36,19 @@ internal class OptionParser : DependencyCheckerBase, IOptionParser
     }
 
     /// <summary>
+    /// Gets a string array of option strings that are contained on the given template line.
+    /// </summary>
+    /// <param name="templateLine">
+    /// A template line containing zero or more option strings of the form "OPTION=VALUE".
+    /// </param>
+    /// <returns>
+    /// An array of option strings.
+    /// </returns>
+    public string[] GetOptionStrings(string templateLine) => templateLine.Length < ControlCodeLength + 2
+        ? []
+        : templateLine[(ControlCodeLength + 1)..].Split(OptionSeparatorChars, StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
+
+    /// <summary>
     /// Parse the given option string and return the option name and value if they are valid.
     /// </summary>
     /// <param name="optionString">

@@ -92,7 +92,7 @@ internal static class MessageService
     internal const string MsgSegmentHasBeenAdded = "Segment {0} has been added to the control dictionary.";
     internal const string MsgSegmentHasBeenReset = "Segment {0} has been reset.";
     // internal const string MsgSegmentHasNoTextLines = "Tried to generate segment {0} but the segment has no text lines.";
-    internal const string MsgSegmentNameIsMissing = "The segment name is missing from the segment header line. The segment will be ignored.";
+    internal const string MsgSegmentNameIsMissing = $"The segment header must contain a valid segment name starting in column {SegmentNameStartColumn}. The segment will be ignored.";
     // internal const string MsgSegmentNameIsNullOrWhitespace = "The segment name passed into the GenerateSegment method was null, empty or whitespace.";
     internal const string MsgSegmentWillBeRemoved = "Segment {0} will be removed from the control dictionary.";
     internal const string MsgTabSizeHasBeenReset = "The tab size value has been reset from {0} back to {1}.";

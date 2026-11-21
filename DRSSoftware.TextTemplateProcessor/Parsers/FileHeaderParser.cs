@@ -74,16 +74,16 @@ internal class FileHeaderParser : DependencyCheckerBase, IFileHeaderParser
     /// </param>
     public void Parse(string headerLine)
     {
-        string[] args = headerLine.Split(OptionSeparatorChars, StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
+        string[] args = OptionParser.GetOptionStrings(headerLine);
 
-        if (args.Length > 1)
-        {
-            ParseFileOptions(args);
-        }
-        else
+        if (args.Length is 0)
         {
             string message = GetMessage(MsgFileHeaderHasNoOptions);
             Logger.Log(LogSeverity.Warning, message);
+        }
+        else
+        {
+            ParseFileOptions(args);
         }
     }
 
@@ -109,9 +109,9 @@ internal class FileHeaderParser : DependencyCheckerBase, IFileHeaderParser
         string delimiterEscapeValue = DelimiterService.DelimiterEscapeCharacter.ToString();
         ;
 
-        for (int i = 1; i < args.Length; i++)
+        foreach (string arg in args)
         {
-            Option option = OptionParser.Parse(args[i], IsValidFileHeaderOption, FileHeaderOptionGroup);
+            Option option = OptionParser.Parse(arg, IsValidFileHeaderOption, FileHeaderOptionGroup);
 
             if (option.IsEmpty)
             {

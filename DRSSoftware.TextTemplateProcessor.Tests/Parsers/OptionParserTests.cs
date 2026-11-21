@@ -33,6 +33,50 @@ public class OptionParserTests : MoqUnitTestBase
     }
 
     [Theory]
+    [InlineData($"{FileHeaderCode} option1  option2 option3 ")]
+    [InlineData($"{FileHeaderCode} option1,option2,option3")]
+    [InlineData($"{FileHeaderCode} option1  option2, option3 , ")]
+    [InlineData($"{FileHeaderCode} option1 option2 option3")]
+    [InlineData($"{FileHeaderCode} , option1,option2  option3")]
+    [InlineData($"{FileHeaderCode}   option1, option2, option3, ")]
+    public void GetOptionStringsWhenMultipleArePresent_ShouldReturnArrayOfOptionStrings(string headerLine)
+    {
+        // Arrange
+        string[] expected = ["option1", "option2", "option3"];
+        OptionParser parser = GetOptionParser();
+
+        // Act
+        string[] actual = parser.GetOptionStrings(headerLine);
+
+        // Assert
+        actual
+            .Should()
+            .NotBeNull()
+            .And
+            .BeEqualTo(expected);
+    }
+
+    [Theory]
+    [InlineData($"{FileHeaderCode} ")]
+    [InlineData($"{FileHeaderCode}  ")]
+    [InlineData($"{FileHeaderCode}   , ")]
+    public void GetOptionStringsWhenNoneArePresent_ShouldReturnEmptyArray(string headerLine)
+    {
+        // Arrange
+        OptionParser parser = GetOptionParser();
+
+        // Act
+        string[] actual = parser.GetOptionStrings(headerLine);
+
+        // Assert
+        actual
+            .Should()
+            .NotBeNull()
+            .And
+            .BeEmpty();
+    }
+
+    [Theory]
     [InlineData(EndDelimiterOption)]
     [InlineData(StartDelimiterOption)]
     [InlineData(DelimiterEscapeOption)]

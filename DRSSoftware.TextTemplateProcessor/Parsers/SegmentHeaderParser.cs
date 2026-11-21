@@ -82,22 +82,23 @@ internal class SegmentHeaderParser : DependencyCheckerBase, ISegmentHeaderParser
     /// </returns>
     public ControlItem Parse(string headerLine)
     {
-        string[] args;
+        string[] args = OptionParser.GetOptionStrings(headerLine);
+        int firstOptionIndex = 1;
+        string segmentName;
+
         ControlItemBuilder.Initialize();
 
-        if (headerLine.Length < ControlCodeLength + 2 || headerLine[ControlCodeLength + 1] is ' ')
+        if (HasSegmentName(headerLine))
         {
-            string message = GetMessage(MsgSegmentNameIsMissing);
-            Logger.Log(LogSeverity.Error, message);
-            string newHeaderLine = $"{SegmentHeaderCode} {UnknownSegmentName} {headerLine[3..].Trim()}";
-            args = newHeaderLine.Split(OptionSeparatorChars, StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
+            segmentName = args[0];
         }
         else
         {
-            args = headerLine.Split(OptionSeparatorChars, StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
+            string message = GetMessage(MsgSegmentNameIsMissing);
+            Logger.Log(LogSeverity.Error, message);
+            firstOptionIndex = 0;
+            segmentName = UnknownSegmentName;
         }
-
-        string segmentName = args[1];
 
         if (IsValidName(segmentName))
         {
@@ -111,9 +112,9 @@ internal class SegmentHeaderParser : DependencyCheckerBase, ISegmentHeaderParser
             Logger.Log(LogSeverity.Error, message);
         }
 
-        if (args.Length > 2)
+        if (args.Length > firstOptionIndex)
         {
-            ParseSegmentOptions(segmentName, args);
+            ParseSegmentOptions(segmentName, args[firstOptionIndex..]);
         }
 
         return ControlItemBuilder.Build();
@@ -140,9 +141,9 @@ internal class SegmentHeaderParser : DependencyCheckerBase, ISegmentHeaderParser
         bool padSegmentOptionFound = false;
         bool tabOptionFound = false;
 
-        for (int i = 2; i < args.Length; i++)
+        foreach (string arg in args)
         {
-            Option option = OptionParser.Parse(args[i], IsValidSegmentHeaderOption, SegmentHeaderOptionGroup, segmentName);
+            Option option = OptionParser.Parse(arg, IsValidSegmentHeaderOption, SegmentHeaderOptionGroup, segmentName);
 
             if (option.IsEmpty)
             {
