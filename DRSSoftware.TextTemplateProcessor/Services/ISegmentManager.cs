@@ -34,9 +34,10 @@ internal interface ISegmentManager
     bool AddTextItem(string segmentName, TextItem textItem);
 
     /// <summary>
-    /// Clears the contents of the control items and text items dictionaries.
+    /// Initializes this <see cref="ISegmentManager"/> object by clearing the contents of the control
+    /// items and text items dictionaries.
     /// </summary>
-    void Clear();
+    void Initialize();
 
     /// <summary>
     /// Gets a value indicating whether or not the given segment name exists in the control items dictionary.

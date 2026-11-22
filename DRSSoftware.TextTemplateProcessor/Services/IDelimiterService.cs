@@ -31,6 +31,12 @@ internal interface IDelimiterService
     }
 
     /// <summary>
+    /// Initializes the <see cref="DelimiterService"/> object by setting the token start and end
+    /// delimiters and the delimiter escape character to their default values.
+    /// </summary>
+    void Initialize();
+
+    /// <summary>
     /// Resets the token delimiters and delimiter escape character to their default values.
     /// </summary>
     void ResetTokenDelimiters();

@@ -1,4 +1,6 @@
-﻿namespace DRSSoftware.TextTemplateProcessor.Core;
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace DRSSoftware.TextTemplateProcessor.Core;
 
 /// <summary>
 /// The <see cref="Locater" /> class is used for keeping track of the current location within a text
@@ -15,11 +17,7 @@ internal class Locater : ILocater
     /// The default constructor initializes the <see cref="Locater" /> class with an empty location
     /// name and line number 0.
     /// </summary>
-    public Locater()
-    {
-        CurrentLocationName = Location.Empty.LocationName;
-        LineNumber = Location.Empty.LineNumber;
-    }
+    public Locater() => Initialize();
 
     /// <summary>
     /// Gets or sets the name of the current location being processed in the text file.
@@ -55,6 +53,16 @@ internal class Locater : ILocater
     {
         get;
         set;
+    }
+
+    /// <summary>
+    /// Initializes the state of this <see cref="Locater"/> object.
+    /// </summary>
+    [MemberNotNull(nameof(CurrentLocationName))]
+    public void Initialize()
+    {
+        CurrentLocationName = Location.Empty.LocationName;
+        LineNumber = Location.Empty.LineNumber;
     }
 
     /// <summary>

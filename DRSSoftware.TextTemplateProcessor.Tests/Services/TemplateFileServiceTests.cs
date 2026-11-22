@@ -71,19 +71,18 @@ public class TemplateFileServiceTests : MoqUnitTestBase
     }
 
     [Fact]
-    public void ReadTemplateFileMoreThanOnce_ShouldLogWarningMessageAndReadFileOnlyOnce()
+    public void Initialize_ShouldClearTemplateLinesBufferAndSetFilePathAndNameToEmptyStrings()
     {
         // Arrange
         string filePath = "filePath";
         string fullFilePath = "fullFilePath";
         string fileName = "fileName";
-        List<string> expected = ["Line 1", "Line 2", "Line 3"];
+        List<string> templateLines = ["Line 1", "Line 2", "Line 3"];
         string message1 = GetMessage(MsgAttemptingToReadFile, fileName);
-        string message2 = GetMessage(MsgFileSuccessfullyRead, expected.Count.ToString());
-        string message3 = GetMessage(MsgFileAlreadyLoaded, filePath);
+        string message2 = GetMessage(MsgFileSuccessfullyRead, templateLines.Count.ToString());
         GetMock<ILogger>()
             .Setup(x => x.PushOperationType(OperationType.Reading))
-            .Verifiable(Times.Exactly(2));
+            .Verifiable(Times.Once);
         GetMock<IPathValidator>()
             .Setup(x => x.ValidatePath(filePath, true, true))
             .Returns(fullFilePath)
@@ -97,40 +96,34 @@ public class TemplateFileServiceTests : MoqUnitTestBase
             .Verifiable(Times.Once);
         GetMock<IFileAndDirectoryService>()
             .Setup(x => x.ReadTextFile(fullFilePath))
-            .Returns(expected)
+            .Returns(templateLines)
             .Verifiable(Times.Once);
         GetMock<ILogger>()
             .Setup(x => x.Log(LogSeverity.Information, message2))
             .Verifiable(Times.Once);
         GetMock<ILogger>()
-            .Setup(x => x.Log(LogSeverity.Warning, message3))
-            .Verifiable(Times.Once);
-        GetMock<ILogger>()
             .Setup(x => x.PopOperationType())
-            .Verifiable(Times.Exactly(2));
+            .Verifiable(Times.Once);
         TemplateFileService templateFileService = GetTemplateFileService();
         templateFileService.ReadTemplateFile(filePath);
 
         // Act
-        templateFileService.ReadTemplateFile(filePath);
+        templateFileService.Initialize();
         List<string> actual = GetTemplateLines(templateFileService);
 
         // Assert
         templateFileService.TemplateFileName
             .Should()
-            .Be(fileName);
+            .BeEmpty();
         templateFileService.TemplateFilePath
             .Should()
-            .Be(fullFilePath);
+            .BeEmpty();
         templateFileService.IsEmptyFile
             .Should()
-            .BeFalse();
+            .BeTrue();
         actual.Count
             .Should()
-            .Be(expected.Count);
-        actual
-            .Should()
-            .BeEqualTo(expected);
+            .Be(0);
         VerifyMocks();
     }
 

@@ -34,8 +34,7 @@ internal class IndentProcessor : DependencyCheckerBase, IIndentProcessor
     {
         Locater = NullDependencyCheck(locater, nameof(locater));
         Logger = NullDependencyCheck(logger, nameof(logger));
-        CurrentIndent = 0;
-        TabSize = DefaultTabSize;
+        Initialize();
     }
 
     /// <summary>
@@ -153,6 +152,15 @@ internal class IndentProcessor : DependencyCheckerBase, IIndentProcessor
         }
 
         return indent;
+    }
+
+    /// <summary>
+    /// Initializes the state of this <see cref="IndentProcessor"/> object.
+    /// </summary>
+    public void Initialize()
+    {
+        CurrentIndent = 0;
+        TabSize = DefaultTabSize;
     }
 
     /// <summary>

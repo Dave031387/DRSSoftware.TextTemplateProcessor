@@ -7,7 +7,6 @@
 internal static class MessageService
 {
     internal const string MsgAllSegmentsHaveBeenReset = "All segments have been reset.";
-    internal const string MsgAllSegmentsHaveBeenCleared = "All segments have been cleared from the segment dictionary.";
     internal const string MsgAttemptingToReadFile = "Attempting to read text template file: {0}";
     internal const string MsgAttemptToAddDuplicateSegmentName = "Segment name {0} appears more than once in the template file. Only the first occurrence will be used.";
     internal const string MsgAttemptToAddTextItemForNonExistingSegment = "An attempt was made to add a text item for segment {0}. That segment doesn't exist in the control dictionary.";
@@ -32,7 +31,6 @@ internal static class MessageService
     // internal const string MsgErrorWhenCreatingOutputDirectory = "An unexpected error occurred when creating the output directory. {0}";
     // internal const string MsgErrorWhenLocatingSolutionDirectory = "An unexpected error occurred while trying to locate the solution directory. {0}";
     // internal const string MsgErrorWhileConstructingFilePath = "An error occurred when trying to construct the output file path. {0}";
-    internal const string MsgFileAlreadyLoaded = "Template file \"{0}\" has already been loaded. Repeat loads will be ignored.";
     internal const string MsgFileHeaderHasNoOptions = "The file header has no options specified and will therefore be ignored.";
     internal const string MsgFileNotFound = "The specified file was not found. Full file path: {0}";
     internal const string MsgFilePathIsEmptyOrWhitespace = "The file path must not be empty or contain only whitespace.";

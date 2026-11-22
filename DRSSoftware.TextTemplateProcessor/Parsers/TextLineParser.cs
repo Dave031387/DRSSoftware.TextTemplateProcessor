@@ -25,6 +25,12 @@ internal class TextLineParser : DependencyCheckerBase, ITextLineParser
     }
 
     /// <summary>
+    /// Initializes the state of this <see cref="TextLineParser"/> object by clearing the contents
+    /// of the token dictionary.
+    /// </summary>
+    public void Initialize() => TokenExtractor.ClearTokens();
+
+    /// <summary>
     /// Parses the given <paramref name="textLine"/>, extracts any tokens on that text line, and
     /// creates a new <see cref="TextItem"/> object representing that text line.
     /// </summary>

@@ -18,7 +18,7 @@ internal class DelimiterService : DependencyCheckerBase, IDelimiterService
     internal DelimiterService(ILogger logger)
     {
         Logger = NullDependencyCheck(logger, nameof(logger));
-        SetTokenDelimitersToDefaultValues();
+        Initialize();
     }
 
     /// <summary>
@@ -60,6 +60,13 @@ internal class DelimiterService : DependencyCheckerBase, IDelimiterService
         get;
         init;
     }
+
+    /// <summary>
+    /// Initializes the <see cref="DelimiterService"/> object by setting the token start and end
+    /// delimiters and the delimiter escape character to their default values.
+    /// </summary>
+    [MemberNotNull(nameof(EndDelimiter), nameof(StartDelimiter))]
+    public void Initialize() => SetTokenDelimitersToDefaultValues();
 
     /// <summary>
     /// Resets the token delimiters and delimiter escape character to their default values.

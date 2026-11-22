@@ -1,4 +1,6 @@
-﻿namespace DRSSoftware.TextTemplateProcessor.Services;
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace DRSSoftware.TextTemplateProcessor.Services;
 
 /// <summary>
 /// The <see cref="TemplateFileService"/> class handles reading a text template file and provides an
@@ -6,12 +8,6 @@
 /// </summary>
 internal class TemplateFileService : DependencyCheckerBase, ITemplateFileService
 {
-    /// <summary>
-    /// The path string of the last text template file that has been read. Will be an empty string
-    /// if no file has been read yet.
-    /// </summary>
-    private string _previousFilePath;
-
     /// <summary>
     /// Creates a new instance of the <see cref="TemplateFileService"/> class and initializes dependencies.
     /// </summary>
@@ -29,10 +25,7 @@ internal class TemplateFileService : DependencyCheckerBase, ITemplateFileService
         FileAndDirectoryService = NullDependencyCheck(fileAndDirectoryService, nameof(fileAndDirectoryService));
         Logger = NullDependencyCheck(logger, nameof(logger));
         PathValidator = NullDependencyCheck(pathValidator, nameof(pathValidator));
-        _previousFilePath = string.Empty;
-        TemplateFileName = string.Empty;
-        TemplateFilePath = string.Empty;
-        TemplateLines = [];
+        Initialize();
     }
 
     /// <summary>
@@ -114,6 +107,25 @@ internal class TemplateFileService : DependencyCheckerBase, ITemplateFileService
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
     /// <summary>
+    /// Initializes the state of this <see cref="TemplateFileService"/> object.
+    /// </summary>
+    [MemberNotNull(nameof(TemplateFileName), nameof(TemplateFilePath), nameof(TemplateLines))]
+    public void Initialize()
+    {
+        TemplateFileName = string.Empty;
+        TemplateFilePath = string.Empty;
+
+        if (TemplateLines is null)
+        {
+            TemplateLines = [];
+        }
+        else
+        {
+            TemplateLines.Clear();
+        }
+    }
+
+    /// <summary>
     /// Reads the contents of the text template file at the specified <paramref name="filePath"/>
     /// and retains the file contents for later processing.
     /// </summary>
@@ -127,16 +139,7 @@ internal class TemplateFileService : DependencyCheckerBase, ITemplateFileService
         try
         {
             Logger.PushOperationType(OperationType.Reading);
-
-            if (filePath == _previousFilePath)
-            {
-                message = GetMessage(MsgFileAlreadyLoaded, filePath);
-                Logger.Log(LogSeverity.Warning, message);
-                return;
-            }
-
             TemplateLines.Clear();
-            _previousFilePath = filePath;
 
             if (IsValidFilePath(filePath))
             {

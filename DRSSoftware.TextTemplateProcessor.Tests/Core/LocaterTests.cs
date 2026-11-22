@@ -22,6 +22,28 @@ public class LocaterTests
             .Be(expectedLineNumber);
     }
 
+    [Fact]
+    public void Initialize_ShouldInitializeLocater()
+    {
+        // Arrange
+        Locater locater = new()
+        {
+            CurrentLocationName = "LocationName",
+            LineNumber = 10
+        };
+
+        // Act
+        locater.Initialize();
+
+        // Assert
+        locater.CurrentLocationName
+            .Should()
+            .Be(Location.Empty.LocationName);
+        locater.LineNumber
+            .Should()
+            .Be(Location.Empty.LineNumber);
+    }
+
     [Theory]
     [InlineData("Segment1", 42)]
     [InlineData(EmptyString, 42)]

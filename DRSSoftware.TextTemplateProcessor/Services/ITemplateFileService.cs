@@ -30,6 +30,11 @@ internal interface ITemplateFileService : IEnumerable<string>
     }
 
     /// <summary>
+    /// Initializes the state of this <see cref="ITemplateFileService"/> object.
+    /// </summary>
+    void Initialize();
+
+    /// <summary>
     /// Reads the contents of the text template file at the specified <paramref name="filePath"/>
     /// and retains the file contents for later processing.
     /// </summary>

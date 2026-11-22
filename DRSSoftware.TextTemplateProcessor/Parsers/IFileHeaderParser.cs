@@ -7,6 +7,12 @@
 internal interface IFileHeaderParser
 {
     /// <summary>
+    /// Initializes the state of the <see cref="IDelimiterService"/> and <see
+    /// cref="IIndentProcessor"/> objects used by this <see cref="IFileHeaderParser"/> object.
+    /// </summary>
+    void Initialize();
+
+    /// <summary>
     /// Parses the file header line from the text template file and handles any file options that
     /// are found.
     /// </summary>

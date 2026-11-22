@@ -378,69 +378,6 @@ public class SegmentManagerTests : MoqUnitTestBase
     }
 
     [Fact]
-    public void Clear_ShouldClearAllSegmentsFromTheControlItemsDictionaryAndLogMessage()
-    {
-        // Arrange
-        string segmentName1 = "segment1";
-        string segmentName2 = "segment2";
-        ControlItem controlItem1 = new()
-        {
-            SegmentName = segmentName1
-        };
-        ControlItem controlItem2 = new()
-        {
-            SegmentName = segmentName2
-        };
-        TextItem textItem1 = new(6, false, false, "text1");
-        TextItem textItem2 = new(4, true, false, "text2");
-        string message1 = GetMessage(MsgSegmentHasBeenAdded, segmentName1);
-        string message2 = GetMessage(MsgSegmentHasBeenAdded, segmentName2);
-        string message3 = GetMessage(MsgAllSegmentsHaveBeenCleared);
-        string message4 = GetMessage(MsgAttemptToRetrieveTextItemsForNonExistingSegment, segmentName1);
-        string message5 = GetMessage(MsgAttemptToRetrieveTextItemsForNonExistingSegment, segmentName2);
-        GetMock<ILogger>()
-            .Setup(x => x.Log(LogSeverity.Information, message1))
-            .Verifiable(Times.Once);
-        GetMock<ILogger>()
-            .Setup(x => x.Log(LogSeverity.Information, message2))
-            .Verifiable(Times.Once);
-        GetMock<ILogger>()
-            .Setup(x => x.Log(LogSeverity.Information, OperationType.Reset, message3))
-            .Verifiable(Times.Once);
-        GetMock<ILogger>()
-            .Setup(x => x.Log(LogSeverity.Error, message4))
-            .Verifiable(Times.Once);
-        GetMock<ILogger>()
-            .Setup(x => x.Log(LogSeverity.Error, message5))
-            .Verifiable(Times.Once);
-        SegmentManager manager = GetSegmentManager();
-        _ = manager.AddControlItem(controlItem1);
-        _ = manager.AddControlItem(controlItem2);
-        _ = manager.AddTextItem(segmentName1, textItem1);
-        _ = manager.AddTextItem(segmentName2, textItem2);
-
-        // Act
-        manager.Clear();
-        IEnumerable<TextItem> textItems1 = manager.GetTextItems(segmentName1);
-        IEnumerable<TextItem> textItems2 = manager.GetTextItems(segmentName2);
-
-        // Assert
-        manager.ContainsSegment(segmentName1)
-            .Should()
-            .BeFalse();
-        manager.ContainsSegment(segmentName2)
-            .Should()
-            .BeFalse();
-        textItems1
-            .Should()
-            .BeEmpty();
-        textItems2
-            .Should()
-            .BeEmpty();
-        VerifyMocks();
-    }
-
-    [Fact]
     public void ContainsSegmentWhenSegmentNameExistsInDictionary_ShouldReturnTrue()
     {
         // Arrange
@@ -692,6 +629,65 @@ public class SegmentManagerTests : MoqUnitTestBase
 
         // Assert
         actual
+            .Should()
+            .BeEmpty();
+        VerifyMocks();
+    }
+
+    [Fact]
+    public void Initialize_ShouldClearAllSegmentsFromTheControlItemsAndTextItemsDictionaries()
+    {
+        // Arrange
+        string segmentName1 = "segment1";
+        string segmentName2 = "segment2";
+        ControlItem controlItem1 = new()
+        {
+            SegmentName = segmentName1
+        };
+        ControlItem controlItem2 = new()
+        {
+            SegmentName = segmentName2
+        };
+        TextItem textItem1 = new(6, false, false, "text1");
+        TextItem textItem2 = new(4, true, false, "text2");
+        string message1 = GetMessage(MsgSegmentHasBeenAdded, segmentName1);
+        string message2 = GetMessage(MsgSegmentHasBeenAdded, segmentName2);
+        string message3 = GetMessage(MsgAttemptToRetrieveTextItemsForNonExistingSegment, segmentName1);
+        string message4 = GetMessage(MsgAttemptToRetrieveTextItemsForNonExistingSegment, segmentName2);
+        GetMock<ILogger>()
+            .Setup(x => x.Log(LogSeverity.Information, message1))
+            .Verifiable(Times.Once);
+        GetMock<ILogger>()
+            .Setup(x => x.Log(LogSeverity.Information, message2))
+            .Verifiable(Times.Once);
+        GetMock<ILogger>()
+            .Setup(x => x.Log(LogSeverity.Error, message3))
+            .Verifiable(Times.Once);
+        GetMock<ILogger>()
+            .Setup(x => x.Log(LogSeverity.Error, message4))
+            .Verifiable(Times.Once);
+        SegmentManager manager = GetSegmentManager();
+        _ = manager.AddControlItem(controlItem1);
+        _ = manager.AddControlItem(controlItem2);
+        _ = manager.AddTextItem(segmentName1, textItem1);
+        _ = manager.AddTextItem(segmentName2, textItem2);
+
+        // Act
+        manager.Initialize();
+        IEnumerable<TextItem> textItems1 = manager.GetTextItems(segmentName1);
+        IEnumerable<TextItem> textItems2 = manager.GetTextItems(segmentName2);
+
+        // Assert
+        manager.ContainsSegment(segmentName1)
+            .Should()
+            .BeFalse();
+        manager.ContainsSegment(segmentName2)
+            .Should()
+            .BeFalse();
+        textItems1
+            .Should()
+            .BeEmpty();
+        textItems2
             .Should()
             .BeEmpty();
         VerifyMocks();

@@ -58,6 +58,11 @@ internal interface IIndentProcessor
     int GetIndent(TextItem textItem);
 
     /// <summary>
+    /// Initializes the state of this <see cref="IIndentProcessor"/> object.
+    /// </summary>
+    void Initialize();
+
+    /// <summary>
     /// Determines whether or not the given string value represents a valid integer indent value.
     /// </summary>
     /// <param name="stringValue">

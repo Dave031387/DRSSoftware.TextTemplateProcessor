@@ -66,6 +66,16 @@ internal class FileHeaderParser : DependencyCheckerBase, IFileHeaderParser
     }
 
     /// <summary>
+    /// Initializes the state of the <see cref="IDelimiterService"/> and <see
+    /// cref="IIndentProcessor"/> objects used by this <see cref="FileHeaderParser"/> object.
+    /// </summary>
+    public void Initialize()
+    {
+        DelimiterService.Initialize();
+        IndentProcessor.Initialize();
+    }
+
+    /// <summary>
     /// Parses the file header line from the text template file and handles any file options that
     /// are found.
     /// </summary>

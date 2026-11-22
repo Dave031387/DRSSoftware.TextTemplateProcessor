@@ -292,6 +292,11 @@ internal static class GlobalConstants
     public const string TabSizeOption = "TAB";
 
     /// <summary>
+    /// The location name that is used when parsing a text template file.
+    /// </summary>
+    public const string TemplateFileLocationName = "Template File Line";
+
+    /// <summary>
     /// The string that represents an unknown or missing segment name.
     /// </summary>
     public const string UnknownSegmentName = "UnknownSegment";

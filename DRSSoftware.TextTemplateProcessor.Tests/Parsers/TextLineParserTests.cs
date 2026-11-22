@@ -30,6 +30,22 @@ public class TextLineParserTests : MoqUnitTestBase
     }
 
     [Fact]
+    public void Initialize_ShouldClearTokenDictionary()
+    {
+        // Arrange
+        GetMock<ITokenExtractor>()
+            .Setup(x => x.ClearTokens())
+            .Verifiable(Times.Once);
+        TextLineParser parser = GetTextLineParser();
+
+        // Act
+        parser.Initialize();
+
+        // Assert
+        VerifyMocks();
+    }
+
+    [Fact]
     public void ParseTextLineHavingAbsoluteIndentButNoText_ShouldReturnEmptyTextWithCorrectIndent()
     {
         // Arrange

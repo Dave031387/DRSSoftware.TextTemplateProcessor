@@ -53,6 +53,11 @@ internal interface ILocater
     }
 
     /// <summary>
+    /// Initializes the state of this <see cref="ILocater"/> object.
+    /// </summary>
+    void Initialize();
+
+    /// <summary>
     /// Resets the current location to an empty location.
     /// </summary>
     void Reset();

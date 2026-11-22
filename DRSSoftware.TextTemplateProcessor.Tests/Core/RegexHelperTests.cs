@@ -746,6 +746,44 @@ public class RegexHelperTests
     }
 
     [Theory]
+    [InlineData($"{SegmentHeaderCode}  Name")]
+    [InlineData($"{SegmentHeaderCode} -Name")]
+    [InlineData($"{SegmentHeaderCode} ,Name")]
+    [InlineData($"{SegmentHeaderCode} =Name")]
+    [InlineData($"{SegmentHeaderCode} +Name")]
+    [InlineData($"{FileHeaderCode} Name")]
+    public void MatchOnSegmentName_ShouldReturnFalseIfSegmentNameNotFound(string headerLine)
+    {
+        // Act
+        bool actual = HasSegmentName(headerLine);
+
+        // Assert
+        actual
+            .Should()
+            .BeFalse();
+    }
+
+    [Theory]
+    [InlineData("A")]
+    [InlineData("a")]
+    [InlineData("Z")]
+    [InlineData("z")]
+    [InlineData("_")]
+    [InlineData("0")]
+    [InlineData("9")]
+    public void MatchOnSegmentName_ShouldReturnTrueIfSegmentNameFound(string firstCharacter)
+    {
+        // Act
+        string headerLine = $"{SegmentHeaderCode} {firstCharacter}Name";
+        bool actual = HasSegmentName(headerLine);
+
+        // Assert
+        actual
+            .Should()
+            .BeTrue();
+    }
+
+    [Theory]
     [InlineData(Space + FileHeaderCode)]
     [InlineData(Space + SegmentHeaderCode)]
     [InlineData(Space + CommentCode)]

@@ -74,6 +74,25 @@ public class FileHeaderParserTests : MoqUnitTestBase
     }
 
     [Fact]
+    public void Initialize_ShouldInitializeDelimiterServiceAndIndentProcessor()
+    {
+        // Arrange
+        GetMock<IDelimiterService>()
+            .Setup(x => x.Initialize())
+            .Verifiable(Times.Once);
+        GetMock<IIndentProcessor>()
+            .Setup(x => x.Initialize())
+            .Verifiable(Times.Once);
+        FileHeaderParser parser = GetFileHeaderParser();
+
+        // Act
+        parser.Initialize();
+
+        // Assert
+        VerifyMocks();
+    }
+
+    [Fact]
     public void ParseFileHeaderWithDelimiterEscapeLongerThanOneCharacter_ShouldLogErrorMessage()
     {
         // Arrange

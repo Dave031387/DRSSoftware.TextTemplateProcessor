@@ -125,17 +125,6 @@ internal class SegmentManager : DependencyCheckerBase, ISegmentManager
     }
 
     /// <summary>
-    /// Clears the contents of the control items and text items dictionaries.
-    /// </summary>
-    public void Clear()
-    {
-        _textItems.Clear();
-        _controlItems.Clear();
-        string message = GetMessage(MsgAllSegmentsHaveBeenCleared);
-        Logger.Log(LogSeverity.Information, OperationType.Reset, message);
-    }
-
-    /// <summary>
     /// Gets a value indicating whether or not the given segment name exists in the control items dictionary.
     /// </summary>
     /// <param name="segmentName">
@@ -208,6 +197,16 @@ internal class SegmentManager : DependencyCheckerBase, ISegmentManager
 
         Logger.Log(LogSeverity.Error, message);
         return [];
+    }
+
+    /// <summary>
+    /// Initializes this <see cref="SegmentManager"/> object by clearing the contents of the control
+    /// items and text items dictionaries.
+    /// </summary>
+    public void Initialize()
+    {
+        _textItems.Clear();
+        _controlItems.Clear();
     }
 
     /// <summary>

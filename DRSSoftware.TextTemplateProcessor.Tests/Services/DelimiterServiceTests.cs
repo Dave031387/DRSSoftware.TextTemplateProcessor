@@ -39,6 +39,42 @@ public class DelimiterServiceTests : MoqUnitTestBase
     }
 
     [Fact]
+    public void Initialize_ShouldSetDelimiterValuesToTheirDefaultValues()
+    {
+        // Arrange
+        string altStartDelimiter = "{{";
+        string altEndDelimiter = "}}";
+        char altEscapeCharacter = '!';
+        string message = GetMessage(MsgNewTokenDelimiterValuesSet, altStartDelimiter, altEndDelimiter, altEscapeCharacter.ToString());
+        GetMock<ILogger>()
+            .Setup(x => x.PushOperationType(OperationType.Setup))
+            .Verifiable(Times.Once);
+        GetMock<ILogger>()
+            .Setup(x => x.Log(LogSeverity.Information, message))
+            .Verifiable(Times.Once);
+        GetMock<ILogger>()
+            .Setup(x => x.PopOperationType())
+            .Verifiable(Times.Once);
+        DelimiterService delimiterService = GetDelimiterService();
+        delimiterService.SetTokenDelimiters(altStartDelimiter, altEndDelimiter, altEscapeCharacter);
+
+        // Act
+        delimiterService.Initialize();
+
+        // Assert
+        delimiterService.StartDelimiter
+            .Should()
+            .Be(DefaultTokenStartDelimiter);
+        delimiterService.EndDelimiter
+            .Should()
+            .Be(DefaultTokenEndDelimiter);
+        delimiterService.DelimiterEscapeCharacter
+            .Should()
+            .Be(DefaultDelimiterEscapeCharacter);
+        VerifyMocks();
+    }
+
+    [Fact]
     public void ResetTokenDelimiters_ShouldSetDelimiterValuesBackToTheirDefaultValues()
     {
         // Arrange

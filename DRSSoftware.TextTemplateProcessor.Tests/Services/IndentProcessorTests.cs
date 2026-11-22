@@ -787,6 +787,38 @@ public class IndentProcessorTests : MoqUnitTestBase
                        expectedReturnValue);
     }
 
+    [Fact]
+    public void Initialize_ShouldSetCurrentIndentToZeroAndSetTabSizeToDefault()
+    {
+        // Arrange
+        int tabSize = DefaultTabSize + 2;
+        string message = GetMessage(MsgNewTabSizeValueSet, DefaultTabSize.ToString(), tabSize.ToString());
+        GetMock<ILogger>()
+            .Setup(x => x.PushOperationType(OperationType.Setup))
+            .Verifiable(Times.Once);
+        GetMock<ILogger>()
+            .Setup(x => x.Log(LogSeverity.Information, message))
+            .Verifiable(Times.Once);
+        GetMock<ILogger>()
+            .Setup(x => x.PopOperationType())
+            .Verifiable(Times.Once);
+        IndentProcessor indentProcessor = GetIndentProcessor();
+        indentProcessor.SetTabSize(tabSize);
+        SetCurrentIndent(indentProcessor, 42);
+
+        // Act
+        indentProcessor.Initialize();
+
+        // Assert
+        indentProcessor.CurrentIndent
+            .Should()
+            .Be(0);
+        indentProcessor.TabSize
+            .Should()
+            .Be(DefaultTabSize);
+        VerifyMocks();
+    }
+
     [Theory]
     [InlineData(null)]
     [InlineData("")]
