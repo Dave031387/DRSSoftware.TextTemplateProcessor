@@ -279,6 +279,18 @@ internal static partial class RegexHelper
         => SegmentHeaderRegex().IsMatch(textLine);
 
     /// <summary>
+    /// Gets a value indicating whether or not the given <paramref name="textLine"/> is a valid text line.
+    /// </summary>
+    /// <param name="textLine">
+    /// The text line to be checked.
+    /// </param>
+    /// <returns>
+    /// <see langword="true"/> if <paramref name="textLine"/> is a valid text line; otherwise, <see langword="false"/>.
+    /// </returns>
+    public static bool IsTextLine(string textLine)
+        => TextLineRegex().IsMatch(textLine);
+
+    /// <summary>
     /// Gets a value indicating whether or not the given <paramref name="option"/> is a valid file
     /// header option.
     /// </summary>
@@ -496,6 +508,17 @@ internal static partial class RegexHelper
     /// </returns>
     [GeneratedRegex($"^{SegmentHeaderCode} ({RegexAnyLetter}|{RegexAnyDigit}|_)", RegexOptions.Compiled | RegexOptions.IgnoreCase)]
     private static partial Regex SegmentNameRegex();
+
+    /// <summary>
+    /// Gets a <see cref="Regex"/> object used for matching any text line that begins with either no
+    /// control code or any valid indent indicator string.
+    /// </summary>
+    /// <returns>
+    /// A <see cref="Regex"/> object used for matching any text line that begins with either no
+    /// control code or any valid indent indicator string.
+    /// </returns>
+    [GeneratedRegex($"^(({ValidIndentCode})|({NoControlCode})) ", RegexOptions.Compiled)]
+    private static partial Regex TextLineRegex();
 
     /// <summary>
     /// Gets a <see cref="Regex"/> object used for matching text template lines that begin with any

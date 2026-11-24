@@ -792,7 +792,7 @@ public class IndentProcessorTests : MoqUnitTestBase
     {
         // Arrange
         int tabSize = DefaultTabSize + 2;
-        string message = GetMessage(MsgNewTabSizeValueSet, DefaultTabSize.ToString(), tabSize.ToString());
+        string message = GetMessage(MsgNewTabSizeValueSet, DefaultTabSize.ToString(), tabSize);
         GetMock<ILogger>()
             .Setup(x => x.PushOperationType(OperationType.Setup))
             .Verifiable(Times.Once);
@@ -859,7 +859,9 @@ public class IndentProcessorTests : MoqUnitTestBase
         // Arrange
         string numberString = number.ToString();
         string expectedMessage = GetMessage(MsgIndentValueOutOfRange,
-                                            numberString);
+                                            numberString,
+                                            MinIndentValue,
+                                            MaxIndentValue);
         GetMock<ILogger>()
             .Setup(logger => logger.Log(LogSeverity.Error, expectedMessage))
             .Verifiable(Times.Once);
@@ -879,16 +881,17 @@ public class IndentProcessorTests : MoqUnitTestBase
     }
 
     [Theory]
-    [InlineData($"{MinIndentValueString}", MinIndentValue)]
-    [InlineData("  -8", -8)]
-    [InlineData("-7  ", -7)]
-    [InlineData("0", 0)]
-    [InlineData("7", 7)]
-    [InlineData("  8  ", 8)]
-    [InlineData($"{MaxIndentValueString}", MaxIndentValue)]
-    public void IsValidIndentValue_ShouldParseValueAndReturnTrueWhenNumberStringIsValid(string numberString, int expected)
+    [InlineData("{0}", MinIndentValue)]
+    [InlineData("  {0}", -8)]
+    [InlineData("{0}  ", -7)]
+    [InlineData("{0}", 0)]
+    [InlineData("{0}", 7)]
+    [InlineData("  {0}  ", 8)]
+    [InlineData("{0}", MaxIndentValue)]
+    public void IsValidIndentValue_ShouldParseValueAndReturnTrueWhenNumberStringIsValid(string formatString, int expected)
     {
         // Arrange
+        string numberString = string.Format(formatString, expected);
         IndentProcessor indentProcessor = GetIndentProcessor();
 
         // Act
@@ -943,7 +946,9 @@ public class IndentProcessorTests : MoqUnitTestBase
         // Arrange
         string numberString = number.ToString();
         string expectedMessage = GetMessage(MsgTabSizeValueOutOfRange,
-                                            numberString);
+                                            numberString,
+                                            MinTabSize,
+                                            MaxTabSize);
         GetMock<ILogger>()
             .Setup(logger => logger.Log(LogSeverity.Error, expectedMessage))
             .Verifiable(Times.Once);
@@ -963,15 +968,16 @@ public class IndentProcessorTests : MoqUnitTestBase
     }
 
     [Theory]
-    [InlineData($"{MinTabSizeString}", MinTabSize)]
-    [InlineData(" 2", 2)]
-    [InlineData("3", 3)]
-    [InlineData("7 ", 7)]
-    [InlineData("8", 8)]
-    [InlineData($" {MaxTabSizeString} ", MaxTabSize)]
-    public void IsValidTabSizeValue_ShouldParseValueAndReturnTrueWhenNumberStringIsValid(string numberString, int expected)
+    [InlineData("{0}", MinTabSize)]
+    [InlineData(" {0}", 2)]
+    [InlineData("{0}", 3)]
+    [InlineData("{0} ", 7)]
+    [InlineData("{0}", 8)]
+    [InlineData(" {0} ", MaxTabSize)]
+    public void IsValidTabSizeValue_ShouldParseValueAndReturnTrueWhenNumberStringIsValid(string formatString, int expected)
     {
         // Arrange
+        string numberString = string.Format(formatString, expected);
         IndentProcessor indentProcessor = GetIndentProcessor();
 
         // Act
@@ -992,7 +998,7 @@ public class IndentProcessorTests : MoqUnitTestBase
         // Arrange
         int expected = DefaultTabSize;
         int newTabSize = DefaultTabSize + 2;
-        string message = GetMessage(MsgNewTabSizeValueSet, expected.ToString(), newTabSize.ToString());
+        string message = GetMessage(MsgNewTabSizeValueSet, expected, newTabSize);
         GetMock<ILogger>()
             .Setup(x => x.PushOperationType(OperationType.Setup))
             .Verifiable(Times.Once);
@@ -1026,7 +1032,7 @@ public class IndentProcessorTests : MoqUnitTestBase
         int oldTabSize = DefaultTabSize;
         int expectedTabSize = DefaultTabSize + 1;
         int tabCount = 3;
-        string message = GetMessage(MsgNewTabSizeValueSet, oldTabSize.ToString(), expectedTabSize.ToString());
+        string message = GetMessage(MsgNewTabSizeValueSet, oldTabSize, expectedTabSize);
         GetMock<ILogger>()
             .Setup(x => x.PushOperationType(OperationType.Setup))
             .Verifiable(Times.Once);
@@ -1063,9 +1069,9 @@ public class IndentProcessorTests : MoqUnitTestBase
         int newTabSize = DefaultTabSize - 1;
         int tabCount = 3;
         int expectedCurrentIndent = tabCount * expectedTabSize;
-        string message1 = GetMessage(MsgNewTabSizeValueSet, initialTabSize.ToString(), expectedTabSize.ToString());
-        string message2 = GetMessage(MsgNewTabSizeValueSet, expectedTabSize.ToString(), newTabSize.ToString());
-        string message3 = GetMessage(MsgTabSizeHasBeenReset, newTabSize.ToString(), expectedTabSize.ToString());
+        string message1 = GetMessage(MsgNewTabSizeValueSet, initialTabSize, expectedTabSize);
+        string message2 = GetMessage(MsgNewTabSizeValueSet, expectedTabSize, newTabSize);
+        string message3 = GetMessage(MsgTabSizeHasBeenReset, newTabSize, expectedTabSize);
         GetMock<ILogger>()
             .Setup(x => x.PushOperationType(OperationType.Setup))
             .Verifiable(Times.Exactly(2));
@@ -1112,8 +1118,8 @@ public class IndentProcessorTests : MoqUnitTestBase
         // Arrange
         int expectedTabSize = MaxTabSize;
         string expectedMessage = GetMessage(MsgTabSizeTooLarge,
-                                            tabSize.ToString(),
-                                            expectedTabSize.ToString());
+                                            tabSize,
+                                            expectedTabSize);
         GetMock<ILogger>()
             .Setup(x => x.PushOperationType(OperationType.Setup))
             .Verifiable(Times.Once);
@@ -1144,8 +1150,8 @@ public class IndentProcessorTests : MoqUnitTestBase
         // Arrange
         int expectedTabSize = MinTabSize;
         string expectedMessage = GetMessage(MsgTabSizeTooSmall,
-                                            tabSize.ToString(),
-                                            expectedTabSize.ToString());
+                                            tabSize,
+                                            expectedTabSize);
         GetMock<ILogger>()
             .Setup(x => x.PushOperationType(OperationType.Setup))
             .Verifiable(Times.Once);
@@ -1176,7 +1182,7 @@ public class IndentProcessorTests : MoqUnitTestBase
     public void SetTabSize_ShouldSetTabSizeToValueWhenValueIsWithinValidRange(int expectedTabSize)
     {
         // Arrange
-        string message = GetMessage(MsgNewTabSizeValueSet, DefaultTabSize.ToString(), expectedTabSize.ToString());
+        string message = GetMessage(MsgNewTabSizeValueSet, DefaultTabSize, expectedTabSize);
         GetMock<ILogger>()
             .Setup(x => x.PushOperationType(OperationType.Setup))
             .Verifiable(Times.Once);

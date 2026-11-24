@@ -182,7 +182,7 @@ internal class GeneratedFileService : DependencyCheckerBase, IGeneratedFileServi
                 CheckForExistingFile();
                 FileAndDirectoryService.WriteTextFile(OutputFilePath, GeneratedTextLines);
                 IsFileWritten = true;
-                message = GetMessage(MsgOutputFileSuccessfullyCreated, GeneratedTextLines.Count.ToString());
+                message = GetMessage(MsgOutputFileSuccessfullyCreated, GeneratedTextLines.Count);
                 Logger.Log(LogSeverity.Information, message);
                 isValid = true;
             }

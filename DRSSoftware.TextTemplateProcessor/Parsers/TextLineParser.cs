@@ -55,13 +55,13 @@ internal class TextLineParser : DependencyCheckerBase, ITextLineParser
 
         if (!HasNoControlCode(textLine))
         {
-            string indentString = textLine[1..ControlCodeLength].Replace(AbsoluteIndexChar, RelativeRightIndentChar);
+            string indentString = textLine[1..ControlCodeLength].Replace(AbsoluteIndexString[0], RelativeRightIndentString[0]);
             _ = int.TryParse(indentString, out indent);
             isRelative = HasRelativeIndent(textLine);
             isOneTime = HasOneTimeIndent(textLine);
         }
 
-        text = textLine.Length < ControlCodeLength + 2
+        text = textLine.Length < SegmentNameStartColumn
             ? string.Empty
             : TokenExtractor.ExtractTokens(textLine[(ControlCodeLength + 1)..]);
 

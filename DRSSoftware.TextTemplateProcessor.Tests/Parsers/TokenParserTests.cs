@@ -8,9 +8,10 @@ public class TokenParserTests : MoqUnitTestBase
     // 4, where 1 represents a token start delimiter, 2 is an escaped token start delimiter, 3 is a
     // token end delimiter, and 4 is an escaped token end delimiter. The order of the numbers
     // indicates the order that the delimiters are found in the template text string.
+
     private const string EndDelimiter = DefaultTokenEndDelimiter;
-    private const string EscapedEndDelimiter = DefaultDelimiterEscapeString + DefaultTokenEndDelimiter;
-    private const string EscapedStartDelimiter = DefaultDelimiterEscapeString + DefaultTokenStartDelimiter;
+    private const string EscapedEndDelimiter = DefaultDelimiterEscapeCharacter + DefaultTokenEndDelimiter;
+    private const string EscapedStartDelimiter = DefaultDelimiterEscapeCharacter + DefaultTokenStartDelimiter;
     private const string StartDelimiter = DefaultTokenStartDelimiter;
 
     [Fact]
@@ -62,7 +63,7 @@ public class TokenParserTests : MoqUnitTestBase
     public void EscapeLastFoundTokenWhenNoTokenFound_ShouldDoNothing()
     {
         // Arrange
-        SetupDelimiterServiceMock(DefaultTokenStartDelimiter, DefaultTokenEndDelimiter, Space);
+        SetupDelimiterServiceMock(DefaultTokenStartDelimiter, DefaultTokenEndDelimiter, " ");
         TokenParser tokenParser = GetTokenParser();
         string expected = "text with no token strings";
         tokenParser.InitializeParser(expected, true);
@@ -110,7 +111,7 @@ public class TokenParserTests : MoqUnitTestBase
     public void GetNextToken_Case0_ShouldReturnEmptyTokenInfoAndUnchangedText()
     {
         // Arrange
-        SetupDelimiterServiceMock(DefaultTokenStartDelimiter, DefaultTokenEndDelimiter, Space);
+        SetupDelimiterServiceMock(DefaultTokenStartDelimiter, DefaultTokenEndDelimiter, " ");
         TokenParser tokenParser = GetTokenParser();
         string expected = "string with no delimiters";
         tokenParser.InitializeParser(expected, true);
@@ -1643,7 +1644,7 @@ public class TokenParserTests : MoqUnitTestBase
         TokenParser tokenParser = GetTokenParser();
         string startDelimiter = "<{{";
         string endDelimiter = "}>";
-        char escapeCharacter = '!';
+        string escapeCharacter = "!";
         string tokenName = "Token1";
         string tokenString = $"{startDelimiter}{tokenName}{endDelimiter}";
         string originalText = $"text {startDelimiter} text {tokenString} text {endDelimiter} {escapeCharacter}{startDelimiter} text {startDelimiter} text {startDelimiter} text";
@@ -1712,7 +1713,7 @@ public class TokenParserTests : MoqUnitTestBase
 
     private void SetupDelimiterServiceMock(string startDelimiter = DefaultTokenStartDelimiter,
                                            string endDelimiter = DefaultTokenEndDelimiter,
-                                           char escapeCharacter = DefaultDelimiterEscapeCharacter)
+                                           string escapeCharacter = DefaultDelimiterEscapeCharacter)
     {
         GetMock<IDelimiterService>()
             .SetupGet(x => x.StartDelimiter)
@@ -1723,11 +1724,11 @@ public class TokenParserTests : MoqUnitTestBase
             .Returns(endDelimiter)
             .Verifiable();
 
-        if (escapeCharacter is not Space)
+        if (escapeCharacter[0] is not Space)
         {
             GetMock<IDelimiterService>()
                 .SetupGet(x => x.DelimiterEscapeCharacter)
-                .Returns(escapeCharacter)
+                .Returns(escapeCharacter[0])
                 .Verifiable();
         }
     }

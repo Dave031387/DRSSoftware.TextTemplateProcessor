@@ -147,12 +147,14 @@ public class TemplateParserTests : MoqUnitTestBase
     public void CreateTemplateParserWithValidDependencies_ShouldSucceedAndInitializeState()
     {
         // Act
+        SetupInitialize(1);
         TemplateParser parser = GetTemplateParser();
 
         // Assert
         parser
             .Should()
             .NotBeNull();
+        VerifyMocks();
     }
 
     [Fact]
@@ -177,22 +179,22 @@ public class TemplateParserTests : MoqUnitTestBase
                                                       GetMock<ITemplateFileService>().Object,
                                                       GetMock<ITextLineParser>().Object);
 
-    private void SetupInitialize()
+    private void SetupInitialize(int expectedCount = 2)
     {
         GetMock<IFileHeaderParser>()
             .Setup(x => x.Initialize())
-            .Verifiable(Times.Once);
+            .Verifiable(Times.Exactly(expectedCount));
         GetMock<ILocater>()
             .Setup(x => x.Initialize())
-            .Verifiable(Times.Once);
+            .Verifiable(Times.Exactly(expectedCount));
         GetMock<ISegmentManager>()
             .Setup(x => x.Initialize())
-            .Verifiable(Times.Once);
+            .Verifiable(Times.Exactly(expectedCount));
         GetMock<ITemplateFileService>()
             .Setup(x => x.Initialize())
-            .Verifiable(Times.Once);
+            .Verifiable(Times.Exactly(expectedCount));
         GetMock<ITextLineParser>()
             .Setup(x => x.Initialize())
-            .Verifiable(Times.Once);
+            .Verifiable(Times.Exactly(expectedCount));
     }
 }

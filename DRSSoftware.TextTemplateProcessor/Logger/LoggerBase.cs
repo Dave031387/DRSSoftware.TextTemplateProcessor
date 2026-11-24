@@ -118,8 +118,8 @@ internal abstract class LoggerBase : DependencyCheckerBase, ILogger
     {
         CurrentOperationType = OperationType.Status;
         string msgSummaryLine1 = GetMessage(MsgProcessingSummary);
-        string msgSummaryLine2 = GetMessage(MsgErrorCount, ErrorCount.ToString());
-        string msgSummaryLine3 = GetMessage(MsgWarningCount, WarningCount.ToString());
+        string msgSummaryLine2 = GetMessage(MsgErrorCount, ErrorCount);
+        string msgSummaryLine3 = GetMessage(MsgWarningCount, WarningCount);
         Log(LogSeverity.Information, msgSummaryLine1);
         Log(LogSeverity.Information, msgSummaryLine2);
         Log(LogSeverity.Information, msgSummaryLine3);

@@ -79,7 +79,7 @@ public class TemplateFileServiceTests : MoqUnitTestBase
         string fileName = "fileName";
         List<string> templateLines = ["Line 1", "Line 2", "Line 3"];
         string message1 = GetMessage(MsgAttemptingToReadFile, fileName);
-        string message2 = GetMessage(MsgFileSuccessfullyRead, templateLines.Count.ToString());
+        string message2 = GetMessage(MsgFileSuccessfullyRead, templateLines.Count);
         GetMock<ILogger>()
             .Setup(x => x.PushOperationType(OperationType.Reading))
             .Verifiable(Times.Once);
@@ -233,7 +233,7 @@ public class TemplateFileServiceTests : MoqUnitTestBase
         string fileName = "fileName";
         List<string> expected = ["Line 1", "Line 2", "Line 3"];
         string message1 = GetMessage(MsgAttemptingToReadFile, fileName);
-        string message2 = GetMessage(MsgFileSuccessfullyRead, expected.Count.ToString());
+        string message2 = GetMessage(MsgFileSuccessfullyRead, expected.Count);
         GetMock<ILogger>()
             .Setup(x => x.PushOperationType(OperationType.Reading))
             .Verifiable(Times.Once);

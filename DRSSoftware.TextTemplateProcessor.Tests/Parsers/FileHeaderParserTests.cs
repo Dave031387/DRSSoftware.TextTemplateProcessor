@@ -153,7 +153,7 @@ public class FileHeaderParserTests : MoqUnitTestBase
         SetupDelimiterService();
         SetupOptionParserParse(EndDelimiterOption, invalidValue, true);
         GetMock<IDelimiterService>()
-            .Setup(x => x.SetTokenDelimiters(DefaultTokenStartDelimiter, invalidValue, DefaultDelimiterEscapeCharacter))
+            .Setup(x => x.SetTokenDelimiters(DefaultTokenStartDelimiter, invalidValue, DefaultDelimiterEscapeCharacter[0]))
             .Returns(false)
             .Verifiable(Times.Once);
         GetMock<ILogger>()
@@ -196,7 +196,7 @@ public class FileHeaderParserTests : MoqUnitTestBase
         SetupDelimiterService();
         SetupOptionParserParse(StartDelimiterOption, invalidValue, true);
         GetMock<IDelimiterService>()
-            .Setup(x => x.SetTokenDelimiters(invalidValue, DefaultTokenEndDelimiter, DefaultDelimiterEscapeCharacter))
+            .Setup(x => x.SetTokenDelimiters(invalidValue, DefaultTokenEndDelimiter, DefaultDelimiterEscapeCharacter[0]))
             .Returns(false)
             .Verifiable(Times.Once);
         GetMock<ILogger>()
@@ -276,7 +276,7 @@ public class FileHeaderParserTests : MoqUnitTestBase
         SetupDelimiterService();
         SetupOptionParserParse(EndDelimiterOption, value1, true);
         GetMock<IDelimiterService>()
-            .Setup(x => x.SetTokenDelimiters(DefaultTokenStartDelimiter, value1, DefaultDelimiterEscapeCharacter))
+            .Setup(x => x.SetTokenDelimiters(DefaultTokenStartDelimiter, value1, DefaultDelimiterEscapeCharacter[0]))
             .Returns(true)
             .Verifiable(Times.Once);
         SetupOptionParserParse(EndDelimiterOption, value2, true);
@@ -303,7 +303,7 @@ public class FileHeaderParserTests : MoqUnitTestBase
         SetupDelimiterService();
         SetupOptionParserParse(StartDelimiterOption, value1, true);
         GetMock<IDelimiterService>()
-            .Setup(x => x.SetTokenDelimiters(value1, DefaultTokenEndDelimiter, DefaultDelimiterEscapeCharacter))
+            .Setup(x => x.SetTokenDelimiters(value1, DefaultTokenEndDelimiter, DefaultDelimiterEscapeCharacter[0]))
             .Returns(true)
             .Verifiable(Times.Once);
         SetupOptionParserParse(StartDelimiterOption, value2, true);
@@ -400,7 +400,7 @@ public class FileHeaderParserTests : MoqUnitTestBase
         SetupDelimiterService();
         SetupOptionParserParse(EndDelimiterOption, endDelimiter, true);
         GetMock<IDelimiterService>()
-            .Setup(x => x.SetTokenDelimiters(DefaultTokenStartDelimiter, endDelimiter, DefaultDelimiterEscapeCharacter))
+            .Setup(x => x.SetTokenDelimiters(DefaultTokenStartDelimiter, endDelimiter, DefaultDelimiterEscapeCharacter[0]))
             .Returns(true)
             .Verifiable(Times.Once);
         FileHeaderParser parser = GetFileHeaderParser();
@@ -421,7 +421,7 @@ public class FileHeaderParserTests : MoqUnitTestBase
         SetupDelimiterService();
         SetupOptionParserParse(StartDelimiterOption, startDelimiter, true);
         GetMock<IDelimiterService>()
-            .Setup(x => x.SetTokenDelimiters(startDelimiter, DefaultTokenEndDelimiter, DefaultDelimiterEscapeCharacter))
+            .Setup(x => x.SetTokenDelimiters(startDelimiter, DefaultTokenEndDelimiter, DefaultDelimiterEscapeCharacter[0]))
             .Returns(true)
             .Verifiable(Times.Once);
         FileHeaderParser parser = GetFileHeaderParser();
@@ -477,7 +477,7 @@ public class FileHeaderParserTests : MoqUnitTestBase
             .Verifiable(Times.Once);
         delimiterService
             .SetupGet(x => x.DelimiterEscapeCharacter)
-            .Returns(DefaultDelimiterEscapeCharacter)
+            .Returns(DefaultDelimiterEscapeCharacter[0])
             .Verifiable(Times.Once);
     }
 

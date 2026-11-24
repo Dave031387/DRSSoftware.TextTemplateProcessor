@@ -35,7 +35,7 @@ public class DelimiterServiceTests : MoqUnitTestBase
             .Be(DefaultTokenStartDelimiter);
         actual.DelimiterEscapeCharacter
             .Should()
-            .Be(DefaultDelimiterEscapeCharacter);
+            .Be(DefaultDelimiterEscapeCharacter[0]);
     }
 
     [Fact]
@@ -45,7 +45,7 @@ public class DelimiterServiceTests : MoqUnitTestBase
         string altStartDelimiter = "{{";
         string altEndDelimiter = "}}";
         char altEscapeCharacter = '!';
-        string message = GetMessage(MsgNewTokenDelimiterValuesSet, altStartDelimiter, altEndDelimiter, altEscapeCharacter.ToString());
+        string message = GetMessage(MsgNewTokenDelimiterValuesSet, altStartDelimiter, altEndDelimiter, altEscapeCharacter);
         GetMock<ILogger>()
             .Setup(x => x.PushOperationType(OperationType.Setup))
             .Verifiable(Times.Once);
@@ -70,7 +70,7 @@ public class DelimiterServiceTests : MoqUnitTestBase
             .Be(DefaultTokenEndDelimiter);
         delimiterService.DelimiterEscapeCharacter
             .Should()
-            .Be(DefaultDelimiterEscapeCharacter);
+            .Be(DefaultDelimiterEscapeCharacter[0]);
         VerifyMocks();
     }
 
@@ -81,7 +81,7 @@ public class DelimiterServiceTests : MoqUnitTestBase
         string altStartDelimiter = "{{";
         string altEndDelimiter = "}}";
         char altEscapeCharacter = '!';
-        string message1 = GetMessage(MsgNewTokenDelimiterValuesSet, altStartDelimiter, altEndDelimiter, altEscapeCharacter.ToString());
+        string message1 = GetMessage(MsgNewTokenDelimiterValuesSet, altStartDelimiter, altEndDelimiter, altEscapeCharacter);
         string message2 = GetMessage(MsgTokenDelimitersHaveBeenReset);
         GetMock<ILogger>()
             .Setup(x => x.PushOperationType(OperationType.Setup))
@@ -110,7 +110,7 @@ public class DelimiterServiceTests : MoqUnitTestBase
             .Be(DefaultTokenEndDelimiter);
         delimiterService.DelimiterEscapeCharacter
             .Should()
-            .Be(DefaultDelimiterEscapeCharacter);
+            .Be(DefaultDelimiterEscapeCharacter[0]);
         VerifyMocks();
     }
 
@@ -121,7 +121,7 @@ public class DelimiterServiceTests : MoqUnitTestBase
         string startDelimiter = "{{";
         string endDelimiter = "}}";
         char escapeCharacter = '!';
-        string message = GetMessage(MsgNewTokenDelimiterValuesSet, startDelimiter, endDelimiter, escapeCharacter.ToString());
+        string message = GetMessage(MsgNewTokenDelimiterValuesSet, startDelimiter, endDelimiter, escapeCharacter);
         AssertSetTokenDelimiters(message, startDelimiter, endDelimiter, escapeCharacter, LogSeverity.Information);
     }
 
@@ -132,7 +132,7 @@ public class DelimiterServiceTests : MoqUnitTestBase
         string startDelimiter = "{{";
         string endDelimiter = "!";
         char escapeCharacter = '!';
-        string message = GetMessage(MsgTokenEndAndTokenEscapeAreSame, endDelimiter, escapeCharacter.ToString());
+        string message = GetMessage(MsgTokenEndAndTokenEscapeAreSame, endDelimiter, escapeCharacter);
         AssertSetTokenDelimiters(message, startDelimiter, endDelimiter, escapeCharacter, LogSeverity.Error);
     }
 
@@ -165,7 +165,9 @@ public class DelimiterServiceTests : MoqUnitTestBase
         string startDelimiter = "}}";
         string endDelimiter = "}}";
         char escapeCharacter = '!';
-        string message = GetMessage(MsgTokenStartAndTokenEndAreSame, startDelimiter, endDelimiter);
+        string message = GetMessage(MsgTokenStartAndTokenEndAreSame,
+                                    startDelimiter,
+                                    endDelimiter);
         AssertSetTokenDelimiters(message, startDelimiter, endDelimiter, escapeCharacter, LogSeverity.Error);
     }
 
@@ -176,7 +178,9 @@ public class DelimiterServiceTests : MoqUnitTestBase
         string startDelimiter = "!";
         string endDelimiter = "}}";
         char escapeCharacter = '!';
-        string message = GetMessage(MsgTokenStartAndTokenEscapeAreSame, startDelimiter, escapeCharacter.ToString());
+        string message = GetMessage(MsgTokenStartAndTokenEscapeAreSame,
+                                    startDelimiter,
+                                    escapeCharacter);
         AssertSetTokenDelimiters(message, startDelimiter, endDelimiter, escapeCharacter, LogSeverity.Error);
     }
 
@@ -190,7 +194,10 @@ public class DelimiterServiceTests : MoqUnitTestBase
         string startDelimiter = "{{" + caseFlag;
         string endDelimiter = "}}";
         char escapeCharacter = '!';
-        string message = GetMessage(MsgTokenStartDelimiterWarning);
+        string message = GetMessage(MsgTokenStartDelimiterWarning,
+                                    LowercaseFlag,
+                                    UppercaseFlag,
+                                    SameCaseFlag);
         AssertSetTokenDelimiters(message, startDelimiter, endDelimiter, escapeCharacter, LogSeverity.Warning);
     }
 
@@ -231,7 +238,7 @@ public class DelimiterServiceTests : MoqUnitTestBase
 
         if (logSeverity is LogSeverity.Warning)
         {
-            string msg = GetMessage(MsgNewTokenDelimiterValuesSet, startDelimiter, endDelimiter, escapeCharacter.ToString());
+            string msg = GetMessage(MsgNewTokenDelimiterValuesSet, startDelimiter, endDelimiter, escapeCharacter);
             GetMock<ILogger>()
                 .Setup(x => x.Log(LogSeverity.Information, msg))
                 .Verifiable(Times.Once);
@@ -256,7 +263,7 @@ public class DelimiterServiceTests : MoqUnitTestBase
                 .Be(DefaultTokenEndDelimiter);
             delimiterService.DelimiterEscapeCharacter
                 .Should()
-                .Be(DefaultDelimiterEscapeCharacter);
+                .Be(DefaultDelimiterEscapeCharacter[0]);
         }
         else
         {

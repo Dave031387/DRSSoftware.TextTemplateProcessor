@@ -13,11 +13,6 @@ namespace DRSSoftware.TextTemplateProcessor.Core;
 internal static class GlobalConstants
 {
     /// <summary>
-    /// Character value used to represent an absolute indent.
-    /// </summary>
-    public const char AbsoluteIndexChar = '=';
-
-    /// <summary>
     /// String value used to represent an absolute indent.
     /// </summary>
     public const string AbsoluteIndexString = "=";
@@ -46,13 +41,7 @@ internal static class GlobalConstants
     /// cref="DefaultTokenEndDelimiter"/> when they should be treated as normal text rather than the
     /// start and end delimiters of a token.
     /// </remarks>
-    public const char DefaultDelimiterEscapeCharacter = '\\';
-
-    /// <summary>
-    /// A constant string representation of <see cref="DefaultDelimiterEscapeCharacter"/>. Used
-    /// mainly to simplify some unit test setups.
-    /// </summary>
-    public const string DefaultDelimiterEscapeString = "\\";
+    public const string DefaultDelimiterEscapeCharacter = "\\";
 
     /// <summary>
     /// The default <see cref="OperationType"/> that is used when creating a new instance of the
@@ -125,19 +114,9 @@ internal static class GlobalConstants
     public const char LowercaseFlag = '-';
 
     /// <summary>
-    /// The string representation of the lowercase flag.
-    /// </summary>
-    public const string LowercaseString = "-";
-
-    /// <summary>
     /// The maximum supported indent value.
     /// </summary>
     public const int MaxIndentValue = 9;
-
-    /// <summary>
-    /// A string representation of the maximum indent value.
-    /// </summary>
-    public const string MaxIndentValueString = "9";
 
     /// <summary>
     /// The maximum supported tab size value.
@@ -145,19 +124,9 @@ internal static class GlobalConstants
     public const int MaxTabSize = 9;
 
     /// <summary>
-    /// A string representation of the maximum tab size value.
-    /// </summary>
-    public const string MaxTabSizeString = "9";
-
-    /// <summary>
     /// The minimum supported indent value.
     /// </summary>
     public const int MinIndentValue = -9;
-
-    /// <summary>
-    /// A string representation of the minimum indent value.
-    /// </summary>
-    public const string MinIndentValueString = "-9";
 
     /// <summary>
     /// The minimum supported tab size value.
@@ -165,9 +134,9 @@ internal static class GlobalConstants
     public const int MinTabSize = 1;
 
     /// <summary>
-    /// A string representation of the minimum tab size value.
+    /// The minimum length that a valid line can be in a text template file.
     /// </summary>
-    public const string MinTabSizeString = "1";
+    public const int MinTemplateLineLength = ControlCodeLength + 1;
 
     /// <summary>
     /// Placeholder value indicating the absence of a control code.
@@ -235,11 +204,6 @@ internal static class GlobalConstants
     public const string RelativeLeftIndentString = "-";
 
     /// <summary>
-    /// Character value used to indicate a relative right indent.
-    /// </summary>
-    public const char RelativeRightIndentChar = '+';
-
-    /// <summary>
     /// String value used to indicate a relative right indent.
     /// </summary>
     public const string RelativeRightIndentString = "+";
@@ -249,11 +213,6 @@ internal static class GlobalConstants
     /// when it is inserted into the output text.
     /// </summary>
     public const char SameCaseFlag = '=';
-
-    /// <summary>
-    /// The string representation of the same case flag.
-    /// </summary>
-    public const string SameCaseString = "=";
 
     /// <summary>
     /// The string that is used to indicate the start of a segment header line in a text template file.
@@ -266,10 +225,10 @@ internal static class GlobalConstants
     public const string SegmentHeaderOptionGroup = "segment header";
 
     /// <summary>
-    /// A string value representing the column position where the segment name must start on a
+    /// An integer value representing the column position where the segment name must start on a
     /// segment header line.
     /// </summary>
-    public const string SegmentNameStartColumn = "5";
+    public const int SegmentNameStartColumn = ControlCodeLength + 2;
 
     /// <summary>
     /// The search pattern that is used in locating the solution file with the ".sln" file extension.
@@ -306,11 +265,6 @@ internal static class GlobalConstants
     /// to uppercase when it is inserted into the output text.
     /// </summary>
     public const char UppercaseFlag = '+';
-
-    /// <summary>
-    /// The string representation of the uppercase flag.
-    /// </summary>
-    public const string UppercaseString = "+";
 
     /// <summary>
     /// The string that is used for denoting warning severity level in a log message.

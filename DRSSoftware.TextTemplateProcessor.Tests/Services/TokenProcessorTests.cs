@@ -720,7 +720,7 @@ public class TokenProcessorTests : MoqUnitTestBase
             .Verifiable(Times.AtLeastOnce);
         delimiterServiceMock
             .SetupGet(x => x.DelimiterEscapeCharacter)
-            .Returns(DefaultDelimiterEscapeCharacter)
+            .Returns(DefaultDelimiterEscapeCharacter[0])
             .Verifiable(Times.AtLeastOnce);
     }
 }

@@ -187,7 +187,9 @@ internal class IndentProcessor : DependencyCheckerBase, IIndentProcessor
             if (indentValue is < MinIndentValue or > MaxIndentValue)
             {
                 string message = GetMessage(MsgIndentValueOutOfRange,
-                                            indentValue.ToString());
+                                            indentValue,
+                                            MinIndentValue,
+                                            MaxIndentValue);
                 Logger.Log(LogSeverity.Error, message);
             }
             else
@@ -231,7 +233,9 @@ internal class IndentProcessor : DependencyCheckerBase, IIndentProcessor
             if (tabValue is < MinTabSize or > MaxTabSize)
             {
                 string message = GetMessage(MsgTabSizeValueOutOfRange,
-                                            tabValue.ToString());
+                                            tabValue,
+                                            MinTabSize,
+                                            MaxTabSize);
                 Logger.Log(LogSeverity.Error, message);
             }
             else
@@ -283,7 +287,7 @@ internal class IndentProcessor : DependencyCheckerBase, IIndentProcessor
 
             if (TabSize != tabSize)
             {
-                string message = GetMessage(MsgTabSizeHasBeenReset, TabSize.ToString(), tabSize.ToString());
+                string message = GetMessage(MsgTabSizeHasBeenReset, TabSize, tabSize);
                 TabSize = tabSize;
                 Logger.Log(LogSeverity.Information, OperationType.Setup, message);
             }
@@ -316,16 +320,16 @@ internal class IndentProcessor : DependencyCheckerBase, IIndentProcessor
         if (tabSize < MinTabSize)
         {
             string message = GetMessage(MsgTabSizeTooSmall,
-                                        tabSize.ToString(),
-                                        MinTabSize.ToString());
+                                        tabSize,
+                                        MinTabSize);
             Logger.Log(LogSeverity.Warning, message);
             TabSize = MinTabSize;
         }
         else if (tabSize > MaxTabSize)
         {
             string message = GetMessage(MsgTabSizeTooLarge,
-                                        tabSize.ToString(),
-                                        MaxTabSize.ToString());
+                                        tabSize,
+                                        MaxTabSize);
             Logger.Log(LogSeverity.Warning, message);
             TabSize = MaxTabSize;
         }
@@ -334,8 +338,8 @@ internal class IndentProcessor : DependencyCheckerBase, IIndentProcessor
             int oldValue = TabSize;
             TabSize = tabSize;
             string message = GetMessage(MsgNewTabSizeValueSet,
-                                        oldValue.ToString(),
-                                        TabSize.ToString());
+                                        oldValue,
+                                        TabSize);
             Logger.Log(LogSeverity.Information, message);
         }
 

@@ -32,25 +32,26 @@ internal static class MessageService
     // internal const string MsgErrorWhenLocatingSolutionDirectory = "An unexpected error occurred while trying to locate the solution directory. {0}";
     // internal const string MsgErrorWhileConstructingFilePath = "An error occurred when trying to construct the output file path. {0}";
     internal const string MsgFileHeaderHasNoOptions = "The file header has no options specified and will therefore be ignored.";
+    internal const string MsgFileHeaderMustComeFirst = "The file header must appear before the first segment header and any segment text lines. It will be ignored.";
     internal const string MsgFileNotFound = "The specified file was not found. Full file path: {0}";
     internal const string MsgFilePathIsEmptyOrWhitespace = "The file path must not be empty or contain only whitespace.";
     internal const string MsgFileSuccessfullyRead = "The text template file has been successfully read. Total line count: {0}";
     internal const string MsgFirstTimeIndentHasBeenTruncated = "The calculated first time indent for segment {0} went negative. It will be set to zero.";
-    internal const string MsgFirstTimeIndentIsInvalid = $"The {FirstTimeIndentOption} option value specified on the {{0}} segment header must be a number between {MinIndentValueString} and {MaxIndentValueString} but the specified value was {{1}}.";
+    internal const string MsgFirstTimeIndentIsInvalid = $"The {FirstTimeIndentOption} option value specified on the {{0}} segment header must be a number between {{2}} and {{3}} but the specified value was {{1}}.";
     internal const string MsgFirstTimeIndentSetToZero = $"A {FirstTimeIndentOption} option value of zero was specified on the {{0}} segment header. This value disables the first time indent processing for the segment.";
     internal const string MsgFoundDuplicateFileHeaderOption = "The option \"{0}\" appears more than once on the file header. Only the first occurrence will be used.";
     internal const string MsgFoundDuplicateSegmentHeaderOption = "The option \"{1}\" appears more than once on the {0} segment header. Only the first occurrence will be used.";
     // internal const string MsgFoundDuplicateSegmentName = "Segment name {0} appears more than once in the template file. Only the first occurrence will be used.";
     // internal const string MsgFoundSolutionDirectoryPath = "The solution directory path was determined to be: {0}";
-    // internal const string MsgFourthCharacterMustBeBlank = "The fourth character of each template line should be blank. Template line was: \"{0}\"";
+    internal const string MsgFourthCharacterMustBeBlank = "The following template line will be discarded because it isn't at least {1} characters long or it doesn't contain a space in column {1}: \"{0}\"";
     // internal const string MsgFullPathCannotBeDetermined = "The full path can't be determined because the solution directory path is unknown.";
     // internal const string MsgGeneratedTextHasBeenReset = "The generated text cache for template file \"{0}\" has been reset.";
     internal const string MsgGeneratedTextIsEmpty = "The generated text is empty. The output file will not be written to.";
     internal const string MsgGeneratedTextNotWritten = "A request has been made to clear the generated text before it has been written to an output file.";
     // internal const string MsgGeneratedTextIsNull = "Unable to write to the output file because the generated text is null.";
     internal const string MsgIndentValueMustBeValidNumber = "The specified indent value \"{0}\" is not a valid integer value.";
-    internal const string MsgIndentValueOutOfRange = $"The indent value must be a number between {MinIndentValueString} and {MaxIndentValueString} but the specified value was {{0}}.";
-    // internal const string MsgInvalidControlCode = "The following template line doesn't begin with a valid control code: \"{0}\"";
+    internal const string MsgIndentValueOutOfRange = "The indent value must be a number between {1} and {2} but the specified value was {0}.";
+    internal const string MsgInvalidControlCode = "The following template line doesn't begin with a valid control code and will be discarded: \"{0}\"";
     internal const string MsgInvalidDirectoryCharacters = "The directory path contains invalid characters.";
     internal const string MsgInvalidFileHeaderTabSizeOption = $"The {TabSizeOption} option value \"{{0}}\" specified on the file header is invalid and will be ignored.";
     internal const string MsgInvalidFileNameCharacters = "The file name contains invalid characters.";
@@ -61,13 +62,13 @@ internal static class MessageService
     internal const string MsgInvalidTokenDelimitersSpecifiedOnFileHeader = "One or more errors were found with the token delimiter values specified on the file header. The current token delimiter values will be used instead.";
     internal const string MsgLeftIndentHasBeenTruncated = "The calculated line indent for segment {0} went negative. It will be set to zero.";
     // internal const string MsgLoadingTemplateFile = "Loading template file \"{0}\"";
-    // internal const string MsgMinimumLineLengthInTemplateFileIs3 = "All lines in the template file must be at least 3 characters long.";
     // internal const string MsgMissingDirectoryPath = "The specified file path doesn't contain a valid directory path.";
     internal const string MsgMissingFileName = "The file name is missing from the file path.";
     internal const string MsgMissingTokenEndDelimiter = "A token start delimiter has been found but there are no more end delimiters. All remaining start delimiters will be escaped.";
     internal const string MsgMissingTokenName = "Found token start and end delimiters with no token name between them. The token will be ignored.";
     internal const string MsgMissingTokenStartDelimiter = "A token end delimiter has been found but there are no more start delimiters. All remaining end delimiters will be escaped.";
     internal const string MsgMoreTextAddedAfterFileWasWritten = "More text has been added to the generated text after the output file has already been written.";
+    internal const string MsgMoreThanOneFileHeader = "The text template file has more than one file header line. Only the first one will be used.";
     // internal const string MsgMultipleLevelsOfPadSegments = "Segment {1} specified as a pad segment for segment {0} also specifies a pad segment. Multiple levels of pad segments are not allowed.";
     // internal const string MsgNextLoadRequestBeforeFirstIsWritten = "Template file \"{0}\" is being loaded before any output was written for template file \"{1}\"";
     // internal const string MsgNoTextLinesFollowingSegmentHeader = "The header line for segment {0} must be followed by one or more valid text lines. The segment will be ignored.";
@@ -83,6 +84,7 @@ internal static class MessageService
     internal const string MsgOutputFileWillBeOverwritten = "The output file already exists and will be overwritten.";
     internal const string MsgPadSegmentMustBeDefinedEarlier = "The pad segment name {1} referenced by segment {0} must be defined earlier in the template file. The pad segment will be ignored.";
     internal const string MsgPadSegmentNameSameAsSegmentName = "The pad segment name and segment header name for segment {0} are identical. The pad segment name will be ignored.";
+    internal const string MsgParsingCompletedSuccessfully = "Parsing has completed successfully.";
     // internal const string MsgPathIsNotRooted = "Expected a rooted path, but found \"{0}\"";
     // internal const string MsgProcessingSegment = "Processing segment {0}...";
     internal const string MsgProcessingSummary = "Processing summary:";
@@ -90,16 +92,17 @@ internal static class MessageService
     internal const string MsgSegmentHasBeenAdded = "Segment {0} has been added to the control dictionary.";
     internal const string MsgSegmentHasBeenReset = "Segment {0} has been reset.";
     // internal const string MsgSegmentHasNoTextLines = "Tried to generate segment {0} but the segment has no text lines.";
-    internal const string MsgSegmentNameIsMissing = $"The segment header must contain a valid segment name starting in column {SegmentNameStartColumn}. The segment will be ignored.";
+    internal const string MsgSegmentNameIsMissing = "The segment header must contain a valid segment name starting in column {0}. The segment will be ignored.";
     // internal const string MsgSegmentNameIsNullOrWhitespace = "The segment name passed into the GenerateSegment method was null, empty or whitespace.";
     internal const string MsgSegmentWillBeRemoved = "Segment {0} will be removed from the control dictionary.";
+    internal const string MsgStartingToParseFile = "Starting to parse template file \"{0}\"";
     internal const string MsgTabSizeHasBeenReset = "The tab size value has been reset from {0} back to {1}.";
     internal const string MsgTabSizeTooLarge = "The requested tab size {0} is too large. The maximum value {1} will be used.";
     internal const string MsgTabSizeTooSmall = "The requested tab size {0} is too small. The minimum value {1} will be used.";
     internal const string MsgTabSizeValueMustBeValidNumber = "The specified tab size value \"{0}\" is not a valid integer value.";
-    internal const string MsgTabSizeValueOutOfRange = $"The tab size must be an integer between {MinTabSizeString} and {MaxTabSizeString}, but the specified value was {{0}}.";
+    internal const string MsgTabSizeValueOutOfRange = "The tab size must be an integer between {1} and {2}, but the specified value was {0}.";
     internal const string MsgTemplateFileCouldNotBeRead = "The template file could not be read. Reason: {0}";
-    // internal const string MsgTemplateFileIsEmpty = "This template file is empty: {0}";
+    internal const string MsgTemplateFileIsEmpty = "This template file \"{0}\" is empty, or an error occurred while reading the file. There is nothing to parse.";
     // internal const string MsgTemplateFilePathNotSet = "Unable to load the template file because a valid file path has not been set.";
     // internal const string MsgTemplateHasBeenReset = "The environment for template file \"{0}\" has been reset.";
     internal const string MsgTextItemSegmentNameInvalid = $"The segment name associated with the {nameof(TextItem)} object must not be null, empty, or whitespace.";
@@ -119,7 +122,7 @@ internal static class MessageService
     internal const string MsgTokenStartAndTokenEscapeAreSame = "The token start delimiter \"{0}\" must not be the same as the same as the token escape character '{1}'.";
     internal const string MsgTokenStartDelimiterIsEmpty = "The token start delimiter must not be empty or whitespace.";
     internal const string MsgTokenStartDelimiterIsNull = "The token start delimiter must not be null.";
-    internal const string MsgTokenStartDelimiterWarning = $"Ending the token start delimiter with '{LowercaseString}', '{UppercaseString}' or '{SameCaseString}' may cause confusion and lead to unexpected errors.";
+    internal const string MsgTokenStartDelimiterWarning = "Ending the token start delimiter with '{0}', '{1}' or '{2}' may cause confusion and lead to unexpected errors.";
     internal const string MsgTokenStartDelimiterWillBeEscaped = "An issue has been detected with a token start delimiter. The delimiter will be escaped.";
     internal const string MsgTokenValueIsEmpty = "Found token \"{1}\" with no assigned value while generating segment {0}.";
     internal const string MsgTokenWithEmptyValue = "Possibly unintended attempt to assign an empty string to token \"{1}\" in segment {0}.";
@@ -146,6 +149,7 @@ internal static class MessageService
     // internal const string MsgUnableToWriteGeneratedTextToFile = "Unable to write generated text to file. Reason: {0}";
     internal const string MsgUnableToWriteToTextFile = "An unexpected exception occurred while attempting to write to text file: \"{0}\"";
     internal const string MsgUncPathIsNotSupported = "UNC paths are not supported in this version of the Text Template Processor. The specified path was \"{0}\"";
+    internal const string MsgUnexpectedExceptionWhileParsing = "An unexpected exception was thrown while parsing file \"{0}\". Reason: {1}";
     // internal const string MsgUnknownSegmentName = "A request was made to generate segment {0} but that segment wasn't found in the template file.";
     internal const string MsgUnknownHeaderOptionFound = "An unknown option \"{1}\" was found on the {0}. It will be ignored.";
     internal const string MsgUnknownTokenName = "Invalid attempt to assign a replacement value to unknown token name \"{1}\" in segment {0}. The token will be ignored.";
@@ -155,27 +159,26 @@ internal static class MessageService
 
     /// <summary>
     /// Format the given <paramref name="message"/> composite string by replacing each format item
-    /// with the given <paramref name="strings"/>.
+    /// with the given <paramref name="args"/>.
     /// </summary>
     /// <remarks>
-    /// This method assumes that if the given <paramref name="message"/> contains no more than 10
-    /// format items numbered sequentially starting with 0 and that each format item appears only
-    /// once in the message string. If this is not the case, the message may be formatted
-    /// incorrectly or an exception may be thrown.
+    /// This method assumes that the given <paramref name="message"/> contains no more than 10
+    /// format items numbered sequentially starting with 0. If this is not the case, the message may
+    /// be formatted incorrectly or an exception may be thrown.
     /// </remarks>
     /// <param name="message">
     /// A composite string containing zero or more format items which are to be replaced by the
-    /// strings contained in <paramref name="strings" />.
+    /// string representation of the objects contained in <paramref name="args" />.
     /// </param>
-    /// <param name="strings">
-    /// An array of string values to be substituted for the corresponding format items found in
+    /// <param name="args">
+    /// An array of objects to be substituted for the corresponding format items found in
     /// <paramref name="message" />.
     /// </param>
     /// <returns>
     /// The formatted version of <paramref name="message"/> having all format items replaced with
-    /// the appropriate string values.
+    /// the appropriate values.
     /// </returns>
-    internal static string GetMessage(string message, params string?[] strings)
+    internal static string GetMessage(string message, params object?[] args)
     {
         int numberOfFormatItems = GetFormatItemCount(message);
 
@@ -184,17 +187,17 @@ internal static class MessageService
             return message;
         }
 
-        strings ??= [null];
-        int numberOfStrings = strings.Length;
-        string[] args = new string[numberOfFormatItems];
+        args ??= [];
+        int numberOfArgs = args.Length;
+        object[] formatItems = new object[numberOfFormatItems];
 
         for (int i = 0; i < numberOfFormatItems; i++)
         {
-            args[i] = i < numberOfStrings
-                ? strings[i] ?? NullStringValue
+            formatItems[i] = i < numberOfArgs
+                ? args[i] ?? NullStringValue
                 : NullStringValue;
         }
 
-        return string.Format(message, args);
+        return string.Format(message, formatItems);
     }
 }

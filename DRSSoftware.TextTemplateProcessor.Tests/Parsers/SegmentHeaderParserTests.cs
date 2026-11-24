@@ -188,7 +188,7 @@ public class SegmentHeaderParserTests : MoqUnitTestBase
             SegmentName = UnknownSegmentName,
             TabSize = 0
         };
-        string expectedMessage = GetMessage(MsgSegmentNameIsMissing);
+        string expectedMessage = GetMessage(MsgSegmentNameIsMissing, SegmentNameStartColumn);
         GetMock<IOptionParser>()
             .Setup(x => x.GetOptionStrings(segmentHeaderLine))
             .Returns(optionStrings)
@@ -290,7 +290,7 @@ public class SegmentHeaderParserTests : MoqUnitTestBase
             SegmentName = segmentName,
             TabSize = 0
         };
-        string expectedMessage = GetMessage(MsgFirstTimeIndentIsInvalid, segmentName, stringValue);
+        string expectedMessage = GetMessage(MsgFirstTimeIndentIsInvalid, segmentName, stringValue, MinIndentValue, MaxIndentValue);
         SetupControlItemBuilderMock(expected);
         SetupOptionParserParse(segmentName, FirstTimeIndentOption, stringValue, true);
         GetMock<IIndentProcessor>()

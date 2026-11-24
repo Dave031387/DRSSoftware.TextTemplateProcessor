@@ -110,7 +110,7 @@ internal class DelimiterService : DependencyCheckerBase, IDelimiterService
             DelimiterEscapeCharacter = delimiterEscapeCharacter;
             EndDelimiter = endDelimiter;
             StartDelimiter = startDelimiter;
-            string message = GetMessage(MsgNewTokenDelimiterValuesSet, StartDelimiter, EndDelimiter, DelimiterEscapeCharacter.ToString());
+            string message = GetMessage(MsgNewTokenDelimiterValuesSet, StartDelimiter, EndDelimiter, DelimiterEscapeCharacter);
             Logger.Log(LogSeverity.Information, message);
             isValid = true;
         }
@@ -127,7 +127,7 @@ internal class DelimiterService : DependencyCheckerBase, IDelimiterService
     [MemberNotNull(nameof(EndDelimiter), nameof(StartDelimiter))]
     private void SetTokenDelimitersToDefaultValues()
     {
-        DelimiterEscapeCharacter = DefaultDelimiterEscapeCharacter;
+        DelimiterEscapeCharacter = DefaultDelimiterEscapeCharacter[0];
         EndDelimiter = DefaultTokenEndDelimiter;
         StartDelimiter = DefaultTokenStartDelimiter;
     }
@@ -192,7 +192,7 @@ internal class DelimiterService : DependencyCheckerBase, IDelimiterService
         {
             string message = GetMessage(MsgTokenStartAndTokenEscapeAreSame,
                                         startDelimiter,
-                                        delimiterEscapeCharacter.ToString());
+                                        delimiterEscapeCharacter);
             Logger.Log(LogSeverity.Error, message);
             return false;
         }
@@ -201,14 +201,17 @@ internal class DelimiterService : DependencyCheckerBase, IDelimiterService
         {
             string message = GetMessage(MsgTokenEndAndTokenEscapeAreSame,
                                         endDelimiter,
-                                        delimiterEscapeCharacter.ToString());
+                                        delimiterEscapeCharacter);
             Logger.Log(LogSeverity.Error, message);
             return false;
         }
 
         if (startDelimiter[^1] is LowercaseFlag or UppercaseFlag or SameCaseFlag)
         {
-            string message = GetMessage(MsgTokenStartDelimiterWarning);
+            string message = GetMessage(MsgTokenStartDelimiterWarning,
+                                        LowercaseFlag,
+                                        UppercaseFlag,
+                                        SameCaseFlag);
             Logger.Log(LogSeverity.Warning, message);
         }
 

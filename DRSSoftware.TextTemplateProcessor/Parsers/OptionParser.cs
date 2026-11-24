@@ -44,7 +44,7 @@ internal class OptionParser : DependencyCheckerBase, IOptionParser
     /// <returns>
     /// An array of option strings.
     /// </returns>
-    public string[] GetOptionStrings(string templateLine) => templateLine.Length < ControlCodeLength + 2
+    public string[] GetOptionStrings(string templateLine) => templateLine.Length < SegmentNameStartColumn
         ? []
         : templateLine[(ControlCodeLength + 1)..].Split(OptionSeparatorChars, StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
 

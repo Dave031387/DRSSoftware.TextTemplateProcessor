@@ -94,7 +94,7 @@ internal class SegmentHeaderParser : DependencyCheckerBase, ISegmentHeaderParser
         }
         else
         {
-            string message = GetMessage(MsgSegmentNameIsMissing);
+            string message = GetMessage(MsgSegmentNameIsMissing, SegmentNameStartColumn);
             Logger.Log(LogSeverity.Error, message);
             firstOptionIndex = 0;
             segmentName = UnknownSegmentName;
@@ -215,7 +215,9 @@ internal class SegmentHeaderParser : DependencyCheckerBase, ISegmentHeaderParser
         {
             string message = GetMessage(MsgFirstTimeIndentIsInvalid,
                                         segmentName,
-                                        optionValue);
+                                        optionValue,
+                                        MinIndentValue,
+                                        MaxIndentValue);
             Logger.Log(LogSeverity.Error, message);
         }
     }

@@ -16,7 +16,7 @@ public class GeneratedFileServiceTests : MoqUnitTestBase
         int expectedLineCount = 2;
         List<string> textLines = [text];
         string message1 = GetMessage(MsgWritingGeneratedTextFile, filePath);
-        string message2 = GetMessage(MsgOutputFileSuccessfullyCreated, initialLineCount.ToString());
+        string message2 = GetMessage(MsgOutputFileSuccessfullyCreated, initialLineCount);
         string message3 = GetMessage(MsgMoreTextAddedAfterFileWasWritten);
         GetMock<ILogger>()
             .Setup(x => x.PushOperationType(OperationType.Writing))
@@ -114,7 +114,7 @@ public class GeneratedFileServiceTests : MoqUnitTestBase
         int lineCount = 2;
         List<string> textLines = [text, text];
         string message1 = GetMessage(MsgWritingGeneratedTextFile, filePath);
-        string message2 = GetMessage(MsgOutputFileSuccessfullyCreated, lineCount.ToString());
+        string message2 = GetMessage(MsgOutputFileSuccessfullyCreated, lineCount);
         GetMock<ILogger>()
             .Setup(x => x.PushOperationType(OperationType.Writing))
             .Verifiable(Times.Once);
@@ -439,7 +439,7 @@ public class GeneratedFileServiceTests : MoqUnitTestBase
         List<string> textLines = [text, text];
         string message1 = GetMessage(MsgWritingGeneratedTextFile, filePath);
         string message2 = GetMessage(MsgOutputFileWillBeOverwritten);
-        string message3 = GetMessage(MsgOutputFileSuccessfullyCreated, lineCount.ToString());
+        string message3 = GetMessage(MsgOutputFileSuccessfullyCreated, lineCount);
         GetMock<ILogger>()
             .Setup(x => x.PushOperationType(OperationType.Writing))
             .Verifiable(Times.Once);
@@ -515,7 +515,7 @@ public class GeneratedFileServiceTests : MoqUnitTestBase
         int lineCount = 2;
         List<string> textLines = [text, text];
         string message1 = GetMessage(MsgWritingGeneratedTextFile, filePath);
-        string message2 = GetMessage(MsgOutputFileSuccessfullyCreated, lineCount.ToString());
+        string message2 = GetMessage(MsgOutputFileSuccessfullyCreated, lineCount);
         GetMock<ILogger>()
             .Setup(x => x.PushOperationType(OperationType.Writing))
             .Verifiable(Times.Once);
