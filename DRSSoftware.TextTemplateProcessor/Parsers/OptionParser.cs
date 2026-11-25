@@ -46,7 +46,7 @@ internal class OptionParser : DependencyCheckerBase, IOptionParser
     /// </returns>
     public string[] GetOptionStrings(string templateLine) => templateLine.Length < SegmentNameStartColumn
         ? []
-        : templateLine[(ControlCodeLength + 1)..].Split(OptionSeparatorChars, StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
+        : templateLine[MinTemplateLineLength..].Split(OptionSeparatorChars, StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
 
     /// <summary>
     /// Parse the given option string and return the option name and value if they are valid.

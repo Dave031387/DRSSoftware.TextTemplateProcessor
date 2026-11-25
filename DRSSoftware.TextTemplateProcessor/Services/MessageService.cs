@@ -41,7 +41,6 @@ internal static class MessageService
     internal const string MsgFirstTimeIndentSetToZero = $"A {FirstTimeIndentOption} option value of zero was specified on the {{0}} segment header. This value disables the first time indent processing for the segment.";
     internal const string MsgFoundDuplicateFileHeaderOption = "The option \"{0}\" appears more than once on the file header. Only the first occurrence will be used.";
     internal const string MsgFoundDuplicateSegmentHeaderOption = "The option \"{1}\" appears more than once on the {0} segment header. Only the first occurrence will be used.";
-    // internal const string MsgFoundDuplicateSegmentName = "Segment name {0} appears more than once in the template file. Only the first occurrence will be used.";
     // internal const string MsgFoundSolutionDirectoryPath = "The solution directory path was determined to be: {0}";
     internal const string MsgFourthCharacterMustBeBlank = "The following template line will be discarded because it isn't at least {1} characters long or it doesn't contain a space in column {1}: \"{0}\"";
     // internal const string MsgFullPathCannotBeDetermined = "The full path can't be determined because the solution directory path is unknown.";
@@ -64,16 +63,18 @@ internal static class MessageService
     // internal const string MsgLoadingTemplateFile = "Loading template file \"{0}\"";
     // internal const string MsgMissingDirectoryPath = "The specified file path doesn't contain a valid directory path.";
     internal const string MsgMissingFileName = "The file name is missing from the file path.";
+    internal const string MsgMissingSegmentHeaderForText = "The text line from the text template file will be discarded because no segment header was found.";
     internal const string MsgMissingTokenEndDelimiter = "A token start delimiter has been found but there are no more end delimiters. All remaining start delimiters will be escaped.";
     internal const string MsgMissingTokenName = "Found token start and end delimiters with no token name between them. The token will be ignored.";
     internal const string MsgMissingTokenStartDelimiter = "A token end delimiter has been found but there are no more start delimiters. All remaining end delimiters will be escaped.";
     internal const string MsgMoreTextAddedAfterFileWasWritten = "More text has been added to the generated text after the output file has already been written.";
     internal const string MsgMoreThanOneFileHeader = "The text template file has more than one file header line. Only the first one will be used.";
-    // internal const string MsgMultipleLevelsOfPadSegments = "Segment {1} specified as a pad segment for segment {0} also specifies a pad segment. Multiple levels of pad segments are not allowed.";
+    internal const string MsgMultipleLevelsOfPadSegments = "Segment {1} which was specified as a pad segment for segment {0} also specifies its own pad segment. Nested levels of pad segments are not allowed.";
     // internal const string MsgNextLoadRequestBeforeFirstIsWritten = "Template file \"{0}\" is being loaded before any output was written for template file \"{1}\"";
-    // internal const string MsgNoTextLinesFollowingSegmentHeader = "The header line for segment {0} must be followed by one or more valid text lines. The segment will be ignored.";
+    internal const string MsgNoTextLinesFollowingSegmentHeader = "Segment {0} will be ignored because there are no valid text lines following the segment header.";
     internal const string MsgNewTabSizeValueSet = "The tab size value has been changed from {0} to {1}.";
     internal const string MsgNewTokenDelimiterValuesSet = "The token delimiters have been set to new values. Start delimiter: \"{0}\"; End delimiter: \"{1}\"; Escape character: \"{2}\"";
+    internal const string MsgNoValidSegmentsFound = "There were no valid segments found in the text template file. There is nothing to generate.";
     internal const string MsgNullDirectoryPath = "The directory path must not be null.";
     internal const string MsgNullFilePath = "The file path must not be null.";
     internal const string MsgOptionNameMustPrecedeEqualsSign = "An option name must appear immediately before the equals sign with no intervening spaces on the {0}.";
@@ -84,7 +85,7 @@ internal static class MessageService
     internal const string MsgOutputFileWillBeOverwritten = "The output file already exists and will be overwritten.";
     internal const string MsgPadSegmentMustBeDefinedEarlier = "The pad segment name {1} referenced by segment {0} must be defined earlier in the template file. The pad segment will be ignored.";
     internal const string MsgPadSegmentNameSameAsSegmentName = "The pad segment name and segment header name for segment {0} are identical. The pad segment name will be ignored.";
-    internal const string MsgParsingCompletedSuccessfully = "Parsing has completed successfully.";
+    internal const string MsgParsingCompletedSuccessfully = "Parsing of file \"{0}\" has completed successfully.";
     // internal const string MsgPathIsNotRooted = "Expected a rooted path, but found \"{0}\"";
     // internal const string MsgProcessingSegment = "Processing segment {0}...";
     internal const string MsgProcessingSummary = "Processing summary:";
@@ -107,6 +108,8 @@ internal static class MessageService
     // internal const string MsgTemplateHasBeenReset = "The environment for template file \"{0}\" has been reset.";
     internal const string MsgTextItemSegmentNameInvalid = $"The segment name associated with the {nameof(TextItem)} object must not be null, empty, or whitespace.";
     internal const string MsgTextItemTextIsNull = $"The Text property of the {nameof(TextItem)} object must not be null.";
+    internal const string MsgTextLineDiscardedDueToError = "The text line will be discarded due to the issue mentioned above.";
+    internal const string MsgTextLineHasInvalidSegmentHeader = "The text line will be discarded because the segment header was invalid.";
     internal const string MsgTokenDelimitersHaveBeenReset = "The token delimiters and delimiter escape character have been reset back to their default values.";
     internal const string MsgTokenDictionaryContainsInvalidTokenName = "Attempted to assign a replacement value to a token having an invalid name \"{1}\" for segment {0}. The token will be ignored.";
     internal const string MsgTokenDictionaryIsEmpty = "An empty token dictionary was supplied for segment {0}.";
@@ -149,7 +152,7 @@ internal static class MessageService
     // internal const string MsgUnableToWriteGeneratedTextToFile = "Unable to write generated text to file. Reason: {0}";
     internal const string MsgUnableToWriteToTextFile = "An unexpected exception occurred while attempting to write to text file: \"{0}\"";
     internal const string MsgUncPathIsNotSupported = "UNC paths are not supported in this version of the Text Template Processor. The specified path was \"{0}\"";
-    internal const string MsgUnexpectedExceptionWhileParsing = "An unexpected exception was thrown while parsing file \"{0}\". Reason: {1}";
+    internal const string MsgUnexpectedExceptionWhileParsing = "Parsing of file \"{0}\" was terminated due to an unexpected exception. Reason: {1}";
     // internal const string MsgUnknownSegmentName = "A request was made to generate segment {0} but that segment wasn't found in the template file.";
     internal const string MsgUnknownHeaderOptionFound = "An unknown option \"{1}\" was found on the {0}. It will be ignored.";
     internal const string MsgUnknownTokenName = "Invalid attempt to assign a replacement value to unknown token name \"{1}\" in segment {0}. The token will be ignored.";

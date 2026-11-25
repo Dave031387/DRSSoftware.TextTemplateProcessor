@@ -63,7 +63,7 @@ internal class TextLineParser : DependencyCheckerBase, ITextLineParser
 
         text = textLine.Length < SegmentNameStartColumn
             ? string.Empty
-            : TokenExtractor.ExtractTokens(textLine[(ControlCodeLength + 1)..]);
+            : TokenExtractor.ExtractTokens(textLine[MinTemplateLineLength..]);
 
         return new(indent, isRelative, isOneTime, text);
     }

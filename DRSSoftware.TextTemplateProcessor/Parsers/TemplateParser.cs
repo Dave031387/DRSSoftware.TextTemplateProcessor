@@ -70,6 +70,16 @@ internal class TemplateParser : DependencyCheckerBase, ITemplateParser
     }
 
     /// <summary>
+    /// Gets or sets a value indicating whether or not the current segment header being parsed in
+    /// the template file is valid or not.
+    /// </summary>
+    private bool IsValidSegmentHeader
+    {
+        get;
+        set;
+    }
+
+    /// <summary>
     /// Gets or sets the last segment name that was found in the text template file.
     /// </summary>
     private string LastSegmentName
@@ -159,7 +169,7 @@ internal class TemplateParser : DependencyCheckerBase, ITemplateParser
             string message = GetMessage(MsgStartingToParseFile, TemplateFileService.TemplateFileName);
             Logger.Log(LogSeverity.Information, message);
             ParseTemplateFile();
-            message = GetMessage(MsgParsingCompletedSuccessfully);
+            message = GetMessage(MsgParsingCompletedSuccessfully, TemplateFileService.TemplateFileName);
             Logger.Log(LogSeverity.Information, message);
         }
         catch (Exception ex)
@@ -171,27 +181,6 @@ internal class TemplateParser : DependencyCheckerBase, ITemplateParser
         {
             Logger.PopOperationType();
             Locater.Reset();
-        }
-    }
-
-    private void CheckForEmptySegment()
-    {
-        if (!string.IsNullOrEmpty(LastSegmentName))
-        {
-            if (SegmentManager.IsEmptySegment(LastSegmentName))
-            {
-            }
-        }
-    }
-
-    private void EndOfFileCheck()
-    {
-        if (string.IsNullOrEmpty(LastSegmentName))
-        {
-        }
-        else
-        {
-            CheckForEmptySegment();
         }
     }
 
@@ -208,10 +197,54 @@ internal class TemplateParser : DependencyCheckerBase, ITemplateParser
         TemplateFileService.Initialize();
         TextLineParser.Initialize();
         FileHeaderFound = false;
+        IsValidSegmentHeader = false;
         LastSegmentName = string.Empty;
         TextLineFound = false;
     }
 
+    /// <summary>
+    /// Checks to see if any valid text lines were parsed for the last segment and logs an error if
+    /// none were found.
+    /// </summary>
+    private void CheckForEmptySegment()
+    {
+        if (!(string.IsNullOrEmpty(LastSegmentName) || LastSegmentName is UnknownSegmentName || IsValidSegmentHeader))
+        {
+            if (SegmentManager.IsEmptySegment(LastSegmentName))
+            {
+                string message = GetMessage(MsgNoTextLinesFollowingSegmentHeader, LastSegmentName);
+                Logger.Log(LogSeverity.Warning, message);
+            }
+        }
+    }
+
+    /// <summary>
+    /// Checks to see if at least one valid segment header has been parsed and if the last segment
+    /// has at least one valid text line. An error is logged if either condition is false.
+    /// </summary>
+    private void EndOfFileCheck()
+    {
+        if (string.IsNullOrEmpty(LastSegmentName))
+        {
+            string message = GetMessage(MsgNoValidSegmentsFound);
+            Logger.Log(LogSeverity.Warning, message);
+        }
+        else
+        {
+            CheckForEmptySegment();
+        }
+    }
+
+    /// <summary>
+    /// Checks to see if the given line from the text template file begins with a valid control code
+    /// and is at least the minimum length.
+    /// </summary>
+    /// <param name="templateLine">
+    /// The line to be checked from the text template file.
+    /// </param>
+    /// <returns>
+    /// <see langword="true"/> if the given template line is formatted correctly; otherwise, <see langword="false"/>
+    /// </returns>
     private bool IsValidTemplateLine(string templateLine)
     {
         bool isValid = true;
@@ -223,7 +256,7 @@ internal class TemplateParser : DependencyCheckerBase, ITemplateParser
             isValid = false;
         }
 
-        if (templateLine.Length < ControlCodeLength + 1 || templateLine[ControlCodeLength] is not ' ')
+        if (templateLine.Length < MinTemplateLineLength || templateLine[ControlCodeLength] is not ' ')
         {
             string message = GetMessage(MsgFourthCharacterMustBeBlank,
                                         templateLine,
@@ -235,6 +268,12 @@ internal class TemplateParser : DependencyCheckerBase, ITemplateParser
         return isValid;
     }
 
+    /// <summary>
+    /// Parses the given file header line from the text template file.
+    /// </summary>
+    /// <param name="templateLine">
+    /// The template file header line to be parsed.
+    /// </param>
     private void ParseFileHeader(string templateLine)
     {
         if (FileHeaderFound)
@@ -256,11 +295,27 @@ internal class TemplateParser : DependencyCheckerBase, ITemplateParser
         FileHeaderParser.Parse(templateLine);
     }
 
+    /// <summary>
+    /// Parses the given segment header line from the text template file.
+    /// </summary>
+    /// <param name="templateLine">
+    /// The segment header line to be parsed.
+    /// </param>
     private void ParseSegmentHeader(string templateLine)
     {
         CheckForEmptySegment();
+        ControlItem controlItem = SegmentHeaderParser.Parse(templateLine);
+        LastSegmentName = controlItem.SegmentName;
+        IsValidSegmentHeader = LastSegmentName is not UnknownSegmentName && SegmentManager.AddControlItem(controlItem);
     }
 
+    /// <summary>
+    /// Parses the entire contents of the text template file.
+    /// </summary>
+    /// <remarks>
+    /// An error is logged and no further processing is performed if the text template file is found
+    /// to be empty.
+    /// </remarks>
     private void ParseTemplateFile()
     {
         if (TemplateFileService.IsEmptyFile)
@@ -278,6 +333,12 @@ internal class TemplateParser : DependencyCheckerBase, ITemplateParser
         EndOfFileCheck();
     }
 
+    /// <summary>
+    /// Parses the next line from the text template file.
+    /// </summary>
+    /// <param name="templateLine">
+    /// The text template line to be parsed.
+    /// </param>
     private void ParseTemplateLine(string templateLine)
     {
         Locater.LineNumber++;
@@ -303,7 +364,35 @@ internal class TemplateParser : DependencyCheckerBase, ITemplateParser
         // NOTE: Comment lines are ignored and discarded.
     }
 
+    /// <summary>
+    /// Parses the given segment text line from the text template file.
+    /// </summary>
+    /// <param name="templateLine">
+    /// The text line to be parsed.
+    /// </param>
     private void ParseTextLine(string templateLine)
     {
+        TextLineFound = true;
+
+        if (string.IsNullOrEmpty(LastSegmentName))
+        {
+            string message = GetMessage(MsgMissingSegmentHeaderForText);
+            Logger.Log(LogSeverity.Error, message);
+        }
+        else if (IsValidSegmentHeader)
+        {
+            TextItem textItem = TextLineParser.Parse(templateLine);
+
+            if (!SegmentManager.AddTextItem(LastSegmentName, textItem))
+            {
+                string message = GetMessage(MsgTextLineDiscardedDueToError);
+                Logger.Log(LogSeverity.Error, message);
+            }
+        }
+        else
+        {
+            string message = GetMessage(MsgTextLineHasInvalidSegmentHeader);
+            Logger.Log(LogSeverity.Error, message);
+        }
     }
 }

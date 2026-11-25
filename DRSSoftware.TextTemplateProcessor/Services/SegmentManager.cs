@@ -48,6 +48,7 @@ internal class SegmentManager : DependencyCheckerBase, ISegmentManager
     public bool AddControlItem(ControlItem controlItem)
     {
         string message;
+        bool controlItemAdded = false;
 
         try
         {
@@ -57,22 +58,24 @@ internal class SegmentManager : DependencyCheckerBase, ISegmentManager
             {
                 message = GetMessage(MsgAttemptToAddDuplicateSegmentName, validatedControlItem.SegmentName);
                 Logger.Log(LogSeverity.Error, message);
-                return false;
             }
-
-            _controlItems.Add(validatedControlItem.SegmentName, validatedControlItem);
-            _textItems.Add(validatedControlItem.SegmentName, []);
-            message = GetMessage(MsgSegmentHasBeenAdded, validatedControlItem.SegmentName);
-            Logger.Log(LogSeverity.Information, message);
-            return true;
+            else
+            {
+                _controlItems.Add(validatedControlItem.SegmentName, validatedControlItem);
+                _textItems.Add(validatedControlItem.SegmentName, []);
+                message = GetMessage(MsgSegmentHasBeenAdded, validatedControlItem.SegmentName);
+                Logger.Log(LogSeverity.Information, message);
+                controlItemAdded = true;
+            }
         }
         catch (Exception ex)
         {
             string segmentName = controlItem is null || controlItem.SegmentName is null ? NullStringValue : controlItem.SegmentName;
             message = GetMessage(MsgUnableToAddSegmentToControlDictionary, segmentName, ex.Message);
             Logger.Log(LogSeverity.Error, message);
-            return false;
         }
+
+        return controlItemAdded;
     }
 
     /// <summary>
@@ -90,6 +93,8 @@ internal class SegmentManager : DependencyCheckerBase, ISegmentManager
     /// </returns>
     public bool AddTextItem(string segmentName, TextItem textItem)
     {
+        bool textItemAdded = false;
+
         try
         {
             ValidateTextItem(segmentName, textItem);
@@ -97,13 +102,12 @@ internal class SegmentManager : DependencyCheckerBase, ISegmentManager
             if (ContainsSegment(segmentName))
             {
                 _textItems[segmentName].Add(textItem);
-                return true;
+                textItemAdded = true;
             }
             else
             {
                 string message = GetMessage(MsgAttemptToAddTextItemForNonExistingSegment, segmentName);
                 Logger.Log(LogSeverity.Error, message);
-                return false;
             }
         }
         catch (Exception ex)
@@ -119,9 +123,9 @@ internal class SegmentManager : DependencyCheckerBase, ISegmentManager
                 _ = _textItems.Remove(segmentName);
                 _ = _controlItems.Remove(segmentName);
             }
-
-            return false;
         }
+
+        return textItemAdded;
     }
 
     /// <summary>
@@ -343,23 +347,49 @@ internal class SegmentManager : DependencyCheckerBase, ISegmentManager
             throw new ArgumentException(message);
         }
 
-        if (!string.IsNullOrWhiteSpace(controlItem.PadSegment))
+        return string.IsNullOrWhiteSpace(controlItem.PadSegment)
+            ? controlItem
+            : ValidatePadSegment(controlItem);
+    }
+
+    /// <summary>
+    /// Validates the pad segment specified in the given <paramref name="controlItem"/>.
+    /// </summary>
+    /// <param name="controlItem">
+    /// The <see cref="ControlItem"/> object containing the pad segment that is to be validated.
+    /// </param>
+    /// <returns>
+    /// <see langword="true"/> if the specified pad segment exists in the control item dictionary
+    /// and that pad segment doesn't specify a pad segment of its own; otherwise, <see langword="false"/>
+    /// </returns>
+    private ControlItem ValidatePadSegment(ControlItem controlItem)
+    {
+        string message;
+
+        if (_controlItems.TryGetValue(controlItem.PadSegment, out ControlItem? padControlItem))
         {
-            if (!_controlItems.ContainsKey(controlItem.PadSegment))
+            if (string.IsNullOrEmpty(padControlItem.PadSegment))
             {
-                string message = GetMessage(MsgPadSegmentMustBeDefinedEarlier, controlItem.SegmentName, controlItem.PadSegment);
-                Logger.Log(LogSeverity.Error, message);
-                return new()
-                {
-                    SegmentName = controlItem.SegmentName,
-                    PadSegment = string.Empty,
-                    FirstTimeIndent = controlItem.FirstTimeIndent,
-                    TabSize = controlItem.TabSize,
-                    IsFirstTime = controlItem.IsFirstTime
-                };
+                return controlItem;
+            }
+            else
+            {
+                message = GetMessage(MsgMultipleLevelsOfPadSegments, controlItem.SegmentName, controlItem.PadSegment);
             }
         }
+        else
+        {
+            message = GetMessage(MsgPadSegmentMustBeDefinedEarlier, controlItem.SegmentName, controlItem.PadSegment);
+        }
 
-        return controlItem;
+        Logger.Log(LogSeverity.Error, message);
+        return new()
+        {
+            SegmentName = controlItem.SegmentName,
+            PadSegment = string.Empty,
+            FirstTimeIndent = controlItem.FirstTimeIndent,
+            TabSize = controlItem.TabSize,
+            IsFirstTime = controlItem.IsFirstTime
+        };
     }
 }

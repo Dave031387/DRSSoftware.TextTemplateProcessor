@@ -6,5 +6,11 @@
 /// </summary>
 internal interface ITemplateParser
 {
+    /// <summary>
+    /// Parses the text template file found at the given <paramref name="filePath"/>.
+    /// </summary>
+    /// <param name="filePath">
+    /// The file path of the text template file that is to be parsed.
+    /// </param>
     void Parse(string filePath);
 }
